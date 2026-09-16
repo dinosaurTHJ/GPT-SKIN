@@ -1,0 +1,3 @@
+base_url = "https://theme.dux.cn/api/desktop/v1"
+secret_id = "replace-with-desktop-secret-id"
+secret_key = "replace-with-desktop-secret-key"

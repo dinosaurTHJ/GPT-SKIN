@@ -1,0 +1,373 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release, for example 0.1.0"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref_name || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    name: Prepare release
+    runs-on: ubuntu-latest
+    outputs:
+      release_id: ${{ steps.release.outputs.release_id }}
+      tag: ${{ steps.release.outputs.tag }}
+      version: ${{ steps.release.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Resolve version, notes, and draft release
+        id: release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          version="${{ github.event.inputs.version }}"
+          if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then
+            version="${GITHUB_REF_NAME#v}"
+          fi
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "Invalid release version: $version" >&2
+            exit 1
+          fi
+          tag="v$version"
+
+          node scripts/sync-version.mjs "$version"
+          node scripts/sync-version.mjs "$version" --check
+          notes_path="$RUNNER_TEMP/release-notes.md"
+          bash scripts/release/build-release-notes.sh "$version" "$notes_path"
+
+          release_id="$(gh api "repos/${{ github.repository }}/releases?per_page=100" --paginate --jq ".[] | select(.tag_name == \"$tag\") | .id" | head -n 1)"
+          if [[ -z "$release_id" ]]; then
+            release_id="$(gh api --method POST "repos/${{ github.repository }}/releases" \
+              -f tag_name="$tag" \
+              -f target_commitish="$GITHUB_SHA" \
+              -f name="ReTheme v$version" \
+              -f body="$(cat "$notes_path")" \
+              -F draft=true \
+              --jq .id)"
+          fi
+          [[ -n "$release_id" ]] || { echo "Unable to resolve draft release ID" >&2; exit 1; }
+
+          is_draft="$(gh api "repos/${{ github.repository }}/releases/$release_id" --jq .draft)"
+          [[ "$is_draft" == "true" ]] || { echo "Release $tag is already public; refusing to overwrite it" >&2; exit 1; }
+
+          gh api --method PATCH "repos/${{ github.repository }}/releases/$release_id" \
+            -f name="ReTheme v$version" \
+            -f body="$(cat "$notes_path")" \
+            -f target_commitish="$GITHUB_SHA" \
+            >/dev/null
+
+          {
+            echo "release_id=$release_id"
+            echo "tag=$tag"
+            echo "version=$version"
+          } >> "$GITHUB_OUTPUT"
+
+  release:
+    name: ${{ matrix.name }}
+    needs: prepare
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: macOS Apple Silicon
+            platform: macos-15
+            target: aarch64-apple-darwin
+            bundles: app,dmg
+            asset_arch: aarch64
+          - name: macOS Intel
+            platform: macos-15-intel
+            target: x86_64-apple-darwin
+            bundles: app,dmg
+            asset_arch: x64
+          - name: Windows x64
+            platform: windows-latest
+            target: x86_64-pc-windows-msvc
+            bundles: nsis
+            asset_arch: x64
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.31.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - name: Resolve release version and notes
+        id: release
+        shell: bash
+        run: |
+          version="${{ needs.prepare.outputs.version }}"
+
+          node scripts/sync-version.mjs "$version"
+          node scripts/sync-version.mjs "$version" --check
+
+          notes_path="$RUNNER_TEMP/release-notes.md"
+          bash scripts/release/build-release-notes.sh "$version" "$notes_path"
+          {
+            echo "version=$version"
+            echo "notes<<RETHEME_RELEASE_NOTES"
+            cat "$notes_path"
+            echo "RETHEME_RELEASE_NOTES"
+          } >> "$GITHUB_OUTPUT"
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Configure Apple signing and notarization
+        if: runner.os == 'macOS'
+        shell: bash
+        env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
+          APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+          APPLE_API_PRIVATE_KEY_BASE64: ${{ secrets.APPLE_API_PRIVATE_KEY_BASE64 }}
+        run: |
+          required=(
+            APPLE_CERTIFICATE
+            APPLE_CERTIFICATE_PASSWORD
+            APPLE_SIGNING_IDENTITY
+            APPLE_API_KEY
+            APPLE_API_ISSUER
+            APPLE_API_PRIVATE_KEY_BASE64
+          )
+          for name in "${required[@]}"; do
+            if [[ -z "${!name:-}" ]]; then
+              echo "Missing required macOS release secret: $name" >&2
+              exit 1
+            fi
+          done
+
+          if [[ "$APPLE_SIGNING_IDENTITY" != "Developer ID Application: xinhua li (USA572LS4F)" ]]; then
+            echo "Unexpected Apple signing identity: $APPLE_SIGNING_IDENTITY" >&2
+            exit 1
+          fi
+
+          api_key_path="$RUNNER_TEMP/AuthKey_${APPLE_API_KEY}.p8"
+          printf '%s' "$APPLE_API_PRIVATE_KEY_BASE64" | base64 --decode > "$api_key_path"
+          chmod 600 "$api_key_path"
+          echo "APPLE_API_KEY_PATH=$api_key_path" >> "$GITHUB_ENV"
+      - name: Generate build configuration
+        run: node scripts/write-build-config.mjs
+        env:
+          RETHEME_API_BASE_URL: https://theme.dux.cn/api/desktop/v1
+          RETHEME_API_SECRET_ID: ${{ secrets.RETHEME_API_SECRET_ID }}
+          RETHEME_API_SECRET_KEY: ${{ secrets.RETHEME_API_SECRET_KEY }}
+          RETHEME_PACKAGE_KEY: ${{ secrets.RETHEME_PACKAGE_KEY }}
+          RETHEME_LICENSE_PUBLIC_KEY: ${{ secrets.RETHEME_LICENSE_PUBLIC_KEY }}
+          RETHEME_COMPATIBILITY_PUBLIC_KEY: ${{ secrets.RETHEME_COMPATIBILITY_PUBLIC_KEY }}
+          RETHEME_THEME_PUBLIC_KEY: ${{ secrets.RETHEME_THEME_PUBLIC_KEY }}
+      - name: Test frontend
+        run: pnpm test
+      - name: Test Rust
+        run: cargo test --manifest-path src-tauri/Cargo.toml --target ${{ matrix.target }}
+      - name: Build and publish
+        uses: tauri-apps/tauri-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          APPLE_CERTIFICATE: ${{ runner.os == 'macOS' && secrets.APPLE_CERTIFICATE || '' }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ runner.os == 'macOS' && secrets.APPLE_CERTIFICATE_PASSWORD || '' }}
+          APPLE_SIGNING_IDENTITY: ${{ runner.os == 'macOS' && secrets.APPLE_SIGNING_IDENTITY || '' }}
+          APPLE_API_KEY: ${{ runner.os == 'macOS' && secrets.APPLE_API_KEY || '' }}
+          APPLE_API_ISSUER: ${{ runner.os == 'macOS' && secrets.APPLE_API_ISSUER || '' }}
+          APPLE_API_KEY_PATH: ${{ runner.os == 'macOS' && env.APPLE_API_KEY_PATH || '' }}
+        with:
+          releaseId: ${{ needs.prepare.outputs.release_id }}
+          tagName: ${{ needs.prepare.outputs.tag }}
+          releaseBody: ${{ steps.release.outputs.notes }}
+          releaseDraft: true
+          prerelease: false
+          updaterJsonPreferNsis: true
+          releaseAssetNamePattern: "[name]-[platform]-[arch][setup][ext]"
+          retryAttempts: 2
+          args: --target ${{ matrix.target }} --bundles ${{ matrix.bundles }}
+      - name: Verify local Apple distribution artifacts
+        if: runner.os == 'macOS'
+        shell: bash
+        run: bash scripts/verify-macos-release.sh "${{ matrix.target }}"
+      - name: Upload stable Apple disk image
+        if: runner.os == 'macOS'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          upload_dir="$RUNNER_TEMP/release-upload"
+          asset_name="ReTheme-darwin-${{ matrix.asset_arch }}.dmg"
+          mkdir -p "$upload_dir"
+          cp src-tauri/target/${{ matrix.target }}/release/bundle/dmg/*.dmg "$upload_dir/$asset_name"
+          bash scripts/upload-release-asset.sh \
+            "${{ needs.prepare.outputs.release_id }}" \
+            "$asset_name" \
+            "$upload_dir/$asset_name"
+      - name: Preserve Apple disk image for remote verification
+        if: runner.os == 'macOS'
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-dmg-${{ matrix.asset_arch }}
+          path: src-tauri/target/${{ matrix.target }}/release/bundle/dmg/*.dmg
+          if-no-files-found: error
+          retention-days: 1
+      - name: Remove generated configuration
+        if: always()
+        shell: bash
+        run: rm -f src-tauri/config/api.toml src-tauri/config/security.toml "${APPLE_API_KEY_PATH:-}"
+
+  publish:
+    name: Publish verified release
+    needs: [prepare, release]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Normalize updater metadata
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          release_id="${{ needs.prepare.outputs.release_id }}"
+          tag="${{ needs.prepare.outputs.tag }}"
+          gh api "repos/${{ github.repository }}/releases/$release_id/assets?per_page=100" > release-assets.json
+          mkdir -p release
+          latest_asset_id="$(jq -r '.[] | select(.name == "latest.json") | .id' release-assets.json)"
+          [[ -n "$latest_asset_id" ]] || { echo "latest.json asset is missing" >&2; exit 1; }
+          gh api -H "Accept: application/octet-stream" "repos/${{ github.repository }}/releases/assets/$latest_asset_id" > release/latest.json
+          node scripts/normalize-updater-metadata.mjs \
+            release/latest.json \
+            release-assets.json \
+            "${{ github.repository }}" \
+            "$tag"
+          bash scripts/upload-release-asset.sh "$release_id" latest.json release/latest.json
+      - name: Verify updater metadata
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          version="${{ needs.prepare.outputs.version }}"
+          tag="${{ needs.prepare.outputs.tag }}"
+          notes_path="$RUNNER_TEMP/release-notes.md"
+          bash scripts/release/build-release-notes.sh "$version" "$notes_path"
+          jq -e --arg release_root "https://github.com/${{ github.repository }}/releases/download/$tag/" '
+            .version == $version and
+            (.notes | length > 0) and
+            (.platforms as $platforms |
+              ["darwin-aarch64", "darwin-x86_64", "windows-x86_64"] |
+              all(.[];
+                . as $platform |
+                ($platforms[$platform].url | startswith($release_root)) and
+                ($platforms[$platform].url | test("/[0-9]+$") | not) and
+                ($platforms[$platform].signature != "")
+              )
+            )
+          ' --arg version "$version" release/latest.json
+          jq -e --rawfile notes "$notes_path" '
+            (.notes | rtrimstr("\n")) == ($notes | rtrimstr("\n"))
+          ' release/latest.json
+
+          gh api "repos/${{ github.repository }}/releases/${{ needs.prepare.outputs.release_id }}" --jq .body > release/release-body.md
+          jq -Rn --rawfile actual release/release-body.md --rawfile expected "$notes_path" '
+            ($actual | rtrimstr("\n")) == ($expected | rtrimstr("\n"))
+          ' | grep -Fxq true || { echo "GitHub release notes do not match the current changelog" >&2; exit 1; }
+          expected_assets=(
+            ReTheme-darwin-aarch64.dmg
+            ReTheme-darwin-x64.dmg
+            ReTheme-windows-x64-setup.exe
+            latest.json
+          )
+          release_assets="$(gh api "repos/${{ github.repository }}/releases/${{ needs.prepare.outputs.release_id }}/assets?per_page=100" --jq '.[].name')"
+          for asset in "${expected_assets[@]}"; do
+            grep -Fxq "$asset" <<< "$release_assets" || { echo "Missing release asset: $asset" >&2; exit 1; }
+          done
+          if grep -E "(^|[-_])${version}([-_.]|$)" <<< "$release_assets"; then
+            echo "Versioned release filename detected" >&2
+            exit 1
+          fi
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bash scripts/publish-release.sh "${{ needs.prepare.outputs.release_id }}" "${{ needs.prepare.outputs.tag }}"
+
+  apple-remote:
+    name: Apple remote verification
+    needs: [prepare, publish]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: aarch64-apple-darwin
+            asset_arch: aarch64
+          - target: x86_64-apple-darwin
+            asset_arch: x64
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: macos-dmg-${{ matrix.asset_arch }}
+          path: src-tauri/target/${{ matrix.target }}/release/bundle/dmg
+      - name: Configure Apple remote verification
+        env:
+          APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
+          APPLE_API_PRIVATE_KEY_BASE64: ${{ secrets.APPLE_API_PRIVATE_KEY_BASE64 }}
+        run: |
+          api_key_path="$RUNNER_TEMP/AuthKey_${APPLE_API_KEY}.p8"
+          printf '%s' "$APPLE_API_PRIVATE_KEY_BASE64" | base64 --decode > "$api_key_path"
+          chmod 600 "$api_key_path"
+          echo "APPLE_API_KEY_PATH=$api_key_path" >> "$GITHUB_ENV"
+      - name: Notarize and remotely verify Apple disk image
+        id: verification
+        continue-on-error: true
+        env:
+          APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
+          APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+          APPLE_API_KEY_PATH: ${{ env.APPLE_API_KEY_PATH }}
+        run: bash scripts/notarize-macos-dmg.sh "${{ matrix.target }}"
+      - name: Replace release disk image after verification
+        if: steps.verification.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          source_path="$(find src-tauri/target/${{ matrix.target }}/release/bundle/dmg -type f -name '*.dmg' -print -quit)"
+          bash scripts/upload-release-asset.sh \
+            "${{ needs.prepare.outputs.release_id }}" \
+            "ReTheme-darwin-${{ matrix.asset_arch }}.dmg" \
+            "$source_path"
+      - name: Report Apple remote verification failure
+        if: steps.verification.outcome == 'failure'
+        run: echo "::warning::Apple remote DMG verification failed without blocking the release."
+
+  remote-verify:
+    name: Verify published distribution
+    needs: [prepare, publish, apple-remote]
+    if: always() && needs.publish.result == 'success'
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download and remotely verify published assets
+        id: distribution
+        continue-on-error: true
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: bash scripts/verify-published-release.sh "${{ needs.prepare.outputs.version }}"
+      - name: Report remote distribution verification failure
+        if: steps.distribution.outcome == 'failure'
+        run: echo "::warning::Published distribution verification failed without blocking the release."

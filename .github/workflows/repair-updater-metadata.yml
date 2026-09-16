@@ -1,0 +1,80 @@
+name: Repair updater metadata
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/repair-updater-metadata.yml"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to repair, for example v0.1.2. Leave empty for latest."
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    name: Repair and verify latest.json
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Resolve release
+        id: release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag="${{ inputs.tag }}"
+          if [[ -z "$tag" ]]; then
+            tag="$(gh api "repos/${{ github.repository }}/releases/latest" --jq .tag_name)"
+          fi
+          release_id="$(gh api "repos/${{ github.repository }}/releases/tags/$tag" --jq .id)"
+          {
+            echo "tag=$tag"
+            echo "release_id=$release_id"
+          } >> "$GITHUB_OUTPUT"
+      - name: Repair updater metadata
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          release_id="${{ steps.release.outputs.release_id }}"
+          tag="${{ steps.release.outputs.tag }}"
+          mkdir -p release
+          gh api "repos/${{ github.repository }}/releases/$release_id/assets?per_page=100" > release/assets.json
+          latest_asset_id="$(jq -r '.[] | select(.name == "latest.json") | .id' release/assets.json)"
+          [[ -n "$latest_asset_id" ]] || { echo "latest.json asset is missing" >&2; exit 1; }
+          gh api -H "Accept: application/octet-stream" \
+            "repos/${{ github.repository }}/releases/assets/$latest_asset_id" \
+            > release/latest.json
+          node scripts/normalize-updater-metadata.mjs \
+            release/latest.json \
+            release/assets.json \
+            "${{ github.repository }}" \
+            "$tag"
+          bash scripts/upload-release-asset.sh "$release_id" latest.json release/latest.json
+      - name: Verify published updater metadata
+        run: |
+          tag="${{ steps.release.outputs.tag }}"
+          release_root="https://github.com/${{ github.repository }}/releases/download/$tag/"
+          curl --fail --location --retry 6 --retry-delay 5 --retry-all-errors \
+            "https://github.com/${{ github.repository }}/releases/download/$tag/latest.json" \
+            --output release/published-latest.json
+          jq -e --arg release_root "$release_root" '
+            (.notes | length > 0) and
+            ([.platforms[].url] |
+              all(startswith($release_root)) and
+              all(test("/[0-9]+$") | not)) and
+            ([.platforms[].signature] | all(length > 0))
+          ' release/published-latest.json >/dev/null
+          jq -r '.platforms | to_entries | map(.value.url) | unique[]' \
+            release/published-latest.json |
+          while read -r url; do
+            curl --fail --head --location --retry 6 --retry-delay 5 --retry-all-errors \
+              "$url" --output /dev/null
+          done

@@ -1,0 +1,51 @@
+[package]
+name = "retheme"
+version = "0.1.0"
+description = "A safe local theme manager for Codex"
+authors = ["ReTheme"]
+license = "BSD-3-Clause"
+edition = "2024"
+
+[lib]
+name = "retheme_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.6.3", features = [] }
+
+[dependencies]
+base64 = "0.22.1"
+chacha20poly1305 = "0.10.1"
+crypto_secretbox = "0.1.1"
+ed25519-dalek = "2.2.0"
+hex = "0.4.3"
+hkdf = "0.12.4"
+hmac = "0.12.1"
+lightningcss = { version = "1.0.0-alpha.71", default-features = false }
+plist = "1.8.0"
+rand_core = { version = "0.6.4", features = ["getrandom"] }
+reqwest = { version = "0.12.28", default-features = false, features = ["json", "rustls-tls"] }
+retheme-theme-protocol = { path = "../crates/theme-protocol" }
+semver = "1.0.28"
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.150"
+sha2 = "0.10.9"
+tauri = { version = "2.11.5", features = ["tray-icon", "protocol-asset"] }
+tauri-plugin-dialog = "2.7.1"
+tauri-plugin-opener = "2.5.4"
+tempfile = "3.23.0"
+tokio = { version = "1.49.0", features = ["time"] }
+toml = "0.9.8"
+tungstenite = "0.30.0"
+zip = { version = "8.2.0", default-features = false, features = ["deflate"] }
+x25519-dalek = { version = "2.0.1", features = ["static_secrets"] }
+tauri-plugin-deep-link = "2.4.9"
+tauri-plugin-single-instance = { version = "2.4.3", features = ["deep-link"] }
+tauri-plugin-updater = "2.10.1"
+tauri-plugin-process = "2.3.1"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+libc = "0.2.186"
+
+[target.'cfg(target_os = "windows")'.dependencies]
+windows = { version = "0.61.3", features = ["ApplicationModel", "ApplicationModel_Core", "Foundation_Collections", "Management_Deployment", "Storage", "Storage_Search", "Win32_Foundation", "Win32_System_Com", "Win32_System_Threading", "Win32_UI_Shell"] }

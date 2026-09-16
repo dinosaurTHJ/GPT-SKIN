@@ -1,0 +1,3057 @@
+/* Canonical cross-platform skin. Run tools/sync-runtime-assets.mjs after editing. */
+@layer dreamskin-accessibility, dreamskin-community;
+
+html[data-dream-skin="active"] {
+  color-scheme: dark !important;
+  --ds-bg: #111318;
+  --ds-panel: #191c22;
+  --ds-panel-2: #20242b;
+  --ds-green: #8298a3;
+  --ds-lime: #a0adb3;
+  --ds-cyan: #8da397;
+  --ds-purple: #9d94a3;
+  --ds-text: #edf0f1;
+  --ds-muted: #a3aaae;
+  --ds-line: rgba(130, 152, 163, .24);
+  --ds-bg-rgb: 17 19 24;
+  --ds-panel-rgb: 25 28 34;
+  --ds-panel-2-rgb: 32 36 43;
+  --ds-text-rgb: 237 240 241;
+  --ds-muted-rgb: 163 170 174;
+  --ds-accent-rgb: 130 152 163;
+  --ds-secondary-rgb: 141 163 151;
+  --ds-highlight-rgb: var(--ds-secondary-rgb);
+  --ds-accent: var(--ds-green);
+  --ds-accent-soft: var(--ds-lime);
+  --ds-secondary: var(--ds-cyan);
+  --ds-highlight: var(--ds-purple);
+  --ds-on-accent: rgb(var(--ds-bg-rgb) / 1);
+  --ds-focus-x: var(--dream-skin-focus-x, var(--dream-art-focus-x, 50%));
+  --ds-focus-y: var(--dream-skin-focus-y, var(--dream-art-focus-y, 50%));
+  --ds-art-position: var(--dream-art-position, var(--dream-skin-art-position, var(--ds-focus-x) var(--ds-focus-y)));
+  --ds-safe-side: left;
+  --ds-hero-scrim: linear-gradient(90deg,
+    rgb(var(--ds-bg-rgb) / .90) 0%,
+    rgb(var(--ds-bg-rgb) / .76) 50%,
+    rgb(var(--ds-bg-rgb) / .18) 84%,
+    transparent 100%);
+  --ds-task-shade: linear-gradient(90deg,
+    rgb(var(--ds-bg-rgb) / .56) 0%,
+    rgb(var(--ds-bg-rgb) / .36) 48%,
+    rgb(var(--ds-bg-rgb) / .12) 100%);
+  --ds-task-fade: linear-gradient(180deg,
+    rgb(var(--ds-bg-rgb) / .10) 0%,
+    rgb(var(--ds-bg-rgb) / .18) 32%,
+    rgb(var(--ds-bg-rgb) / .76) 68%,
+    rgb(var(--ds-bg-rgb) / 1) 100%);
+  --ds-task-full-veil: linear-gradient(
+    rgb(var(--ds-bg-rgb) / .10),
+    rgb(var(--ds-bg-rgb) / .10));
+  --ds-immersive-edge: rgb(var(--ds-bg-rgb) / .40);
+  --ds-immersive-mid: rgb(var(--ds-bg-rgb) / .26);
+  --ds-immersive-far: rgb(var(--ds-bg-rgb) / .16);
+  --ds-immersive-sidebar: rgb(var(--ds-panel-rgb) / .46);
+  --ds-task-immersive-sidebar: rgb(var(--ds-panel-rgb) / .70);
+  --ds-immersive-chrome: rgb(var(--ds-panel-rgb) / .28);
+  --ds-immersive-composer: rgb(var(--ds-panel-rgb) / .44);
+  --ds-immersive-composer-solid: color-mix(in srgb,
+    rgb(var(--ds-panel-2-rgb)) 88%,
+    rgb(var(--ds-muted-rgb)) 12%);
+  --ds-immersive-line: rgb(var(--ds-muted-rgb) / .42);
+  --ds-task-immersive-edge: rgb(var(--ds-bg-rgb) / .82);
+  --ds-task-immersive-mid: rgb(var(--ds-bg-rgb) / .74);
+  --ds-task-immersive-far: rgb(var(--ds-bg-rgb) / .60);
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"] {
+  color-scheme: light !important;
+  --ds-bg: #f3f5f6;
+  --ds-panel: #fafbfb;
+  --ds-panel-2: #e9edef;
+  --ds-text: #22272a;
+  --ds-muted: #687176;
+  --ds-line: rgba(91, 111, 121, .18);
+  --ds-bg-rgb: 243 245 246;
+  --ds-panel-rgb: 250 251 251;
+  --ds-panel-2-rgb: 233 237 239;
+  --ds-text-rgb: 34 39 42;
+  --ds-muted-rgb: 104 113 118;
+  --ds-accent-rgb: 84 112 126;
+  --ds-secondary-rgb: 102 128 116;
+  --ds-highlight-rgb: var(--ds-secondary-rgb);
+  --ds-on-accent: rgb(var(--ds-panel-rgb) / 1);
+  --ds-hero-scrim: linear-gradient(90deg,
+    rgb(var(--ds-panel-rgb) / .96) 0%,
+    rgb(var(--ds-panel-rgb) / .82) 50%,
+    rgb(var(--ds-panel-rgb) / .20) 84%,
+    transparent 100%);
+  --ds-task-shade: linear-gradient(90deg,
+    rgb(var(--ds-bg-rgb) / .68) 0%,
+    rgb(var(--ds-bg-rgb) / .40) 48%,
+    rgb(var(--ds-bg-rgb) / .12) 100%);
+  --ds-task-fade: linear-gradient(180deg,
+    rgb(var(--ds-bg-rgb) / .08) 0%,
+    rgb(var(--ds-bg-rgb) / .22) 34%,
+    rgb(var(--ds-bg-rgb) / .78) 70%,
+    rgb(var(--ds-bg-rgb) / 1) 100%);
+  --ds-task-full-veil: linear-gradient(
+    rgb(var(--ds-panel-rgb) / .10),
+    rgb(var(--ds-panel-rgb) / .10));
+  --ds-immersive-edge: rgb(var(--ds-panel-rgb) / .44);
+  --ds-immersive-mid: rgb(var(--ds-panel-rgb) / .28);
+  --ds-immersive-far: rgb(var(--ds-panel-rgb) / .14);
+  --ds-immersive-sidebar: rgb(var(--ds-panel-rgb) / .48);
+  --ds-task-immersive-sidebar: rgb(var(--ds-panel-rgb) / .72);
+  --ds-immersive-chrome: rgb(var(--ds-panel-rgb) / .34);
+  --ds-immersive-composer: rgb(var(--ds-panel-rgb) / .46);
+  --ds-immersive-composer-solid: rgb(var(--ds-panel-rgb) / .74);
+  --ds-immersive-line: rgb(var(--ds-accent-rgb) / .24);
+  --ds-task-immersive-edge: rgb(var(--ds-panel-rgb) / .86);
+  --ds-task-immersive-mid: rgb(var(--ds-panel-rgb) / .78);
+  --ds-task-immersive-far: rgb(var(--ds-panel-rgb) / .66);
+}
+
+/* Native token surfaces (dropdown/popover) resolve from Codex's own
+   appearanceTheme, not the skin; when that disagrees with data-dream-shell the
+   popover keeps the opposite palette (#233). Remap the dropdown token family to
+   skin variables so those surfaces inherit the theme in both shells. */
+html[data-dream-skin="active"] {
+  --color-token-dropdown-background: var(--ds-panel);
+  --color-token-foreground: var(--ds-text);
+  --color-token-text-primary: var(--ds-text);
+  --color-token-text-secondary: var(--ds-muted);
+  --color-token-text-tertiary: var(--ds-muted);
+  --color-token-muted-foreground: var(--ds-muted);
+  --color-token-description-foreground: var(--ds-muted);
+  --color-token-input-placeholder-foreground: var(--ds-muted);
+}
+
+/* The native Codex shell can keep dark-mode token classes while the image
+   analysis selects a light shell. Remap those classes explicitly so body
+   copy remains readable on bright artwork. */
+html[data-dream-skin="active"][data-dream-shell="light"]
+  :is([class~="text-token-text-primary"], [class~="text-token-foreground"]) {
+  color: var(--ds-text) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  :is([class~="text-token-text-secondary"], [class~="text-token-text-tertiary"],
+    [class~="text-token-muted-foreground"], [class~="text-token-description-foreground"],
+    [class~="text-token-input-placeholder-foreground"]) {
+  color: var(--ds-muted) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) [class*="_markdown"] {
+  color: var(--ds-text) !important;
+  text-shadow: 0 1px 2px rgb(var(--ds-panel-rgb) / .86) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) [role="main"]
+  :is(p, h1, h2, h3, h4, h5, h6, li, blockquote, pre, code) {
+  color: var(--ds-text) !important;
+}
+
+/* Current Windows Codex threads use local conversation anchors and generated
+   markdown classes instead of the older [role="main"] contract. In a light
+   image theme those descendants can retain the native electron-dark ink, so
+   remap the actual message text nodes while keeping secondary metadata muted. */
+html[data-dream-skin="active"][data-dream-shell="light"]
+  :is([data-local-conversation-user-anchor], [data-local-conversation-final-assistant]) {
+  color: var(--ds-text) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  :is([data-local-conversation-user-anchor], [data-local-conversation-final-assistant])
+  :is(p, h1, h2, h3, h4, h5, h6, li, blockquote, pre, code,
+    [class*="_markdown"], [class*="InlineMarkdown"], [class*="inline-markdown"]) {
+  color: rgb(30 32 36) !important;
+  -webkit-text-fill-color: rgb(30 32 36) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  :is([data-local-conversation-user-anchor], [data-local-conversation-final-assistant])
+  :is([class~="text-secondary"], [class~="text-tertiary"], [class*="text-xs"]) {
+  color: var(--ds-muted) !important;
+  -webkit-text-fill-color: var(--ds-muted) !important;
+}
+
+html[data-dream-skin="active"] [class~="bg-token-dropdown-background"] {
+  color: var(--ds-text);
+  --color-token-foreground: var(--ds-text);
+  --color-token-text-secondary: var(--ds-muted);
+  --color-token-muted-foreground: var(--ds-muted);
+  --color-token-description-foreground: var(--ds-muted);
+  --color-token-list-hover-background: rgb(var(--ds-panel-2-rgb) / .9);
+  --color-token-border: var(--ds-line);
+  --color-token-border-default: var(--ds-line);
+}
+
+/* Dialogs and popovers are native Codex surfaces, so their palette can stay
+   dark after artwork analysis selects the light shell. Keep the surface,
+   controls, and copy on the same readable light palette. */
+html[data-dream-skin="active"][data-dream-shell="light"]
+  :is([role="dialog"], [aria-modal="true"], [data-radix-popper-content-wrapper]) {
+  color: var(--ds-text) !important;
+  background: rgb(var(--ds-panel-rgb) / .92) !important;
+  border-color: rgb(var(--ds-muted-rgb) / .24) !important;
+  box-shadow: 0 12px 32px rgb(var(--ds-bg-rgb) / .18) !important;
+  backdrop-filter: blur(14px) saturate(106%) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  :is([role="dialog"], [aria-modal="true"], [data-radix-popper-content-wrapper])
+  :is([class~="bg-token-main-surface-primary"], [class~="bg-token-dropdown-background"],
+    [class~="bg-token-menu-background"], [class~="bg-token-surface-primary"]) {
+  color: var(--ds-text) !important;
+  background: rgb(var(--ds-panel-rgb) / .94) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  :is([role="dialog"], [aria-modal="true"], [data-radix-popper-content-wrapper])
+  :is([class~="text-token-text-primary"], [class~="text-token-foreground"]) {
+  color: var(--ds-text) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  :is([role="dialog"], [aria-modal="true"], [data-radix-popper-content-wrapper])
+  :is([class~="text-token-text-secondary"], [class~="text-token-text-tertiary"],
+    [class~="text-token-muted-foreground"], [class~="text-token-description-foreground"],
+    [class~="text-token-input-placeholder-foreground"]) {
+  color: var(--ds-muted) !important;
+}
+
+html[data-dream-skin="active"]:is([data-dream-art-safe="left"], [data-dream-art-safe-area="left"]) {
+  --ds-safe-side: left;
+  --ds-art-position: 100% var(--ds-focus-y);
+}
+
+html[data-dream-skin="active"]:is([data-dream-art-safe="right"], [data-dream-art-safe-area="right"]) {
+  --ds-safe-side: right;
+  --ds-art-position: 0% var(--ds-focus-y);
+  --ds-hero-scrim: linear-gradient(270deg,
+    rgb(var(--ds-bg-rgb) / .90) 0%,
+    rgb(var(--ds-bg-rgb) / .76) 50%,
+    rgb(var(--ds-bg-rgb) / .18) 84%,
+    transparent 100%);
+  --ds-task-shade: linear-gradient(270deg,
+    rgb(var(--ds-bg-rgb) / .56) 0%,
+    rgb(var(--ds-bg-rgb) / .36) 48%,
+    rgb(var(--ds-bg-rgb) / .12) 100%);
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]:is([data-dream-art-safe="right"], [data-dream-art-safe-area="right"]) {
+  --ds-hero-scrim: linear-gradient(270deg,
+    rgb(var(--ds-panel-rgb) / .96) 0%,
+    rgb(var(--ds-panel-rgb) / .82) 50%,
+    rgb(var(--ds-panel-rgb) / .20) 84%,
+    transparent 100%);
+  --ds-task-shade: linear-gradient(270deg,
+    rgb(var(--ds-bg-rgb) / .68) 0%,
+    rgb(var(--ds-bg-rgb) / .40) 48%,
+    rgb(var(--ds-bg-rgb) / .12) 100%);
+}
+
+html[data-dream-skin="active"]:is([data-dream-art-safe="center"], [data-dream-art-safe-area="center"]) {
+  --ds-safe-side: center;
+  --ds-hero-scrim: linear-gradient(90deg,
+    transparent 0%,
+    rgb(var(--ds-bg-rgb) / .68) 25%,
+    rgb(var(--ds-bg-rgb) / .78) 50%,
+    rgb(var(--ds-bg-rgb) / .68) 75%,
+    transparent 100%);
+  --ds-task-shade: radial-gradient(ellipse at center,
+    rgb(var(--ds-bg-rgb) / .48) 0%,
+    rgb(var(--ds-bg-rgb) / .30) 52%,
+    rgb(var(--ds-bg-rgb) / .10) 100%);
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]:is([data-dream-art-safe="center"], [data-dream-art-safe-area="center"]) {
+  --ds-hero-scrim: linear-gradient(90deg,
+    transparent 0%,
+    rgb(var(--ds-panel-rgb) / .72) 25%,
+    rgb(var(--ds-panel-rgb) / .88) 50%,
+    rgb(var(--ds-panel-rgb) / .72) 75%,
+    transparent 100%);
+  --ds-task-shade: radial-gradient(ellipse at center,
+    rgb(var(--ds-bg-rgb) / .58) 0%,
+    rgb(var(--ds-bg-rgb) / .34) 52%,
+    rgb(var(--ds-bg-rgb) / .10) 100%);
+}
+
+html[data-dream-skin="active"]:is([data-dream-art-safe="none"], [data-dream-art-safe-area="none"]) {
+  --ds-safe-side: none;
+  --ds-hero-scrim: linear-gradient(180deg,
+    rgb(var(--ds-bg-rgb) / .34),
+    rgb(var(--ds-bg-rgb) / .20));
+  --ds-task-shade: linear-gradient(180deg,
+    rgb(var(--ds-bg-rgb) / .28),
+    rgb(var(--ds-bg-rgb) / .14));
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]:is([data-dream-art-safe="none"], [data-dream-art-safe-area="none"]) {
+  --ds-hero-scrim: linear-gradient(180deg,
+    rgb(var(--ds-panel-rgb) / .46),
+    rgb(var(--ds-panel-rgb) / .28));
+  --ds-task-shade: linear-gradient(180deg,
+    rgb(var(--ds-bg-rgb) / .34),
+    rgb(var(--ds-bg-rgb) / .16));
+}
+
+html[data-dream-skin="active"] body {
+  background: var(--ds-bg) !important;
+  color: var(--ds-text) !important;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Microsoft YaHei UI", "Segoe UI", system-ui, sans-serif !important;
+}
+
+html[data-dream-skin="active"] body::before {
+  content: none;
+}
+
+html[data-dream-skin="active"] aside.app-shell-left-panel {
+  background:
+    linear-gradient(180deg,
+      rgb(var(--ds-panel-rgb) / .98),
+      rgb(var(--ds-bg-rgb) / .96)) !important;
+  border: 1px solid var(--ds-line) !important;
+  border-left: 0 !important;
+  border-radius: 0 16px 16px 0 !important;
+  box-shadow: 10px 0 30px rgb(var(--ds-bg-rgb) / .22) !important;
+  color: var(--ds-text) !important;
+  backdrop-filter: none !important;
+}
+
+html[data-dream-skin="active"] aside.app-shell-left-panel nav { background: transparent !important; }
+
+html[data-dream-skin="active"] aside.app-shell-left-panel button,
+html[data-dream-skin="active"] aside.app-shell-left-panel a {
+  color: var(--ds-text) !important;
+  transition: background-color .18s cubic-bezier(.22, 1, .36, 1),
+    border-color .18s cubic-bezier(.22, 1, .36, 1),
+    color .18s cubic-bezier(.22, 1, .36, 1) !important;
+}
+
+html[data-dream-skin="active"] aside.app-shell-left-panel [class*="text-token-foreground"] {
+  color: var(--ds-text) !important;
+}
+
+html[data-dream-skin="active"] aside.app-shell-left-panel [class*="text-token-input-placeholder-foreground"] {
+  color: rgb(var(--ds-muted-rgb) / .92) !important;
+}
+
+html[data-dream-skin="active"] aside.app-shell-left-panel svg {
+  color: rgb(var(--ds-muted-rgb) / .96) !important;
+}
+
+html[data-dream-skin="active"] aside.app-shell-left-panel button:hover,
+html[data-dream-skin="active"] aside.app-shell-left-panel a:hover {
+  background: rgb(var(--ds-accent-rgb) / .09) !important;
+  color: var(--ds-text) !important;
+  transform: none !important;
+}
+
+html[data-dream-skin="active"] aside.app-shell-left-panel button:hover svg,
+html[data-dream-skin="active"] aside.app-shell-left-panel a:hover svg {
+  color: var(--ds-accent) !important;
+}
+
+html[data-dream-skin="active"] aside.app-shell-left-panel button[aria-label^="切换模式"] {
+  background: transparent !important;
+  border: 0 !important;
+  color: var(--ds-accent) !important;
+  font-family: inherit !important;
+  font-size: 19px !important;
+  font-weight: 800 !important;
+  text-shadow: none !important;
+}
+
+html[data-dream-skin="active"] aside.app-shell-left-panel button[aria-label^="切换模式"]::after {
+  content: " ·";
+  color: var(--ds-secondary);
+}
+
+html[data-dream-skin="active"] aside.app-shell-left-panel [class~="bg-token-list-hover-background"],
+html[data-dream-skin="active"] aside.app-shell-left-panel [aria-current="page"] {
+  background: rgb(var(--ds-accent-rgb) / .12) !important;
+  border: 1px solid rgb(var(--ds-accent-rgb) / .22) !important;
+  box-shadow: 0 4px 16px rgb(var(--ds-bg-rgb) / .12) !important;
+  color: var(--ds-text) !important;
+}
+
+html[data-dream-skin="active"] aside.app-shell-left-panel [aria-current="page"] svg {
+  color: var(--ds-accent) !important;
+}
+
+/* Current Windows navigation uses native utility classes for its labels. In
+   a light image shell those classes can retain the electron-dark foreground,
+   even though the outer sidebar has already adopted the light palette. */
+html[data-dream-skin="active"][data-dream-shell="light"] aside.app-shell-left-panel {
+  color: var(--ds-text) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"] aside.app-shell-left-panel
+  :is(.sidebar-item, [class~="text-default"], [class~="text-fade-truncate"],
+    [class~="font-semibold"], [class*="_viewport_"], [class*="_clipViewport_"],
+    [class*="truncate"]) {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"] aside.app-shell-left-panel
+  :is([class~="text-secondary"], [class~="text-tertiary"], [class*="opacity-75"]) {
+  color: var(--ds-muted) !important;
+  -webkit-text-fill-color: var(--ds-muted) !important;
+}
+
+html[data-dream-skin="active"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) {
+  position: relative !important;
+  isolation: isolate;
+  overflow: hidden !important;
+  background: var(--ds-bg) !important;
+  border: 1px solid var(--ds-line) !important;
+  border-right: 0 !important;
+  border-bottom: 0 !important;
+  border-radius: 16px 0 0 0 !important;
+  box-shadow: -8px 0 28px rgb(var(--ds-bg-rgb) / .18) !important;
+}
+
+html[data-dream-skin="active"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"]))::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: var(--ds-task-fade), var(--ds-task-shade), var(--dream-skin-art);
+  background-repeat: no-repeat;
+  background-position: center, center, var(--ds-art-position);
+  background-size: 100% 100%, 100% 100%, cover;
+  opacity: var(--ds-theme-image-opacity, .80);
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"]))::before {
+  opacity: var(--ds-theme-image-opacity, .80);
+}
+
+html[data-dream-skin="active"]:is([data-dream-art-wide="true"], [data-dream-art-aspect="wide"], [data-dream-art-aspect="ultrawide"])
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"]))::before {
+  background-position: center, center, var(--ds-art-position);
+  background-size: 100% 100%, 100% 100%, cover;
+}
+
+/* Studio's full mode keeps the task artwork at normal strength with only the
+   baseline readability veil. Ambient mode deliberately uses the heavier task
+   fade/shade below, while off removes the artwork entirely. */
+html[data-dream-skin="active"]:is([data-dream-task-mode="full"], [data-dream-art-task-mode="full"])
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"]))::before {
+  inset: 0;
+  height: auto;
+  background-image: var(--ds-task-full-veil), var(--dream-skin-art);
+  background-position: center, var(--ds-art-position);
+  background-size: 100% 100%, cover;
+  opacity: var(--ds-theme-image-opacity, 1);
+}
+
+html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"], [data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"])
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"]))::before {
+  inset: 0;
+  height: auto;
+}
+
+html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"], [data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"])[data-dream-art-wide="true"]:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])):not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) [role="main"])) body {
+  background-image: linear-gradient(
+    rgb(var(--ds-bg-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))),
+    rgb(var(--ds-bg-rgb) / calc(1 - var(--ds-theme-image-opacity, .80)))
+  ), var(--dream-skin-art) !important;
+  background-position: var(--ds-art-position) !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+}
+
+html[data-dream-skin="active"]:is([data-dream-task-mode="full"], [data-dream-art-task-mode="full"])[data-dream-art-wide="true"]:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])):not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) [role="main"])) body {
+  background-image: linear-gradient(
+    rgb(var(--ds-bg-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))),
+    rgb(var(--ds-bg-rgb) / calc(1 - var(--ds-theme-image-opacity, .80)))
+  ), var(--dream-skin-art) !important;
+  background-position: var(--ds-art-position) !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+}
+
+html[data-dream-skin="active"]:is([data-dream-task-mode="full"], [data-dream-art-task-mode="full"])[data-dream-art-wide="true"]:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])):not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) [role="main"]))
+  aside.app-shell-left-panel {
+  background: linear-gradient(90deg,
+    var(--ds-immersive-sidebar),
+    var(--ds-immersive-edge) 100%) !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+html[data-dream-skin="active"]:is([data-dream-task-mode="full"], [data-dream-art-task-mode="full"])[data-dream-art-wide="true"]:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])):not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) [role="main"]))
+  aside.app-shell-left-panel::after {
+  background: transparent !important;
+}
+
+html[data-dream-skin="active"]:is([data-dream-task-mode="full"], [data-dream-art-task-mode="full"])[data-dream-art-wide="true"]:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])):not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) [role="main"]))
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) {
+  background: linear-gradient(90deg,
+    var(--ds-immersive-edge),
+    var(--ds-immersive-mid) 64%,
+    var(--ds-immersive-far)) !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"]:is([data-dream-task-mode="full"], [data-dream-art-task-mode="full"])[data-dream-art-wide="true"]
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"]))::before {
+  content: none;
+}
+
+html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"], [data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"])[data-dream-art-wide="true"]:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])):not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) [role="main"]))
+  aside.app-shell-left-panel {
+  background: linear-gradient(90deg,
+    var(--ds-task-immersive-sidebar),
+    var(--ds-task-immersive-edge) 100%) !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+/* Native sidebar resize chrome inherits the sidebar background and extends
+   20px into the main surface. Keeping it clear preserves one continuous image. */
+html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"], [data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"])[data-dream-art-wide="true"]:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])):not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) [role="main"]))
+  aside.app-shell-left-panel::after {
+  background: transparent !important;
+}
+
+html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"], [data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"])[data-dream-art-wide="true"]:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])):not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) [role="main"]))
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) {
+  background: linear-gradient(90deg,
+    var(--ds-task-immersive-edge),
+    var(--ds-task-immersive-mid) 64%,
+    var(--ds-task-immersive-far)) !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"], [data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"])[data-dream-art-wide="true"]
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"]))::before {
+  content: none;
+}
+
+/* Wide ambient mode keeps the native main surface over the body artwork. Tie
+   that tint to the image setting as well; at 100% the surface must be clear,
+   otherwise a fixed light-shell panel washes the artwork out. */
+html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"], [data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"])[data-dream-art-wide="true"]:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])):not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) [role="main"]))
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) {
+  background: rgb(var(--ds-bg-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))) !important;
+}
+
+html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"], [data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"])[data-dream-art-wide="true"]:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])):not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) [role="main"]))
+  .composer-surface-chrome {
+  background: rgb(var(--ds-panel-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))) !important;
+  border: 0 !important;
+  box-shadow:
+    0 10px 30px rgb(var(--ds-bg-rgb) / .20),
+    inset 0 0 0 1px var(--ds-immersive-line),
+    inset 0 1px rgb(var(--ds-text-rgb) / .12) !important;
+  backdrop-filter: none !important;
+}
+
+html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"], [data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"])[data-dream-art-wide="true"]:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])):not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) [role="main"]))
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) > header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*="_Header_"]) {
+  background: transparent !important;
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"], [data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"], [data-dream-task-mode="full"], [data-dream-art-task-mode="full"])[data-dream-art-wide="true"]
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) [class*="_markdown"] {
+  color: var(--ds-text) !important;
+  text-shadow:
+    0 1px 2px rgb(var(--ds-bg-rgb) / .82),
+    0 0 10px rgb(var(--ds-bg-rgb) / .58);
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"], [data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"], [data-dream-task-mode="full"], [data-dream-art-task-mode="full"])[data-dream-art-wide="true"]
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) [class*="_markdown"] {
+  text-shadow:
+    0 1px 2px rgb(var(--ds-panel-rgb) / .92),
+    0 0 10px rgb(var(--ds-panel-rgb) / .72);
+}
+
+html[data-dream-skin="active"]:is([data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"])
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"]))::before {
+  inset: 0 0 auto;
+  height: clamp(280px, 46vh, 520px);
+  background-position: center top, center top, var(--ds-art-position);
+  background-size: 100% 100%, 100% 100%, cover;
+}
+
+html[data-dream-skin="active"]:is([data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"]):is([data-dream-art-wide="true"], [data-dream-art-aspect="wide"], [data-dream-art-aspect="ultrawide"])
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"]))::before {
+  inset: 0;
+  height: auto;
+  background-position: center, center, var(--ds-art-position);
+  background-size: 100% 100%, 100% 100%, cover;
+}
+
+html[data-dream-skin="active"]:is([data-dream-task-mode="off"], [data-dream-art-task-mode="off"])
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"]))::before {
+  content: none;
+}
+
+html[data-dream-skin="active"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) > :not(header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*="_Header_"])) {
+  position: relative;
+  z-index: 1;
+}
+
+html[data-dream-skin="active"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) [role="main"] {
+  background: transparent !important;
+  color: var(--ds-text) !important;
+  text-shadow:
+    0 1px 2px rgb(var(--ds-bg-rgb) / .72),
+    0 0 10px rgb(var(--ds-bg-rgb) / .46);
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) [role="main"] {
+  text-shadow: none;
+}
+
+/* Newer Codex builds paint the list/detail panes (pull requests, the chat
+   review/terminal/browser/files side panel) with token surfaces instead of
+   [role="main"]. The side panel can coexist with a visible home shell, so this
+   transparency is deliberately not gated on the home-route selector. The nested
+   surfaces all carry the same token, so they are cleared everywhere and the
+   translucent pane tint is painted once, on the bordered outer wrapper. */
+html[data-dream-skin="active"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])
+  :is(div, section, aside)[class~="bg-token-main-surface-primary"] {
+  background: transparent !important;
+}
+
+html[data-dream-skin="active"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])
+  div[class~="bg-token-main-surface-primary"][class~="border-l"] {
+  background: rgb(var(--ds-panel-rgb) / .62) !important;
+  backdrop-filter: blur(10px) saturate(106%) !important;
+}
+
+/* The right output/process/source rail is a native dropdown surface. Keep its
+   content and scrolling, but let the artwork show through the container. */
+html[data-dream-skin="active"]
+  div[class~="pointer-events-none"][class~="absolute"][class~="top-(--thread-floating-content-top-inset)"][class~="right-0"][class~="bottom-(--thread-floating-content-bottom-inset)"]
+  div[class~="bg-token-dropdown-background"][class~="rounded-3xl"][class~="overflow-hidden"] {
+  color: var(--ds-text) !important;
+  background: rgb(var(--ds-panel-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))) !important;
+  border: 1px solid rgb(var(--ds-muted-rgb) / .24) !important;
+  border-radius: 22px !important;
+  box-shadow: 0 12px 30px rgb(var(--ds-bg-rgb) / .18) !important;
+  backdrop-filter: blur(8px) saturate(110%) !important;
+}
+
+html[data-dream-skin="active"]
+  div[class~="pointer-events-none"][class~="absolute"][class~="top-(--thread-floating-content-top-inset)"][class~="right-0"][class~="bottom-(--thread-floating-content-bottom-inset)"]
+  div[class~="bg-token-dropdown-background"][class~="rounded-3xl"][class~="overflow-hidden"]
+  header[class~="bg-token-dropdown-background"] {
+  color: var(--ds-text) !important;
+  background: transparent !important;
+}
+
+/* Newer Windows builds use bg-surface-elevated-secondary for the same output
+   rail. Keep the rail translucent and clear its sticky header/pseudo chrome so
+   the image opacity setting also controls this native surface. */
+html[data-dream-skin="active"]
+  div[class~="pointer-events-none"][class~="absolute"][class~="top-(--thread-floating-content-top-inset)"][class~="right-0"][class~="bottom-(--thread-floating-content-bottom-inset)"]
+  div[class~="bg-surface-elevated-secondary"][class~="rounded-3xl"][class~="overflow-hidden"] {
+  color: var(--ds-text) !important;
+  background: rgb(var(--ds-panel-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))) !important;
+  border: 1px solid rgb(var(--ds-muted-rgb) / .24) !important;
+  border-radius: 22px !important;
+  box-shadow: 0 12px 30px rgb(var(--ds-bg-rgb) / .18) !important;
+  backdrop-filter: blur(8px) saturate(110%) !important;
+}
+
+html[data-dream-skin="active"]
+  div[class~="pointer-events-none"][class~="absolute"][class~="top-(--thread-floating-content-top-inset)"][class~="right-0"][class~="bottom-(--thread-floating-content-bottom-inset)"]
+  div[class~="bg-surface-elevated-secondary"][class~="rounded-3xl"][class~="overflow-hidden"]
+  :is(header, button, span) {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+}
+
+html[data-dream-skin="active"]
+  div[class~="pointer-events-none"][class~="absolute"][class~="top-(--thread-floating-content-top-inset)"][class~="right-0"][class~="bottom-(--thread-floating-content-bottom-inset)"]
+  div[class~="bg-surface-elevated-secondary"][class~="rounded-3xl"][class~="overflow-hidden"]
+  :is([class~="text-secondary"], [class~="text-tertiary"], [class~="text-text/40"]) {
+  color: var(--ds-muted) !important;
+  -webkit-text-fill-color: var(--ds-muted) !important;
+}
+
+html[data-dream-skin="active"]
+  div[class~="pointer-events-none"][class~="absolute"][class~="top-(--thread-floating-content-top-inset)"][class~="right-0"][class~="bottom-(--thread-floating-content-bottom-inset)"]
+  div[class~="bg-surface-elevated-secondary"][class~="rounded-3xl"][class~="overflow-hidden"]
+  header[class~="bg-surface-elevated-secondary"] {
+  color: var(--ds-text) !important;
+  background: transparent !important;
+}
+
+html[data-dream-skin="active"]
+  div[class~="pointer-events-none"][class~="absolute"][class~="top-(--thread-floating-content-top-inset)"][class~="right-0"][class~="bottom-(--thread-floating-content-bottom-inset)"]
+  div[class~="bg-surface-elevated-secondary"][class~="rounded-3xl"][class~="overflow-hidden"]
+  header[class~="bg-surface-elevated-secondary"]::before {
+  background: transparent !important;
+}
+
+/* The edited-files card is a native diff surface, not a dialog. Match its
+   current stable surface token and preserve the diff-specific status colors. */
+html[data-dream-skin="active"][data-dream-shell="light"]
+  [class~="bg-surface-elevated-secondary/50"]:has([class*="turn-diff"]) {
+  color: var(--ds-text) !important;
+  background: rgb(var(--ds-panel-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))) !important;
+  border-color: rgb(var(--ds-muted-rgb) / .24) !important;
+  box-shadow: 0 10px 26px rgb(var(--ds-bg-rgb) / .14) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  [class~="bg-surface-elevated-secondary/50"]:has([class*="turn-diff"])
+  :is([class~="text-default"], [class~="text-secondary"], [class~="text-tertiary"],
+    [class~="turn-diff-default-subtitle"], [class~="turn-diff-hover-subtitle"]) {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  [class~="bg-surface-elevated-secondary/50"]:has([class*="turn-diff"])
+  :is([class~="text-codex-git-added"], [class~="text-codex-git-deleted"]) {
+  -webkit-text-fill-color: currentColor !important;
+}
+
+/* The expanded diff body has its own native dark surfaces and an inline-style
+   utility variable. Override those descendants as well; changing only the
+   outer card leaves the file rows and code preview dark on a bright artwork. */
+html[data-dream-skin="active"][data-dream-shell="light"]
+  [class~="bg-surface-elevated-secondary/50"]:has([class*="turn-diff"])
+  :is([class~="bg-surface/70"], [class~="bg-surface-secondary/92"],
+    [class~="bg-primary-soft-alpha"], [class*="bg-background-primary-soft"],
+    [class*="codex-diffs-surface-override"]) {
+  background: rgb(var(--ds-panel-2-rgb) / .72) !important;
+  border-color: rgb(var(--ds-muted-rgb) / .24) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  [class~="bg-surface-elevated-secondary/50"]:has([class*="turn-diff"])
+  [class*="codex-diffs-surface-override"] {
+  --codex-diffs-surface-override: rgb(var(--ds-panel-2-rgb) / .72) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  [class~="bg-surface-elevated-secondary/50"]:has([class*="turn-diff"])
+  :is(button, pre, code) {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  [class~="bg-surface-elevated-secondary/50"]:has([class*="turn-diff"])
+  :is([class~="text-codex-description"], [class~="text-secondary"],
+    [class~="text-tertiary"], [class~="text-text/40"]) {
+  color: var(--ds-muted) !important;
+  -webkit-text-fill-color: var(--ds-muted) !important;
+}
+
+html[data-dream-skin="active"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) article {
+  border: 1px solid rgb(var(--ds-muted-rgb) / .12);
+  background: rgb(var(--ds-panel-rgb) / .44);
+  box-shadow: 0 8px 24px rgb(var(--ds-bg-rgb) / .10);
+  backdrop-filter: blur(7px) saturate(105%);
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) article {
+  background: rgb(var(--ds-panel-rgb) / .72);
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):has([role="main"])::after,
+html[data-dream-skin="active"][data-dream-shell="light"] [role="main"]:has([data-testid="home-icon"]) [data-feature="game-source"]::before {
+  text-shadow: none;
+}
+
+html[data-dream-skin="active"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) > header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*="_Header_"]) {
+  /* Preserve Codex's native fixed header geometry and side-panel controls. */
+  background: rgb(var(--ds-panel-rgb) / .90) !important;
+  border-bottom: 1px solid var(--ds-line) !important;
+  backdrop-filter: blur(14px) saturate(108%) !important;
+}
+
+/* Decorative chrome lives on the native shell; no injected positioning host is needed. */
+html[data-dream-skin="active"]
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) > header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*="_Header_"])::before {
+  content: var(--dream-skin-name, "Codex Dream Skin") " · "
+    var(--dream-skin-brand-subtitle, "CODEX DREAM SKIN");
+  position: absolute;
+  left: 22px;
+  top: 4px;
+  z-index: 2;
+  max-width: min(42%, 360px);
+  overflow: hidden;
+  color: var(--ds-accent);
+  font: 800 11px/1.3 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  letter-spacing: .03em;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 12px rgb(var(--ds-bg-rgb) / .32);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* The title is manager chrome, not part of the native Codex header. */
+html[data-dream-skin="active"]
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) > header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*="_Header_"])::before {
+  content: none !important;
+}
+
+html[data-dream-skin="active"]
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) > header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*="_Header_"])::after {
+  content: var(--dream-skin-status, "DREAM SKIN ONLINE");
+  position: absolute;
+  right: 84px;
+  top: 13px;
+  z-index: 2;
+  max-width: 28%;
+  overflow: hidden;
+  color: var(--ds-muted);
+  font: 700 9px/1.2 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  letter-spacing: .08em;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 10px rgb(var(--ds-bg-rgb) / .32);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+html[data-dream-skin="active"]
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):has([role="main"])::after {
+  content: var(--dream-skin-quote, "MAKE SOMETHING WONDERFUL");
+  position: absolute;
+  right: 28px;
+  bottom: 72px;
+  z-index: 2;
+  pointer-events: none;
+  color: rgb(var(--ds-accent-rgb) / .74);
+  font: italic 14px/1.2 "Segoe Print", "Comic Sans MS", cursive;
+  letter-spacing: 0;
+  text-shadow: 0 0 13px rgb(var(--ds-accent-rgb) / .30);
+  transform: rotate(-3deg);
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) > header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*="_Header_"])::before,
+html[data-dream-skin="active"][data-dream-shell="light"]
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) > header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*="_Header_"])::after {
+  text-shadow: none;
+}
+
+/* Windows keeps this native bar outside main; macOS simply has no match. */
+html[data-dream-skin="active"][data-dream-shell="dark"]
+  [class~="group/application-menu-top-bar"] {
+  color: var(--ds-text) !important;
+  background: rgb(var(--ds-panel-rgb) / .90) !important;
+  border-bottom: 1px solid var(--ds-line) !important;
+  box-shadow: 0 1px 12px rgb(var(--ds-bg-rgb) / .72) !important;
+  backdrop-filter: blur(16px) saturate(90%) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="dark"]
+  [class~="group/application-menu-top-bar"] :is(button, svg) {
+  color: var(--ds-text) !important;
+  text-shadow: 0 1px 2px rgb(var(--ds-bg-rgb) / .82) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  [class~="group/application-menu-top-bar"] {
+  color: var(--ds-text) !important;
+  background: rgb(var(--ds-panel-rgb) / .90) !important;
+  border-bottom: 1px solid var(--ds-line) !important;
+  box-shadow: 0 1px 12px rgb(var(--ds-bg-rgb) / .18) !important;
+  backdrop-filter: blur(16px) saturate(96%) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  [class~="group/application-menu-top-bar"] :is(button, svg) {
+  color: var(--ds-text) !important;
+  text-shadow: 0 1px 2px rgb(var(--ds-panel-rgb) / .86) !important;
+}
+
+html[data-dream-skin="active"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) [role="main"] {
+  background: transparent !important;
+  scrollbar-color: rgb(var(--ds-accent-rgb) / .38) transparent;
+}
+
+html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) {
+  --thread-content-max-width: min(1180px, calc(100cqw - 44px)) !important;
+  overflow-x: hidden !important;
+}
+
+html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) > div:first-child {
+  min-height: 100% !important;
+  padding-top: 15px !important;
+}
+
+html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child {
+  flex: 0 0 440px !important;
+  min-height: 440px !important;
+  align-items: flex-start !important;
+  padding-bottom: 0 !important;
+}
+
+/* Codex 26.721+: home-route's first child now only wraps the (usually empty)
+   native .home-banners slot; the real content column moved out to become
+   this wrapper's sibling instead of its descendant. The two rules above
+   still assume the old nesting and force this now-mostly-empty wrapper to
+   100% height / 440px, which pushes the real sibling content off-screen
+   (see #244). Override with higher specificity only when that new slot is
+   present, so pre-26.721 layouts are untouched. */
+html[data-dream-skin="active"]
+  [role="main"]:has([data-testid="home-icon"]) > div:first-child:has(> .home-banners) {
+  min-height: 0 !important;
+  padding-top: 0 !important;
+}
+
+html[data-dream-skin="active"]
+  [role="main"]:has([data-testid="home-icon"]) > div:first-child:has(> .home-banners) > .home-banners {
+  flex: 0 1 auto !important;
+  min-height: 0 !important;
+}
+
+html[data-dream-skin="active"]
+  [role="main"]:has([data-testid="home-icon"]) > div:first-child:has(> .home-banners) > .home-banners > div:first-child {
+  height: auto !important;
+  min-height: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"]
+  [role="main"]:has([data-testid="home-icon"]) > div:first-child:has(> .home-banners) > .home-banners > div:first-child::before {
+  content: none !important;
+}
+
+/* Codex 26.721+: this chain (3-6 first-child levels deep) targets the old
+   compact hero-art card that used to live inside div:first-child's second
+   level. That level is now the empty .home-banners slot (see #244), so on
+   the new DOM these rules currently match nothing and the compact hero card
+   is dormant rather than misrendered. Left as-is pending a real fixture of
+   the new nested shape; the critical content-invisible bug is the block
+   above this one. */
+html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child {
+  position: relative !important;
+  isolation: isolate;
+  width: calc(100% - 44px) !important;
+  max-width: none !important;
+  height: clamp(248px, 31cqw, 376px) !important;
+  min-height: 248px !important;
+  flex: 0 1 auto !important;
+  overflow: visible !important;
+  padding: 0 !important;
+  border: 1px solid rgb(var(--ds-accent-rgb) / .30) !important;
+  border-radius: 22px !important;
+  background-color: var(--ds-panel) !important;
+  background-image: var(--dream-skin-art) !important;
+  background-repeat: no-repeat !important;
+  background-position: var(--ds-art-position) !important;
+  background-size: cover !important;
+  box-shadow: 0 16px 38px rgb(var(--ds-bg-rgb) / .30) !important;
+}
+
+html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  z-index: 0;
+  width: 62%;
+  border-radius: 21px 0 0 21px;
+  pointer-events: none;
+  background: var(--ds-hero-scrim);
+}
+
+html[data-dream-skin="active"]:is([data-dream-art-safe="right"], [data-dream-art-safe-area="right"])
+  [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child::before {
+  inset: 0 0 0 auto;
+}
+
+html[data-dream-skin="active"]:is([data-dream-art-safe="center"], [data-dream-art-safe-area="center"])
+  [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child::before {
+  inset: 0 14%;
+  width: auto;
+  border-radius: 0;
+}
+
+html[data-dream-skin="active"]:is([data-dream-art-safe="none"], [data-dream-art-safe-area="none"])
+  [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child::before {
+  inset: 0;
+  width: auto;
+  border-radius: 21px;
+}
+
+html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child > div:first-child {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  padding: 0 38px;
+}
+
+html[data-dream-skin="active"]:is([data-dream-art-safe="right"], [data-dream-art-safe-area="right"])
+  [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child > div:first-child {
+  justify-content: flex-end !important;
+}
+
+html[data-dream-skin="active"]:is([data-dream-art-safe="center"], [data-dream-art-safe-area="center"])
+  [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child > div:first-child {
+  justify-content: center !important;
+}
+
+html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child > div:first-child > div:first-child {
+  width: min(46%, 520px) !important;
+  align-items: flex-start !important;
+  gap: 0 !important;
+}
+
+html[data-dream-skin="active"]:is([data-dream-art-safe="right"], [data-dream-art-safe-area="right"])
+  [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child > div:first-child > div:first-child {
+  align-items: flex-end !important;
+  text-align: right !important;
+}
+
+html[data-dream-skin="active"]:is([data-dream-art-safe="center"], [data-dream-art-safe-area="center"])
+  [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child > div:first-child > div:first-child {
+  width: min(58%, 640px) !important;
+  align-items: center !important;
+  text-align: center !important;
+}
+
+html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) [data-testid="home-icon"] { display: none !important; }
+
+html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) [data-feature="game-source"] {
+  display: block !important;
+  max-width: 100% !important;
+  color: var(--ds-text) !important;
+  font-size: clamp(19px, 1.85vw, 27px) !important;
+  line-height: 1.28 !important;
+  font-weight: 760 !important;
+  text-align: inherit !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) [data-feature="game-source"]::before {
+  content: var(--dream-skin-name, "Codex Dream Skin");
+  display: block;
+  margin-bottom: 9px;
+  color: var(--ds-accent);
+  font: 800 12px/1.3 "Microsoft YaHei UI", sans-serif;
+  letter-spacing: .10em;
+  text-shadow: 0 0 14px rgb(var(--ds-accent-rgb) / .26);
+}
+
+html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) [data-feature="game-source"]::after {
+  content: var(--dream-skin-tagline, "把喜欢的画面变成可交互的 Codex 工作台。");
+  display: block;
+  margin-top: 13px;
+  color: rgb(var(--ds-text-rgb) / .76);
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) [data-feature="game-source"] button {
+  margin: 0 5px;
+  padding: 2px 9px 3px;
+  border: 1px solid rgb(var(--ds-accent-rgb) / .36);
+  border-radius: 999px;
+  background: rgb(var(--ds-accent-rgb) / .10);
+  color: var(--ds-accent) !important;
+  text-decoration-color: rgb(var(--ds-accent-rgb) / .56) !important;
+  text-underline-offset: 5px;
+}
+
+html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) [data-feature="game-source"] button::before {
+  content: var(--dream-skin-project-prefix, "选择项目 · ");
+  font-size: .46em;
+  font-weight: 700;
+  vertical-align: middle;
+  opacity: .86;
+}
+
+html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child > div:nth-child(2) {
+  left: 14px !important;
+  right: 14px !important;
+  top: 100% !important;
+  margin-top: 13px !important;
+}
+
+html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) .group\/home-suggestions { overflow: visible !important; }
+
+html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) .group\/home-suggestions button {
+  position: relative !important;
+  min-height: 118px !important;
+  padding: 14px 13px 12px !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  text-align: center !important;
+  border: 1px solid rgb(var(--ds-muted-rgb) / .18) !important;
+  border-radius: 18px !important;
+  background: rgb(var(--ds-panel-rgb) / .90) !important;
+  color: var(--ds-text) !important;
+  font-weight: 600 !important;
+  line-height: 1.45 !important;
+  box-shadow: 0 8px 22px rgb(var(--ds-bg-rgb) / .18) !important;
+  backdrop-filter: blur(10px) saturate(105%) !important;
+  transform: translateY(0);
+  transition: transform .18s cubic-bezier(.22, 1, .36, 1),
+    box-shadow .18s cubic-bezier(.22, 1, .36, 1),
+    border-color .18s cubic-bezier(.22, 1, .36, 1) !important;
+}
+
+html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) .group\/home-suggestions button [class~="text-token-text-primary"] {
+  color: var(--ds-text) !important;
+}
+
+html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) .group\/home-suggestions button:hover {
+  transform: translateY(-2px) !important;
+  border-color: rgb(var(--ds-accent-rgb) / .42) !important;
+  box-shadow: 0 12px 28px rgb(var(--ds-bg-rgb) / .24) !important;
+}
+
+html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) .group\/home-suggestions button > span:first-child > span:first-child {
+  width: 38px;
+  height: 38px;
+  /* Native spans carry justify-start; grid + place-items cannot override
+     justify-content, so the glyph parks at the circle's left edge. (#176) */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 auto;
+  border: 1px solid rgb(var(--ds-accent-rgb) / .24);
+  border-radius: 50%;
+  color: var(--ds-accent) !important;
+  background: rgb(var(--ds-accent-rgb) / .12);
+  box-shadow: 0 0 0 6px rgb(var(--ds-accent-rgb) / .05);
+}
+
+html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) .group\/home-suggestions button svg {
+  width: 21px !important;
+  height: 21px !important;
+  display: block !important;
+  margin: 0 !important;
+  flex: 0 0 auto !important;
+  color: var(--ds-accent) !important;
+}
+
+html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) .group\/home-suggestions button > span:first-child { justify-content: center !important; }
+html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) .group\/home-suggestions button > span:last-child { align-items: center !important; text-align: center !important; }
+
+html[data-dream-skin="active"] .composer-surface-chrome {
+  overflow: visible !important;
+  border: 1px solid rgb(var(--ds-muted-rgb) / .18) !important;
+  border-radius: 22px !important;
+  background: rgb(var(--ds-panel-rgb) / .94) !important;
+  box-shadow: 0 10px 28px rgb(var(--ds-bg-rgb) / .24) !important;
+  backdrop-filter: blur(16px) saturate(108%) !important;
+}
+
+html[data-dream-skin="active"] .composer-surface-chrome::before { content: none !important; }
+
+/* The current Windows Codex build uses generated ComposerLayout classes and
+   keeps the permission notice as a status card above the composer. Cover
+   those native surfaces explicitly when the artwork selects a light shell. */
+html[data-dream-skin="active"][data-dream-shell="light"]
+  :is([data-ds-part="composer"], [class*="_ComposerLayoutRoot_"]) {
+  overflow: visible !important;
+  border: 1px solid rgb(var(--ds-muted-rgb) / .24) !important;
+  border-radius: 22px !important;
+  background: rgb(var(--ds-panel-rgb) / .88) !important;
+  color: var(--ds-text) !important;
+  box-shadow: 0 10px 28px rgb(var(--ds-bg-rgb) / .16) !important;
+  backdrop-filter: blur(14px) saturate(106%) !important;
+}
+
+/* Current Windows Codex builds use _ComposerLayoutRoot_ instead of the older
+   composer-surface-chrome hook. Keep this input surface transparent in wide
+   artwork mode and let imageOpacity control its remaining tint. */
+html[data-dream-skin="active"][data-dream-art-wide="true"]
+  [class*="_ComposerLayoutRoot_"] {
+  overflow: visible !important;
+  border: 1px solid rgb(var(--ds-muted-rgb) / .24) !important;
+  border-radius: 22px !important;
+  background: rgb(var(--ds-panel-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))) !important;
+  color: var(--ds-text) !important;
+  box-shadow: 0 10px 28px rgb(var(--ds-bg-rgb) / .16) !important;
+  backdrop-filter: blur(8px) saturate(108%) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  :is([data-ds-part="composer"], [class*="_ComposerLayoutRoot_"])
+  :is([class~="text-token-text-primary"], [class~="text-token-foreground"],
+    [class~="text-token-text-secondary"], [class~="text-token-text-tertiary"],
+    [class~="text-token-muted-foreground"], [class~="text-token-description-foreground"],
+    [class~="text-token-input-placeholder-foreground"], textarea, input,
+    [contenteditable="true"]) {
+  color: var(--ds-text) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  :is([data-ds-part="composer"], [class*="_ComposerLayoutRoot_"])
+  :is(textarea, input)::placeholder {
+  color: var(--ds-muted) !important;
+  opacity: 1 !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  :is([data-ds-part="composer"], [class*="_ComposerLayoutRoot_"])
+  button:not([class~="bg-token-foreground"]) {
+  color: var(--ds-muted) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  :is([data-ds-part="composer"], [class*="_ComposerLayoutRoot_"])
+  button:not([class~="bg-token-foreground"]) svg {
+  color: currentColor !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  div.sticky.bottom-0 aside[role="status"] {
+  border-color: rgb(var(--ds-muted-rgb) / .24) !important;
+  background: rgb(var(--ds-panel-rgb) / .86) !important;
+  color: var(--ds-text) !important;
+  box-shadow: 0 10px 28px rgb(var(--ds-bg-rgb) / .14) !important;
+  backdrop-filter: blur(14px) saturate(106%) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  div.sticky.bottom-0 aside[role="status"] :is(h1, h2, h3, h4, h5, h6, p, span, strong) {
+  color: var(--ds-text) !important;
+}
+
+/* Newer app shells may no longer expose the selector contract above. The
+   renderer assigns these parts only from one coherent main/composer/sidebar
+   structure; keep the minimum background and transparency contract functional
+   before a new exact selector contract is available. */
+html[data-dream-skin="active"]:not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]))) [data-ds-part="sidebar"] {
+  background:
+    linear-gradient(180deg,
+      rgb(var(--ds-panel-rgb) / .98),
+      rgb(var(--ds-bg-rgb) / .96)) !important;
+  border: 1px solid var(--ds-line) !important;
+  color: var(--ds-text) !important;
+  box-shadow: 10px 0 30px rgb(var(--ds-bg-rgb) / .22) !important;
+  backdrop-filter: none !important;
+}
+
+html[data-dream-skin="active"]:not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]))) [data-ds-part="main"],
+html[data-dream-skin="active"]:not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])))
+  :not(:has([data-ds-part="main"])) > [data-ds-part="home"] {
+  position: relative !important;
+  isolation: isolate;
+  overflow: hidden !important;
+  background: var(--ds-bg) !important;
+  color: var(--ds-text) !important;
+  border: 1px solid var(--ds-line) !important;
+  box-shadow: -8px 0 28px rgb(var(--ds-bg-rgb) / .18) !important;
+}
+
+html[data-dream-skin="active"]:not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]))) [data-ds-part="main"]::before,
+html[data-dream-skin="active"]:not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])))
+  :not(:has([data-ds-part="main"])) > [data-ds-part="home"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: var(--ds-task-fade), var(--ds-task-shade), var(--dream-skin-art);
+  background-repeat: no-repeat;
+  background-position: center, center, var(--ds-art-position);
+  background-size: 100% 100%, 100% 100%, cover;
+  opacity: .80;
+}
+
+html[data-dream-skin="active"]:not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]))) [data-ds-part="main"] > *,
+html[data-dream-skin="active"]:not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])))
+  :not(:has([data-ds-part="main"])) > [data-ds-part="home"] > * {
+  position: relative;
+  z-index: 1;
+}
+
+html[data-dream-skin="active"]:not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]))) [data-ds-part="composer"] {
+  position: relative;
+  z-index: 2;
+  overflow: visible !important;
+  border: 1px solid rgb(var(--ds-muted-rgb) / .18) !important;
+  border-radius: 22px !important;
+  background: rgb(var(--ds-panel-rgb) / .94) !important;
+  box-shadow: 0 10px 28px rgb(var(--ds-bg-rgb) / .24) !important;
+  backdrop-filter: blur(16px) saturate(108%) !important;
+}
+
+html[data-dream-skin="active"]:not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]))) [data-ds-part="composer"]::before {
+  content: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-art-wide="true"]:not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])))
+  body:has([data-ds-part="main"], [data-ds-part="home"]) {
+  background-image: var(--dream-skin-art) !important;
+  background-position: var(--ds-art-position) !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+}
+
+html[data-dream-skin="active"][data-dream-art-wide="true"]:not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])))
+  [data-ds-part="sidebar"] {
+  background: linear-gradient(90deg,
+    var(--ds-immersive-sidebar),
+    var(--ds-immersive-edge) 100%) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-art-wide="true"]:not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])))
+  [data-ds-part="main"],
+html[data-dream-skin="active"][data-dream-art-wide="true"]:not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])))
+  :not(:has([data-ds-part="main"])) > [data-ds-part="home"] {
+  background: linear-gradient(90deg,
+    var(--ds-immersive-edge),
+    var(--ds-immersive-mid) 64%,
+    var(--ds-immersive-far)) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-art-wide="true"]:not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])))
+  [data-ds-part="main"]::before,
+html[data-dream-skin="active"][data-dream-art-wide="true"]:not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])))
+  :not(:has([data-ds-part="main"])) > [data-ds-part="home"]::before {
+  content: none;
+}
+
+/* A wide image can carry the home screen too. The native hero remains live,
+   but the artwork is painted once on the window instead of repeated in a card. */
+html[data-dream-skin="active"][data-dream-art-wide="true"]:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) [role="main"]) body {
+  background-image: var(--dream-skin-art) !important;
+  background-position: var(--ds-art-position) !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+}
+
+html[data-dream-skin="active"][data-dream-art-wide="true"]:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) [role="main"])
+  aside.app-shell-left-panel {
+  background: linear-gradient(90deg,
+    var(--ds-immersive-sidebar),
+    var(--ds-immersive-edge) 100%) !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-art-wide="true"]:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) [role="main"])
+  aside.app-shell-left-panel::after {
+  background: transparent !important;
+}
+
+html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):has([role="main"]) {
+  background: linear-gradient(90deg,
+    var(--ds-immersive-edge),
+    var(--ds-immersive-mid) 64%,
+    var(--ds-immersive-far)) !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):has([role="main"])
+  > header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*="_Header_"]) {
+  background: transparent !important;
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])
+  > header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*="_Header_"]) {
+  color: var(--ds-text) !important;
+  text-shadow:
+    0 1px 2px rgb(var(--ds-bg-rgb) / .86),
+    0 0 8px rgb(var(--ds-bg-rgb) / .52) !important;
+}
+
+html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])
+  > header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*="_Header_"]) svg {
+  color: rgb(var(--ds-muted-rgb) / .96) !important;
+  filter: drop-shadow(0 1px 2px rgb(var(--ds-bg-rgb) / .72));
+}
+
+html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):has([role="main"])
+  [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):has([role="main"])
+  [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child::before {
+  content: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):has([role="main"])
+  [role="main"]:has([data-testid="home-icon"]) .group\/home-suggestions button {
+  background: rgb(var(--ds-panel-rgb) / .56) !important;
+  box-shadow:
+    0 8px 22px rgb(var(--ds-bg-rgb) / .16),
+    inset 0 0 0 1px rgb(var(--ds-muted-rgb) / .20) !important;
+  backdrop-filter: blur(8px) saturate(104%) !important;
+}
+
+html[data-dream-skin="active"][data-dream-art-wide="true"] .composer-surface-chrome {
+  background: var(--ds-immersive-composer-solid) !important;
+  border: 0 !important;
+  box-shadow:
+    0 10px 30px rgb(var(--ds-bg-rgb) / .20),
+    inset 0 0 0 1px var(--ds-immersive-line),
+    inset 0 1px rgb(var(--ds-text-rgb) / .12) !important;
+  backdrop-filter: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"][data-dream-art-wide="true"]
+  .composer-surface-chrome {
+  box-shadow:
+    0 10px 28px rgb(var(--ds-bg-rgb) / .14),
+    inset 0 0 0 1px var(--ds-immersive-line),
+    inset 0 1px rgb(var(--ds-panel-rgb) / .72) !important;
+  backdrop-filter: blur(8px) saturate(102%) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  .composer-surface-chrome p.placeholder::after {
+  color: rgb(var(--ds-muted-rgb) / .78) !important;
+  opacity: 1 !important;
+}
+
+/* Current Codex builds render the home project picker as a separate opaque
+   cap above the composer. Join both native controls into one continuous
+   surface while leaving task and utility-route inputs untouched. */
+html[data-dream-skin="active"] [class*="_homeUtilityBar_"] {
+  top: 0 !important;
+  width: 100% !important;
+  margin-inline: 0 !important;
+  padding-inline: 18px !important;
+  border-radius: 22px 22px 0 0 !important;
+  background: rgb(var(--ds-panel-rgb) / .94) !important;
+  box-shadow:
+    inset 1px 0 rgb(var(--ds-muted-rgb) / .18),
+    inset -1px 0 rgb(var(--ds-muted-rgb) / .18),
+    inset 0 1px rgb(var(--ds-muted-rgb) / .18) !important;
+  backdrop-filter: blur(16px) saturate(108%) !important;
+}
+
+html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]):has([class*="_homeUtilityBar_"])
+  .composer-surface-chrome {
+  border: 0 !important;
+  border-radius: 0 0 22px 22px !important;
+  box-shadow:
+    0 10px 28px rgb(var(--ds-bg-rgb) / .24),
+    inset 1px 0 rgb(var(--ds-muted-rgb) / .18),
+    inset -1px 0 rgb(var(--ds-muted-rgb) / .18),
+    inset 0 -1px rgb(var(--ds-muted-rgb) / .18) !important;
+}
+
+html[data-dream-skin="active"][data-dream-art-wide="true"] [class*="_homeUtilityBar_"] {
+  background: var(--ds-immersive-composer-solid) !important;
+  box-shadow:
+    inset 1px 0 var(--ds-immersive-line),
+    inset -1px 0 var(--ds-immersive-line),
+    inset 0 1px rgb(var(--ds-text-rgb) / .12) !important;
+  backdrop-filter: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-art-wide="true"]
+  [role="main"]:has([data-testid="home-icon"]):has([class*="_homeUtilityBar_"]) .composer-surface-chrome {
+  box-shadow:
+    0 10px 30px rgb(var(--ds-bg-rgb) / .20),
+    inset 1px 0 var(--ds-immersive-line),
+    inset -1px 0 var(--ds-immersive-line),
+    inset 0 -1px var(--ds-immersive-line) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"][data-dream-art-wide="true"]
+  [class*="_homeUtilityBar_"] {
+  box-shadow:
+    inset 1px 0 var(--ds-immersive-line),
+    inset -1px 0 var(--ds-immersive-line),
+    inset 0 1px rgb(var(--ds-panel-rgb) / .72) !important;
+  backdrop-filter: blur(8px) saturate(102%) !important;
+}
+
+html[data-dream-skin="active"] [class*="_homeUtilityBar_"] button,
+html[data-dream-skin="active"] .composer-surface-chrome button:not([class~="bg-token-foreground"]) {
+  color: var(--ds-muted) !important;
+}
+
+html[data-dream-skin="active"] [class*="_homeUtilityBar_"] button svg,
+html[data-dream-skin="active"] .composer-surface-chrome button svg {
+  color: currentColor !important;
+}
+
+html[data-dream-skin="active"] [class*="_homeUtilityBar_"] button *,
+html[data-dream-skin="active"] .composer-surface-chrome button:not([class~="bg-token-foreground"]) * {
+  color: currentColor !important;
+}
+
+html[data-dream-skin="active"] [class*="_homeUtilityBar_"] button:hover,
+html[data-dream-skin="active"] .composer-surface-chrome button:not([class~="bg-token-foreground"]):hover {
+  color: var(--ds-text) !important;
+  background: rgb(var(--ds-accent-rgb) / .10) !important;
+}
+
+html[data-dream-skin="active"] .composer-surface-chrome p.placeholder::after {
+  color: rgb(var(--ds-muted-rgb) / .82) !important;
+  opacity: 1 !important;
+}
+
+/* Search routes ship an opaque sticky band and input surface. Keep the
+   control legible while allowing the selected image to remain continuous. */
+html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"])[data-dream-art-wide="true"]
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) div.sticky:has(input[type="text"]) {
+  background: transparent !important;
+}
+
+html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"])[data-dream-art-wide="true"]
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) div.sticky:has(input[type="text"])::after {
+  background: transparent !important;
+}
+
+html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"])[data-dream-art-wide="true"]
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) div.no-drag:has(> input[type="text"]) {
+  background: var(--ds-immersive-composer) !important;
+  border: 0 !important;
+  box-shadow:
+    0 8px 22px rgb(var(--ds-bg-rgb) / .16),
+    inset 0 0 0 1px var(--ds-immersive-line) !important;
+  backdrop-filter: none !important;
+}
+
+/* Pull Requests and similar utility routes wrap their content in a native
+   full-size opaque surface. Only clear full-window wrappers, not cards. */
+html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"])[data-dream-art-wide="true"]
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"]))
+  [class~="bg-token-main-surface-primary"][class~="h-full"][class~="w-full"] {
+  background: transparent !important;
+}
+
+html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])
+  .app-shell-main-content-frame {
+  border-top: 0 !important;
+}
+
+html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])
+  :is(.app-shell-main-content-top-fade, [data-app-shell-main-content-top-fade], [class*="_MainContentTopFade_"]) {
+  display: none !important;
+  background: transparent !important;
+}
+
+/* Codex paints a second opaque fade behind the sticky composer. The composer
+   already owns its readable surface, so retaining this layer creates a false
+   bottom panel and makes the control look duplicated. */
+html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])
+  .thread-scroll-container .bg-gradient-to-t.from-token-main-surface-primary {
+  background: transparent !important;
+}
+
+html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) div:has(> .horizontal-scroll-fade-mask .group\/project-selector) {
+  position: relative;
+  padding-top: 28px !important;
+  border: 1px solid rgb(var(--ds-muted-rgb) / .16);
+  border-bottom: 0;
+  background: rgb(var(--ds-panel-rgb) / .92) !important;
+}
+
+html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) div:has(> .horizontal-scroll-fade-mask .group\/project-selector)::before {
+  content: var(--dream-skin-project-label, "选择项目");
+  position: absolute;
+  left: 13px;
+  top: 6px;
+  z-index: 2;
+  color: var(--ds-muted);
+  font-size: 12px;
+  font-weight: 720;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) .group\/project-selector > button {
+  border-color: rgb(var(--ds-accent-rgb) / .22) !important;
+  background: rgb(var(--ds-accent-rgb) / .08) !important;
+  color: var(--ds-text) !important;
+  box-shadow: 0 3px 12px rgb(var(--ds-bg-rgb) / .12) !important;
+}
+
+html[data-dream-skin="active"] .ProseMirror {
+  color: var(--ds-text) !important;
+  caret-color: var(--ds-accent) !important;
+}
+
+html[data-dream-skin="active"] button[class~="bg-token-foreground"] {
+  background: var(--ds-accent) !important;
+  color: var(--ds-on-accent) !important;
+  box-shadow: 0 5px 14px rgb(var(--ds-accent-rgb) / .20) !important;
+}
+
+html[data-dream-skin="active"] article,
+html[data-dream-skin="active"] [data-ds-part="message"] { border-radius: 16px; }
+
+@media (max-width: 1120px) {
+  html[data-dream-skin="active"]
+    main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):has([role="main"])::after { content: none; }
+  html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) { --thread-content-max-width: min(940px, calc(100cqw - 30px)) !important; }
+  html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child { width: calc(100% - 28px) !important; }
+}
+
+@media (max-width: 900px) {
+  html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child {
+    flex-basis: 408px !important;
+    min-height: 408px !important;
+  }
+  html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child {
+    height: 232px !important;
+    min-height: 232px !important;
+  }
+  html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child > div:first-child { padding: 0 26px; }
+  html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child > div:first-child > div:first-child {
+    width: min(58%, 460px) !important;
+  }
+  html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) [data-feature="game-source"] { font-size: 18px !important; }
+  html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) [data-feature="game-source"]::before { margin-bottom: 7px; font-size: 10px; }
+  html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) [data-feature="game-source"]::after { margin-top: 9px; font-size: 11px; }
+  html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) .group\/home-suggestions button { min-height: 112px !important; font-size: 12px !important; }
+}
+
+@layer dreamskin-accessibility {
+  @media (prefers-reduced-motion: reduce) {
+    html[data-dream-skin="active"] *,
+    html[data-dream-skin="active"] *::before,
+    html[data-dream-skin="active"] *::after {
+      scroll-behavior: auto !important;
+      transition-duration: .01ms !important;
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
+}
+
+/* The native Windows shell keeps an outer main.bg-surface behind the actual
+   conversation pane. Clear its opaque fill so wide artwork also covers the
+   bottom edge instead of ending in a black band. */
+html[data-dream-skin="active"] main[class~="bg-surface"]:not([class*="_MainContentSurface_"]) {
+  background: rgb(var(--ds-bg-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))) !important;
+}
+
+/* Keep the navigation panel at the same transparency level as the artwork.
+   The previous fixed .72/.86 gradients hid the image even when the user
+   raised image opacity. */
+html[data-dream-skin="active"] aside.app-shell-left-panel {
+  --ds-task-immersive-sidebar: rgb(var(--ds-panel-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))) !important;
+  --ds-task-immersive-edge: rgb(var(--ds-bg-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))) !important;
+  --ds-task-immersive-mid: rgb(var(--ds-bg-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))) !important;
+  --ds-task-immersive-far: rgb(var(--ds-bg-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))) !important;
+  background: linear-gradient(
+    90deg,
+    rgb(var(--ds-panel-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))),
+    rgb(var(--ds-bg-rgb) / calc(1 - var(--ds-theme-image-opacity, .80)))
+  ) !important;
+}
+
+/* Edited-files cards are part of the conversation, not standalone dialogs.
+   Their generated surface tokens otherwise repaint an opaque light/dark
+   rectangle over the image. Keep the card, rows, and inline diff surface
+   variable transparent in both shells. */
+html[data-dream-skin="active"]
+  [class~="bg-surface-elevated-secondary/50"]:has([class*="turn-diff"]) {
+  background: transparent !important;
+}
+
+html[data-dream-skin="active"]
+  [class~="bg-surface-elevated-secondary/50"]:has([class*="turn-diff"])
+  :is([class~="bg-surface/70"], [class~="bg-surface-secondary/92"],
+    [class~="bg-primary-soft-alpha"], [class*="bg-background-primary-soft"],
+    [class*="codex-diffs-surface-override"]) {
+  background: transparent !important;
+  border-color: rgb(var(--ds-muted-rgb) / .18) !important;
+}
+
+html[data-dream-skin="active"]
+  [class~="bg-surface-elevated-secondary/50"]:has([class*="turn-diff"])
+  [class*="codex-diffs-surface-override"] {
+  --codex-diffs-surface-override: transparent !important;
+}
+
+/* The current composer renders its hint through a generated RichTextInput
+   placeholder pseudo-element, so the older textarea/input rule does not
+   reach it on a light image. */
+html[data-dream-skin="active"]
+  :is([data-ds-part="composer"], [class*="_ComposerLayoutRoot_"])
+  p.placeholder::after {
+  color: var(--ds-muted) !important;
+  -webkit-text-fill-color: var(--ds-muted) !important;
+  opacity: 1 !important;
+}
+
+/* Current Codex markdown uses generated paragraph classes and exposes the
+   message surface through data-markdown-text-style. The old conversation
+   anchors do not cover these nodes, so native white text leaked into a light
+   artwork. */
+html[data-dream-skin="active"][data-dream-shell="light"]
+  :is([data-markdown-text-style], [data-markdown-han-text]) {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  [data-markdown-text-style]
+  :is(p, li, blockquote, pre, code, strong, em, a, span) {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+}
+
+/* Windows 26.814 uses _ApplicationMenuTopBar_ instead of the older utility
+   token. Apply the light-shell ink to the real top menu and its buttons. */
+html[data-dream-skin="active"][data-dream-shell="light"]
+  [class*="_ApplicationMenuTopBar_"] {
+  color: var(--ds-text) !important;
+  background: rgb(var(--ds-panel-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))) !important;
+  border-bottom: 1px solid rgb(var(--ds-muted-rgb) / .18) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  [class*="_ApplicationMenuTopBar_"]
+  :is(button, svg, [role="menuitem"]) {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+  text-shadow: none !important;
+}
+
+/* The current composer footer is a separate native surface and was still
+   fixed at 88% opacity. Tie both composer layers to imageOpacity so 80%
+   leaves only a 20% panel tint and 100% becomes genuinely transparent. */
+html[data-dream-skin="active"]
+  :is([class*="_ComposerLayoutRoot_"], [class*="_ComposerLayoutFooter_"]) {
+  background: rgb(var(--ds-panel-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))) !important;
+  backdrop-filter: none !important;
+}
+
+/* The edited-files card and the output rail are native surfaces. Keep their
+   contents and borders, but do not paint a second opaque rectangle over the
+   artwork. The shell attribute is included to outrank the light-specific
+   token rules on current Windows builds. */
+html[data-dream-skin="active"]:is([data-dream-shell="light"], [data-dream-shell="dark"])
+  [class~="bg-surface-elevated-secondary/50"]:has([class*="turn-diff"]) {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"]:is([data-dream-shell="light"], [data-dream-shell="dark"])
+  [class~="bg-surface-elevated-secondary/50"]:has([class*="turn-diff"])
+  :is([class~="bg-surface/70"], [class~="bg-surface-secondary/92"],
+    [class~="bg-primary-soft-alpha"], [class*="bg-background-primary-soft"],
+    [class*="codex-diffs-surface-override"]) {
+  background: transparent !important;
+  border-color: rgb(var(--ds-muted-rgb) / .18) !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"]:is([data-dream-shell="light"], [data-dream-shell="dark"])
+  [class~="bg-surface-elevated-secondary/50"]:has([class*="turn-diff"])
+  [class*="codex-diffs-surface-override"] {
+  --codex-diffs-surface-override: transparent !important;
+}
+
+html[data-dream-skin="active"]
+  div[class~="pointer-events-none"][class~="absolute"]
+  :is(
+    div[class~="bg-token-dropdown-background"][class~="rounded-3xl"][class~="overflow-hidden"],
+    div[class~="bg-surface-elevated-secondary"][class~="rounded-3xl"][class~="overflow-hidden"]
+  ) {
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+/* Match the real composer part attribute as well as both generated classes.
+   The Windows native rule targets data-ds-part="composer" with .88 opacity;
+   keeping the shell and wide-art attributes here gives this override a
+   higher specificity while preserving the imageOpacity contract. */
+html[data-dream-skin="active"][data-dream-art-wide="true"][data-dream-shell="light"]
+  :is([data-ds-part="composer"], [class*="_ComposerLayoutRoot_"], [class*="_ComposerLayoutFooter_"]),
+html[data-dream-skin="active"][data-dream-art-wide="true"][data-dream-shell="dark"]
+  :is([data-ds-part="composer"], [class*="_ComposerLayoutRoot_"], [class*="_ComposerLayoutFooter_"]) {
+  background: rgb(var(--ds-panel-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))) !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  --composer-layout-surface-background: rgb(var(--ds-panel-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))) !important;
+  --composer-layout-surface-backdrop-filter: none !important;
+}
+
+/* Use the complete native rail contract to outrank its earlier elevated
+   surface declaration. */
+html[data-dream-skin="active"]
+  div[class~="pointer-events-none"][class~="absolute"][class~="top-(--thread-floating-content-top-inset)"][class~="right-0"][class~="bottom-(--thread-floating-content-bottom-inset)"]
+  div[class~="bg-token-dropdown-background"][class~="rounded-3xl"][class~="overflow-hidden"],
+html[data-dream-skin="active"]
+  div[class~="pointer-events-none"][class~="absolute"][class~="top-(--thread-floating-content-top-inset)"][class~="right-0"][class~="bottom-(--thread-floating-content-bottom-inset)"]
+  div[class~="bg-surface-elevated-secondary"][class~="rounded-3xl"][class~="overflow-hidden"] {
+  background: rgb(var(--ds-panel-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+/* Wide thread pages paint a duplicate artwork/fade on the content surface.
+   Its last 30% is the large black strip seen at the bottom of the window. */
+html[data-dream-skin="active"][data-dream-art-wide="true"][data-dream-shell="light"]
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])::before,
+html[data-dream-skin="active"][data-dream-art-wide="true"][data-dream-shell="dark"]
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])::before {
+  content: none !important;
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  background: none !important;
+  background-image: none !important;
+}
+
+/* Current Codex uses a new sticky-footer fade contract. Do not paint that
+   fixed electron-dark gradient over image themes; spacing on the conversation
+   itself keeps content clear of the composer without obscuring artwork. */
+html[data-dream-skin="active"][data-dream-art-wide="true"]
+  [data-thread-scroll-footer="true"]
+  > div[class~="pointer-events-none"][class~="absolute"][class~="inset-x-0"][class~="bottom-0"][class~="z-0"][class~="h-full"][class~="bg-gradient-to-t"][class~="from-surface"][class~="via-surface"] {
+  display: none !important;
+  opacity: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+}
+
+html[data-dream-skin="active"] [data-thread-find-target="conversation"] {
+  padding-bottom: 9rem !important;
+}
+
+/* Keep scrollbars discoverable over both bright artwork and translucent
+   panels. Apply this only to scrollable application surfaces, not the window
+   chrome. */
+html[data-dream-skin="active"]
+  :is(.thread-scroll-container, .vertical-scroll-fade-mask, aside.app-shell-left-panel,
+    [role="dialog"], [role="listbox"], [data-radix-popper-content-wrapper]) {
+  scrollbar-color: rgb(var(--ds-muted-rgb) / .92) rgb(var(--ds-panel-rgb) / .34) !important;
+  scrollbar-width: auto !important;
+}
+
+html[data-dream-skin="active"]
+  :is(.thread-scroll-container, .vertical-scroll-fade-mask, aside.app-shell-left-panel,
+    [role="dialog"], [role="listbox"], [data-radix-popper-content-wrapper])::-webkit-scrollbar {
+  width: 11px !important;
+  height: 11px !important;
+}
+
+html[data-dream-skin="active"]
+  :is(.thread-scroll-container, .vertical-scroll-fade-mask, aside.app-shell-left-panel,
+    [role="dialog"], [role="listbox"], [data-radix-popper-content-wrapper])::-webkit-scrollbar-track {
+  background: rgb(var(--ds-panel-rgb) / .38) !important;
+  border-left: 1px solid rgb(var(--ds-muted-rgb) / .32) !important;
+}
+
+html[data-dream-skin="active"]
+  :is(.thread-scroll-container, .vertical-scroll-fade-mask, aside.app-shell-left-panel,
+    [role="dialog"], [role="listbox"], [data-radix-popper-content-wrapper])::-webkit-scrollbar-thumb {
+  background: rgb(var(--ds-muted-rgb) / .92) !important;
+  border: 2px solid rgb(var(--ds-panel-rgb) / .66) !important;
+  border-radius: 999px !important;
+}
+
+html[data-dream-skin="active"]
+  :is(.thread-scroll-container, .vertical-scroll-fade-mask, aside.app-shell-left-panel,
+    [role="dialog"], [role="listbox"], [data-radix-popper-content-wrapper])::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--ds-accent-rgb) / .94) !important;
+}
+
+/* Streaming metadata retains electron-dark utility colors after a bright
+   artwork switches the shell to light.  Keep elapsed/reconnect status text
+   muted but readable instead of white-on-white. */
+html[data-dream-skin="active"][data-dream-shell="light"]
+  :is([class~="text-text/60"], [class~="text-codex-description/80"]) {
+  color: var(--ds-muted) !important;
+  -webkit-text-fill-color: var(--ds-muted) !important;
+  opacity: 1 !important;
+}
+
+/* Markdown fenced code is rendered by a separate native surface with a dark
+   header and body.  Treat it as a normal themed panel in both shells while
+   preserving monospaced code content and its copy controls. */
+html[data-dream-skin="active"]
+  :is([data-local-conversation-user-anchor], [data-local-conversation-final-assistant])
+  :is(pre, [data-markdown-copy="code-block"], [class*="CodeBlock"], [class*="code-block"],
+    div:has(> pre), div:has(> [data-markdown-copy="code-block"])) {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+  background: rgb(var(--ds-panel-2-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))) !important;
+  border-color: rgb(var(--ds-muted-rgb) / .24) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+html[data-dream-skin="active"]
+  :is([data-local-conversation-user-anchor], [data-local-conversation-final-assistant])
+  :is(pre, [data-markdown-copy="code-block"], [class*="CodeBlock"], [class*="code-block"],
+    div:has(> pre), div:has(> [data-markdown-copy="code-block"]))
+  :is(pre, code, button, span, svg) {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+  background-color: transparent !important;
+}
+
+/* Bright artwork can leave electron-dark component variables in place even
+   after the shell switches to light.  Set the thread and composer context to
+   the same ink palette, then keep secondary copy visibly muted rather than
+   nearly-white. */
+html[data-dream-skin="active"][data-dream-shell="light"]
+  :is([data-thread-find-target="conversation"], [data-thread-scroll-footer="true"],
+    [data-ds-part="composer"]) {
+  --color-text: var(--ds-text) !important;
+  --color-text-primary: var(--ds-text) !important;
+  --color-text-secondary: var(--ds-muted) !important;
+  --color-text-tertiary: var(--ds-muted) !important;
+  --color-codex-description: var(--ds-muted) !important;
+  --color-token-foreground: var(--ds-text) !important;
+  --color-token-text-primary: var(--ds-text) !important;
+  --color-token-text-secondary: var(--ds-muted) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  main
+  :is([class~="text-default"], [class~="text-token-text-primary"],
+    [class~="text-token-foreground"]) {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  main
+  :is([class~="text-secondary"], [class~="text-tertiary"],
+    [class~="text-codex-description"], [class~="text-codex-description/80"],
+    [class~="text-text/60"], [class~="text-text/40"]) {
+  color: var(--ds-muted) !important;
+  -webkit-text-fill-color: var(--ds-muted) !important;
+  opacity: 1 !important;
+}
+
+/* Menus, model pickers, dialogs and generic floating popovers use different
+   libraries in Codex.  Normalise every native floating surface in light mode
+   so a dark menu cannot reappear over a pale image. */
+html[data-dream-skin="active"][data-dream-shell="light"]
+  :is([role="dialog"], [role="alertdialog"], [role="menu"], [role="listbox"],
+    [aria-modal="true"], [data-radix-popper-content-wrapper],
+    [data-radix-popper-content], [data-floating-ui-portal] > *) {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+  --color-text: var(--ds-text) !important;
+  --color-text-primary: var(--ds-text) !important;
+  --color-text-secondary: var(--ds-muted) !important;
+  --color-text-tertiary: var(--ds-muted) !important;
+  --color-codex-description: var(--ds-muted) !important;
+  --color-token-foreground: var(--ds-text) !important;
+  --color-token-text-primary: var(--ds-text) !important;
+  --color-token-text-secondary: var(--ds-muted) !important;
+  background: rgb(var(--ds-panel-rgb) / .96) !important;
+  border-color: rgb(var(--ds-muted-rgb) / .26) !important;
+  box-shadow: 0 12px 30px rgb(var(--ds-bg-rgb) / .18) !important;
+  backdrop-filter: blur(12px) saturate(106%) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  :is([role="dialog"], [role="alertdialog"], [role="menu"], [role="listbox"],
+    [aria-modal="true"], [data-radix-popper-content-wrapper],
+    [data-radix-popper-content], [data-floating-ui-portal] > *)
+  :is(button, [role="menuitem"], [role="option"], [role="tab"], p, span, label, input) {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+}
+
+/* The active-work toast and the scroll-to-bottom affordance are separate
+   native overlays.  They must stay operable, but electron's dark surface
+   tokens turn them into floating black blocks on light artwork. */
+html[data-dream-skin="active"][data-dream-shell="light"]
+  [data-in-progress-fixed-content="true"]
+  div[class~="bg-background-primary-soft/70"][class~="rounded-3xl"] {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+  background: rgb(var(--ds-panel-rgb) / .50) !important;
+  border-color: rgb(var(--ds-muted-rgb) / .28) !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(6px) saturate(104%) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  [data-in-progress-fixed-content="true"]
+  div[class~="bg-background-primary-soft/70"][class~="rounded-3xl"]
+  :is(span, p, button, svg) {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+}
+
+/* The status pill sits above a separate, full-width progress rail.  The
+   original Electron rail is a black gradient, so skin the rail container as
+   well instead of leaving a dark strip below the otherwise themed pill. */
+html[data-dream-skin="active"]
+  [data-in-progress-fixed-content="true"] {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+  background: rgb(var(--ds-panel-rgb) / .48) !important;
+  background-image: none !important;
+  border-color: rgb(var(--ds-muted-rgb) / .24) !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(8px) saturate(104%) !important;
+}
+
+html[data-dream-skin="active"]
+  [data-in-progress-fixed-content="true"]::before,
+html[data-dream-skin="active"]
+  [data-in-progress-fixed-content="true"]::after {
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+/* Queued follow-up messages render immediately above the composer, rather
+   than inside data-in-progress-fixed-content.  Their own soft-background
+   utility is the dark strip shown while the assistant is working. */
+html[data-dream-skin="active"]
+  [class*="home-composer-inline-inset"]
+  > [class~="order-2"]
+  > div[class~="bg-background-primary-soft/70"][class~="backdrop-blur-sm"] {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+  background: rgb(var(--ds-panel-rgb) / .48) !important;
+  background-image: none !important;
+  border-color: rgb(var(--ds-muted-rgb) / .24) !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(8px) saturate(104%) !important;
+}
+
+html[data-dream-skin="active"]
+  [class*="home-composer-inline-inset"]
+  > [class~="order-2"]
+  > div[class~="bg-background-primary-soft/70"][class~="backdrop-blur-sm"]
+  :is(.text-secondary, .text-tertiary, [class*="text-secondary"], [class*="text-tertiary"]) {
+  color: var(--ds-muted) !important;
+  -webkit-text-fill-color: var(--ds-muted) !important;
+}
+
+html[data-dream-skin="active"]
+  [data-in-progress-fixed-content="true"]
+  :is([class*="bg-background-primary-soft"], [class*="bg-surface"],
+    [class*="bg-gradient"], [class*="progress" i], [role="progressbar"]) {
+  background: rgb(var(--ds-panel-rgb) / .48) !important;
+  background-image: none !important;
+  border-color: rgb(var(--ds-muted-rgb) / .24) !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"]
+  [data-in-progress-fixed-content="true"]
+  :is([class*="bg-background-primary-soft"], [class*="bg-surface"],
+    [class*="bg-gradient"], [class*="progress" i], [role="progressbar"])::before,
+html[data-dream-skin="active"]
+  [data-in-progress-fixed-content="true"]
+  :is([class*="bg-background-primary-soft"], [class*="bg-surface"],
+    [class*="bg-gradient"], [class*="progress" i], [role="progressbar"])::after {
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  button[aria-label="滚动到底部"] {
+  color: var(--ds-text) !important;
+  background: rgb(var(--ds-panel-rgb) / .48) !important;
+  border-color: rgb(var(--ds-muted-rgb) / .34) !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(6px) saturate(104%) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  button[aria-label="滚动到底部"]:hover {
+  background: rgb(var(--ds-panel-rgb) / .66) !important;
+  border-color: rgb(var(--ds-accent-rgb) / .56) !important;
+}
+
+/* The sidebar owns its scroll rail.  Let the thumb inherit the active
+   artwork accent instead of the generic grey native scrollbar, while keeping
+   both track and gaps transparent. */
+html[data-dream-skin="active"]
+  aside.app-shell-left-panel
+  [data-app-action-sidebar-scroll] {
+  scrollbar-color: rgb(var(--ds-accent-rgb) / .72) transparent !important;
+}
+
+html[data-dream-skin="active"]
+  aside.app-shell-left-panel
+  [data-app-action-sidebar-scroll]::-webkit-scrollbar {
+  width: 10px !important;
+}
+
+html[data-dream-skin="active"]
+  aside.app-shell-left-panel
+  [data-app-action-sidebar-scroll]::-webkit-scrollbar-track {
+  background: transparent !important;
+  border: 0 !important;
+}
+
+html[data-dream-skin="active"]
+  aside.app-shell-left-panel
+  [data-app-action-sidebar-scroll]::-webkit-scrollbar-thumb {
+  background: rgb(var(--ds-accent-rgb) / .62) !important;
+  background-clip: padding-box !important;
+  border: 3px solid transparent !important;
+  border-radius: 999px !important;
+}
+
+html[data-dream-skin="active"]
+  aside.app-shell-left-panel
+  [data-app-action-sidebar-scroll]::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--ds-accent-rgb) / .88) !important;
+  background-clip: padding-box !important;
+}
+
+/* Code blocks and edited-file viewers each ship their own dark header/body
+   tokens.  Keep syntax and controls intact, but render their surfaces as a
+   readable light panel whenever the artwork selects the light shell. */
+html[data-dream-skin="active"][data-dream-shell="light"]
+  main
+  :is([data-markdown-copy="code-block"], [class*="_CodeBlock_"],
+    [class*="turn-diff"], [class*="TurnDiff"], [class*="diff-editor"],
+    [class*="DiffEditor"], .monaco-editor, .monaco-diff-editor, .editor-widget) {
+  color: rgb(30 32 36) !important;
+  -webkit-text-fill-color: rgb(30 32 36) !important;
+  background: rgb(252 252 252 / .96) !important;
+  border-color: rgb(99 105 116 / .26) !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  main
+  :is([data-markdown-copy="code-block"], [class*="_CodeBlock_"],
+    [class*="turn-diff"], [class*="TurnDiff"], [class*="diff-editor"],
+    [class*="DiffEditor"], .monaco-editor, .monaco-diff-editor, .editor-widget)
+  :is([class*="StickyActionBar"], [data-markdown-copy="exclude"],
+    .monaco-editor-background, .margin, .monaco-scrollable-element) {
+  color: rgb(30 32 36) !important;
+  -webkit-text-fill-color: rgb(30 32 36) !important;
+  background: rgb(252 252 252 / .98) !important;
+  background-image: none !important;
+  border-color: rgb(99 105 116 / .28) !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  main
+  :is([data-markdown-copy="code-block"], [class*="_CodeBlock_"],
+    [class*="turn-diff"], [class*="TurnDiff"], [class*="diff-editor"],
+    [class*="DiffEditor"], .monaco-editor, .monaco-diff-editor, .editor-widget)
+  :is(button, [role="button"], [class*="line-numbers"], [class*="lineNumber"]) {
+  color: rgb(99 105 116) !important;
+  -webkit-text-fill-color: rgb(99 105 116) !important;
+}
+
+/* The main thread has its own scroll rail (separate from the left sidebar).
+   Keep both rails transparent and use the extracted artwork accent for their
+   thumbs, so there is no remaining grey native scrollbar inside the canvas. */
+html[data-dream-skin="active"]
+  [data-app-action-timeline-scroll],
+html[data-dream-skin="active"]
+  [data-app-action-review-scroll] {
+  scrollbar-color: rgb(var(--ds-accent-rgb) / .72) transparent !important;
+}
+
+html[data-dream-skin="active"]
+  :is([data-app-action-timeline-scroll], [data-app-action-review-scroll])::-webkit-scrollbar {
+  width: 10px !important;
+  height: 10px !important;
+}
+
+html[data-dream-skin="active"]
+  :is([data-app-action-timeline-scroll], [data-app-action-review-scroll])::-webkit-scrollbar-track {
+  background: transparent !important;
+  border: 0 !important;
+}
+
+html[data-dream-skin="active"]
+  :is([data-app-action-timeline-scroll], [data-app-action-review-scroll])::-webkit-scrollbar-thumb {
+  background: rgb(var(--ds-accent-rgb) / .62) !important;
+  background-clip: padding-box !important;
+  border: 3px solid transparent !important;
+  border-radius: 999px !important;
+}
+
+/* The compact "edited files" card belongs to the conversation, not to the
+   full editor.  It should remain glass/transparent over the artwork. */
+html[data-dream-skin="active"]
+  [data-thread-find-target="conversation"]
+  :is([class*="turn-diff"], [class*="TurnDiff"],
+    [class*="bg-surface-elevated-secondary/50"]:has([class*="turn-diff"])) {
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"]
+  [data-thread-find-target="conversation"]
+  :is([class*="turn-diff"], [class*="TurnDiff"])
+  :is(button, div, span) {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Attachments use a standalone surface inside the composer and otherwise
+   retain the electron dark token.  Make only that attachment shelf light and
+   translucent without changing the editable input itself. */
+html[data-dream-skin="active"][data-dream-shell="light"]
+  [data-composer-attachments]
+  :is([class*="bg-background-primary-soft"], [class*="bg-surface"],
+    [class*="bg-primary-soft"], [class*="border-border"]) {
+  color: rgb(30 32 36) !important;
+  -webkit-text-fill-color: rgb(30 32 36) !important;
+  background: rgb(var(--ds-panel-rgb) / .56) !important;
+  background-image: none !important;
+  border-color: rgb(var(--ds-muted-rgb) / .26) !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(6px) saturate(104%) !important;
+}
+
+/* Full review/editor views are independent from Markdown code blocks.  Their
+   outer tabs, review scroll surface and custom diff host must all receive the
+   light variables because a web component does not inherit class selectors. */
+html[data-dream-skin="active"][data-dream-shell="light"]
+  :is([data-app-shell-tabs], [data-app-action-review-scroll],
+    [class*="group/file-diff"], diffs-container) {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+  color-scheme: light !important;
+  background: rgb(252 252 252 / .96) !important;
+  background-image: none !important;
+  border-color: rgb(99 105 116 / .28) !important;
+  box-shadow: none !important;
+  --codex-diffs-surface-override: rgb(252 252 252 / .96) !important;
+  --color-codex-diff-surface: rgb(252 252 252 / .96) !important;
+  --vscode-editor-background: rgb(252 252 252 / .96) !important;
+  --vscode-editor-foreground: rgb(30 32 36) !important;
+  --vscode-editorGutter-background: rgb(245 246 247 / .98) !important;
+  --vscode-editorLineNumber-foreground: rgb(99 105 116) !important;
+}
+
+/* Keep the editor contrast aligned with the application shell.  The review
+   web component is completed by renderer-inject.js because its shadow root
+   cannot inherit these document-level rules. */
+html[data-dream-skin="active"][data-dream-shell="dark"]
+  main
+  :is([class*="turn-diff"], [class*="TurnDiff"], [class*="diff-editor"],
+    [class*="DiffEditor"], .monaco-editor, .monaco-diff-editor, .editor-widget) {
+  color: rgb(235 238 244) !important;
+  -webkit-text-fill-color: rgb(235 238 244) !important;
+  background: rgb(24 26 31 / .96) !important;
+  border-color: rgb(163 171 184 / .26) !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="dark"]
+  main
+  :is([class*="turn-diff"], [class*="TurnDiff"], [class*="diff-editor"],
+    [class*="DiffEditor"], .monaco-editor, .monaco-diff-editor, .editor-widget)
+  :is(.monaco-editor-background, .margin, .monaco-scrollable-element) {
+  color: rgb(235 238 244) !important;
+  -webkit-text-fill-color: rgb(235 238 244) !important;
+  background: rgb(24 26 31 / .98) !important;
+  background-image: none !important;
+  border-color: rgb(163 171 184 / .26) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="dark"]
+  :is([data-app-shell-tabs], [data-app-action-review-scroll],
+    [class*="group/file-diff"], diffs-container) {
+  color: rgb(235 238 244) !important;
+  -webkit-text-fill-color: rgb(235 238 244) !important;
+  color-scheme: dark !important;
+  background: rgb(24 26 31 / .96) !important;
+  background-image: none !important;
+  border-color: rgb(163 171 184 / .26) !important;
+  box-shadow: none !important;
+  --codex-diffs-surface-override: rgb(24 26 31 / .96) !important;
+  --color-codex-diff-surface: rgb(24 26 31 / .96) !important;
+  --vscode-editor-background: rgb(24 26 31 / .96) !important;
+  --vscode-editor-foreground: rgb(235 238 244) !important;
+  --vscode-editorGutter-background: rgb(24 26 31 / .98) !important;
+  --vscode-editorLineNumber-foreground: rgb(163 171 184) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  :is([data-app-shell-tabs], [data-app-action-review-scroll], [class*="group/file-diff"])
+  :is(header, [role="tablist"], [role="toolbar"], [class*="Header"], [class*="header"], [class*="Toolbar"], [class*="toolbar"]) {
+  color: rgb(30 32 36) !important;
+  -webkit-text-fill-color: rgb(30 32 36) !important;
+  background: rgb(245 246 247 / .98) !important;
+  background-image: none !important;
+  border-color: rgb(99 105 116 / .24) !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  :is([data-app-shell-tabs], [class*="group/file-diff"])
+  :is(button, input, [role="combobox"], [role="searchbox"], [class*="border"], [class*="ring"], [class*="outline"]) {
+  color: rgb(30 32 36) !important;
+  -webkit-text-fill-color: rgb(30 32 36) !important;
+  background: rgb(245 246 247 / .98) !important;
+  background-image: none !important;
+  border: 1px solid rgb(99 105 116 / .32) !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="dark"]
+  :is([data-app-shell-tabs], [class*="group/file-diff"])
+  :is(button, input, [role="combobox"], [role="searchbox"], [class*="border"], [class*="ring"], [class*="outline"]) {
+  color: rgb(235 238 244) !important;
+  -webkit-text-fill-color: rgb(235 238 244) !important;
+  background: rgb(32 35 41 / .98) !important;
+  background-image: none !important;
+  border: 1px solid rgb(163 171 184 / .32) !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* File previews are modal dialogs outside main, so they do not inherit the
+   in-thread Monaco rules.  Keep their title bar and scroll rail in the same
+   palette as the editor body. */
+html[data-dream-skin="active"][data-dream-shell="light"]
+  :is([role="dialog"], [aria-modal="true"]):has(:is(.monaco-editor, .monaco-diff-editor, .editor-widget, diffs-container)) {
+  color: rgb(30 32 36) !important;
+  -webkit-text-fill-color: rgb(30 32 36) !important;
+  background: rgb(252 252 252 / .96) !important;
+  border-color: rgb(99 105 116 / .28) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="dark"]
+  :is([role="dialog"], [aria-modal="true"]):has(:is(.monaco-editor, .monaco-diff-editor, .editor-widget, diffs-container)) {
+  color: rgb(235 238 244) !important;
+  -webkit-text-fill-color: rgb(235 238 244) !important;
+  background: rgb(24 26 31 / .96) !important;
+  border-color: rgb(163 171 184 / .28) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  :is([role="dialog"], [aria-modal="true"]):has(:is(.monaco-editor, .monaco-diff-editor, .editor-widget, diffs-container))
+  :is(header, [role="toolbar"], [class*="Header"], [class*="header"], [class*="Toolbar"], [class*="toolbar"]) {
+  color: rgb(30 32 36) !important;
+  -webkit-text-fill-color: rgb(30 32 36) !important;
+  background: rgb(245 246 247 / .98) !important;
+  background-image: none !important;
+  border-color: rgb(99 105 116 / .24) !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="dark"]
+  :is([role="dialog"], [aria-modal="true"]):has(:is(.monaco-editor, .monaco-diff-editor, .editor-widget, diffs-container))
+  :is(header, [role="toolbar"], [class*="Header"], [class*="header"], [class*="Toolbar"], [class*="toolbar"]) {
+  color: rgb(235 238 244) !important;
+  -webkit-text-fill-color: rgb(235 238 244) !important;
+  background: rgb(32 35 41 / .98) !important;
+  background-image: none !important;
+  border-color: rgb(163 171 184 / .24) !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"]
+  :is([role="dialog"], [aria-modal="true"]):has(:is(.monaco-editor, .monaco-diff-editor, .editor-widget, diffs-container))
+  :is(.monaco-scrollable-element, .overflow-guard, [data-app-action-review-scroll]) {
+  scrollbar-color: rgb(var(--ds-accent-rgb) / .72) transparent !important;
+}
+
+html[data-dream-skin="active"]
+  :is([role="dialog"], [aria-modal="true"]):has(:is(.monaco-editor, .monaco-diff-editor, .editor-widget, diffs-container))
+  :is(.monaco-scrollable-element, .overflow-guard, [data-app-action-review-scroll])::-webkit-scrollbar {
+  width: 10px !important;
+  height: 10px !important;
+}
+
+html[data-dream-skin="active"]
+  :is([role="dialog"], [aria-modal="true"]):has(:is(.monaco-editor, .monaco-diff-editor, .editor-widget, diffs-container))
+  :is(.monaco-scrollable-element, .overflow-guard, [data-app-action-review-scroll])::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+html[data-dream-skin="active"]
+  :is([role="dialog"], [aria-modal="true"]):has(:is(.monaco-editor, .monaco-diff-editor, .editor-widget, diffs-container))
+  :is(.monaco-scrollable-element, .overflow-guard, [data-app-action-review-scroll])::-webkit-scrollbar-thumb {
+  background: rgb(var(--ds-accent-rgb) / .62) !important;
+  background-clip: padding-box !important;
+  border: 3px solid transparent !important;
+  border-radius: 999px !important;
+}
+
+/* The expanded turn-diff viewer is not a dialog in current Codex builds.
+   Its title bar uses lower-case generated sticky/header classes, so keep this
+   final override adjacent to the modal styles and cover its own scroll host. */
+html[data-dream-skin="active"][data-dream-shell="light"] main
+  :is([class*="turn-diff" i], [class*="diff-editor" i], [class*="editor-widget" i]) {
+  color: rgb(30 32 36) !important;
+  -webkit-text-fill-color: rgb(30 32 36) !important;
+  background: rgb(252 252 252 / .96) !important;
+  border-color: rgb(99 105 116 / .28) !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="dark"] main
+  :is([class*="turn-diff" i], [class*="diff-editor" i], [class*="editor-widget" i]) {
+  color: rgb(235 238 244) !important;
+  -webkit-text-fill-color: rgb(235 238 244) !important;
+  background: rgb(24 26 31 / .96) !important;
+  border-color: rgb(163 171 184 / .28) !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"] main
+  :is([class*="turn-diff" i], [class*="diff-editor" i], [class*="editor-widget" i])
+  :is([class*="sticky" i], [class*="header" i], [class*="toolbar" i], [data-markdown-copy="exclude"], [role="toolbar"]) {
+  color: rgb(30 32 36) !important;
+  -webkit-text-fill-color: rgb(30 32 36) !important;
+  background: rgb(245 246 247 / .98) !important;
+  background-image: none !important;
+  border-color: rgb(99 105 116 / .24) !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="dark"] main
+  :is([class*="turn-diff" i], [class*="diff-editor" i], [class*="editor-widget" i])
+  :is([class*="sticky" i], [class*="header" i], [class*="toolbar" i], [data-markdown-copy="exclude"], [role="toolbar"]) {
+  color: rgb(235 238 244) !important;
+  -webkit-text-fill-color: rgb(235 238 244) !important;
+  background: rgb(32 35 41 / .98) !important;
+  background-image: none !important;
+  border-color: rgb(163 171 184 / .24) !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"] main
+  :is([class*="turn-diff" i], [class*="diff-editor" i], [class*="editor-widget" i])
+  :is([class*="overflow" i], .monaco-scrollable-element, .overflow-guard) {
+  scrollbar-color: rgb(var(--ds-accent-rgb) / .72) transparent !important;
+}
+
+html[data-dream-skin="active"] main
+  :is([class*="turn-diff" i], [class*="diff-editor" i], [class*="editor-widget" i])
+  :is([class*="overflow" i], .monaco-scrollable-element, .overflow-guard)::-webkit-scrollbar {
+  width: 10px !important;
+  height: 10px !important;
+}
+
+html[data-dream-skin="active"] main
+  :is([class*="turn-diff" i], [class*="diff-editor" i], [class*="editor-widget" i])
+  :is([class*="overflow" i], .monaco-scrollable-element, .overflow-guard)::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+html[data-dream-skin="active"] main
+  :is([class*="turn-diff" i], [class*="diff-editor" i], [class*="editor-widget" i])
+  :is([class*="overflow" i], .monaco-scrollable-element, .overflow-guard)::-webkit-scrollbar-thumb {
+  background: rgb(var(--ds-accent-rgb) / .62) !important;
+  background-clip: padding-box !important;
+  border: 3px solid transparent !important;
+  border-radius: 999px !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="dark"]
+  :is([data-app-shell-tabs], [data-app-action-review-scroll], [class*="group/file-diff"])
+  :is(header, [role="tablist"], [role="toolbar"], [class*="Header"], [class*="header"], [class*="Toolbar"], [class*="toolbar"]) {
+  color: rgb(235 238 244) !important;
+  -webkit-text-fill-color: rgb(235 238 244) !important;
+  background: rgb(32 35 41 / .98) !important;
+  background-image: none !important;
+  border-color: rgb(163 171 184 / .24) !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  :is([data-app-shell-tabs], [class*="group/file-diff"])
+  :is(button, [role="tab"])[aria-selected="true"],
+html[data-dream-skin="active"][data-dream-shell="light"]
+  :is([data-app-shell-tabs], [class*="group/file-diff"])
+  :is(button, [role="tab"])[data-active="true"] {
+  color: rgb(30 32 36) !important;
+  background: rgb(255 255 255) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="dark"]
+  :is([data-app-shell-tabs], [class*="group/file-diff"])
+  :is(button, [role="tab"])[aria-selected="true"],
+html[data-dream-skin="active"][data-dream-shell="dark"]
+  :is([data-app-shell-tabs], [class*="group/file-diff"])
+  :is(button, [role="tab"])[data-active="true"] {
+  color: rgb(235 238 244) !important;
+  background: rgb(44 48 57) !important;
+}
+
+/* Current Electron builds add a class selector with a native scrollbar token
+   after the generic thread rules.  Target the concrete scroll elements with
+   higher specificity so their tracks stay transparent in every state. */
+html[data-dream-skin="active"][data-dream-shell="light"] body
+  .thread-scroll-container[data-app-action-timeline-scroll],
+html[data-dream-skin="active"][data-dream-shell="light"] body
+  [data-app-action-review-scroll] {
+  scrollbar-color: rgb(var(--ds-accent-rgb) / .72) transparent !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"] body
+  :is(.thread-scroll-container[data-app-action-timeline-scroll],
+    [data-app-action-review-scroll])::-webkit-scrollbar-track {
+  background: transparent !important;
+  border: 0 !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"] body
+  :is(.thread-scroll-container[data-app-action-timeline-scroll],
+    [data-app-action-review-scroll])::-webkit-scrollbar-thumb {
+  background: rgb(var(--ds-accent-rgb) / .62) !important;
+  background-clip: padding-box !important;
+  border: 3px solid transparent !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  :is([data-composer-attachments], [data-composer-layout="multiline"])
+  > :is([class*="bg-background-primary-soft"], [class*="bg-surface"],
+    [class*="bg-primary-soft"], [class*="border-border"]) {
+  background: rgb(var(--ds-panel-rgb) / .56) !important;
+  background-image: none !important;
+  border-color: rgb(var(--ds-muted-rgb) / .26) !important;
+  box-shadow: none !important;
+}
+
+/* 在根节点定义选中配色，让后代通过 highlight 继承。
+   后代通配 ::selection 会为长对话的每个节点触发伪元素样式匹配，
+   滚动及菜单更新时可阻塞数百毫秒。 */
+html[data-dream-skin="active"]::selection {
+  color: rgb(255 255 255) !important;
+  -webkit-text-fill-color: rgb(255 255 255) !important;
+  background: rgb(var(--ds-accent-rgb) / .88) !important;
+}
+
+html[data-dream-skin="active"]::-moz-selection {
+  color: rgb(255 255 255) !important;
+  background: rgb(var(--ds-accent-rgb) / .88) !important;
+}
+
+/* Do not derive code selections from the artwork accent: a white or very dark
+   extracted accent can erase the selected text. Monaco uses overlay nodes in
+   addition to the browser selection pseudo-element, so cover both layers. */
+html[data-dream-skin="active"][data-dream-shell="light"]
+  :is([class*="turn-diff" i], [class*="diff-editor" i], [class*="editor-widget" i],
+    .monaco-editor, .monaco-diff-editor, diffs-container)::selection {
+  color: rgb(15 23 42) !important;
+  -webkit-text-fill-color: rgb(15 23 42) !important;
+  background: rgb(37 99 235 / .38) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="dark"]
+  :is([class*="turn-diff" i], [class*="diff-editor" i], [class*="editor-widget" i],
+    .monaco-editor, .monaco-diff-editor, diffs-container)::selection {
+  color: rgb(248 250 252) !important;
+  -webkit-text-fill-color: rgb(248 250 252) !important;
+  background: rgb(96 165 250 / .48) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"]
+  :is(.monaco-editor .selected-text, .monaco-editor .selectionHighlight,
+    .monaco-editor .wordHighlight, .monaco-editor .wordHighlightStrong) {
+  background-color: rgb(37 99 235 / .38) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="dark"]
+  :is(.monaco-editor .selected-text, .monaco-editor .selectionHighlight,
+    .monaco-editor .wordHighlight, .monaco-editor .wordHighlightStrong) {
+  background-color: rgb(96 165 250 / .48) !important;
+}
+
+/* Edited-files cards live in the conversation stream.  The generic diff
+   header rule also matches their `group/turn-diff-header` class and repaints
+   them as opaque editor chrome, so make this narrower, later rule win. */
+html[data-dream-skin="active"]
+  [data-thread-find-target="conversation"]
+  [class~="bg-surface-elevated-secondary/50"]:has([class~="group/turn-diff-header"]),
+html[data-dream-skin="active"]
+  [data-thread-find-target="conversation"]
+  [class~="group/turn-diff-header"],
+html[data-dream-skin="active"]
+  [data-thread-find-target="conversation"]
+  [class~="group/turn-diff-header"]
+  :is([class*="bg-surface"], [class*="bg-background"], [class*="bg-gradient"]) {
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+/* Keep every visual subcomponent of those compact edited-files cards glassy:
+   icon wells, rows, and action buttons must not reintroduce opaque islands. */
+html[data-dream-skin="active"]
+  [data-thread-find-target="conversation"]
+  [class~="bg-surface-elevated-secondary/50"]:has([class~="group/turn-diff-header"])
+  :is(button, [role="button"], [class*="bg-"], [class*="surface"], [class*="background"]) {
+  background: transparent !important;
+  background-image: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Some current Codex turns render resource cards outside
+   [data-thread-find-target].  Target the card's own stable classes as the
+   final authority so the compact edited-files surfaces remain transparent. */
+html[data-dream-skin="active"]
+  [class~="bg-surface-elevated-secondary/50"]:has([class~="group/turn-diff-header"]),
+html[data-dream-skin="active"]
+  [class~="bg-surface-elevated-secondary/50"]:has([class~="group/turn-diff-header"])
+  [class~="group/turn-diff-header"],
+html[data-dream-skin="active"]
+  [class~="bg-surface-elevated-secondary/50"]:has([class~="group/turn-diff-header"])
+  :is(button, [role="button"], [class*="bg-"], [class*="surface"], [class*="background"]) {
+  background: transparent !important;
+  background-image: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Virtualized turns can replace the outer resource-card wrapper.  Its header
+   class remains stable, so use it directly for the compact edited-file card. */
+html[data-dream-skin="active"][data-dream-shell][data-dream-art-wide]
+  main [class~="group/turn-diff-header"] {
+  background: transparent !important;
+  background-image: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell][data-dream-art-wide]
+  main [class~="group/turn-diff-header"]
+  :is(button, [role="button"], [class*="bg-"], [class*="surface"], [class*="background"]) {
+  background: transparent !important;
+  background-image: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Chromium renders the thread rail with a native WebKit track.  Give both
+   sides of the reverse thread scroller a transparent track and a restrained,
+   theme-coloured thumb. */
+html[data-dream-skin="active"] body
+  .thread-scroll-container[data-app-action-timeline-scroll] {
+  scrollbar-color: rgb(var(--ds-accent-rgb) / .52) transparent !important;
+}
+
+html[data-dream-skin="active"] body
+  .thread-scroll-container[data-app-action-timeline-scroll]::-webkit-scrollbar {
+  width: 10px !important;
+  height: 10px !important;
+  background: transparent !important;
+}
+
+html[data-dream-skin="active"] body
+  .thread-scroll-container[data-app-action-timeline-scroll]::-webkit-scrollbar-track,
+html[data-dream-skin="active"] body
+  .thread-scroll-container[data-app-action-timeline-scroll]::-webkit-scrollbar-corner {
+  background: transparent !important;
+  border: 0 !important;
+}
+
+html[data-dream-skin="active"] body
+  .thread-scroll-container[data-app-action-timeline-scroll]::-webkit-scrollbar-thumb {
+  background: rgb(var(--ds-accent-rgb) / .52) !important;
+  background-clip: padding-box !important;
+  border: 3px solid transparent !important;
+  border-radius: 999px !important;
+}
+
+/* File-change and queued-message strips are mounted directly above the
+   composer and share this soft-background container.  Keep that strip clear
+   of opaque white surfaces while preserving its text and controls. */
+html[data-dream-skin="active"]
+  [class*="home-composer-inline-inset"]
+  div[class~="bg-background-primary-soft/70"][class~="backdrop-blur-sm"] {
+  background: transparent !important;
+  background-image: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* The compact user-message navigator is a separate overflow container, not
+   the thread scroller.  Its native Chromium track used the default pale/grey
+   rail (and arrow wells), so override that exact stable application hook. */
+html[data-dream-skin="active"] body nav
+  [data-thread-user-message-navigation-rail-list="true"] {
+  scrollbar-color: rgb(var(--ds-accent-rgb) / .56) transparent !important;
+  scrollbar-width: thin !important;
+}
+
+html[data-dream-skin="active"] body nav
+  [data-thread-user-message-navigation-rail-list="true"]::-webkit-scrollbar {
+  width: 10px !important;
+  height: 10px !important;
+  background: transparent !important;
+}
+
+html[data-dream-skin="active"] body nav
+  [data-thread-user-message-navigation-rail-list="true"]::-webkit-scrollbar-track,
+html[data-dream-skin="active"] body nav
+  [data-thread-user-message-navigation-rail-list="true"]::-webkit-scrollbar-corner,
+html[data-dream-skin="active"] body nav
+  [data-thread-user-message-navigation-rail-list="true"]::-webkit-scrollbar-button {
+  background-color: transparent !important;
+  border: 0 !important;
+}
+
+html[data-dream-skin="active"] body nav
+  [data-thread-user-message-navigation-rail-list="true"]::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+html[data-dream-skin="active"] body nav
+  [data-thread-user-message-navigation-rail-list="true"]::-webkit-scrollbar-thumb {
+  background-color: rgb(var(--ds-accent-rgb) / .56) !important;
+  background-clip: padding-box !important;
+  border: 3px solid transparent !important;
+  border-radius: 999px !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"] body nav
+  [data-thread-user-message-navigation-rail-list="true"]::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(var(--ds-accent-rgb) / .78) !important;
+}
+
+/* Message-navigation previews are portalled tooltips in current builds.
+   Keep their surface translucent in both shells and inherit the active
+   palette rather than Electron's opaque black tooltip token. */
+html[data-dream-skin="active"]
+  :is([role="tooltip"], [data-radix-popper-content-wrapper]:has([role="tooltip"]),
+    [data-radix-popper-content]:has([role="tooltip"]),
+    [data-floating-ui-portal] > [role="tooltip"]) {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+  background: rgb(var(--ds-panel-rgb) / .30) !important;
+  background-image: none !important;
+  border-color: rgb(var(--ds-muted-rgb) / .22) !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(10px) saturate(105%) !important;
+}
+
+html[data-dream-skin="active"]
+  :is([role="tooltip"], [data-radix-popper-content-wrapper]:has([role="tooltip"]),
+    [data-radix-popper-content]:has([role="tooltip"]),
+    [data-floating-ui-portal] > [role="tooltip"])
+  :is(p, span, div, button) {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+  background-color: transparent !important;
+}
+
+/* Some builds keep the message preview inside the navigation <nav> instead
+   of exposing tooltip semantics.  This narrow fallback covers only that
+   navigator's own floating surface, without changing regular menus. */
+html[data-dream-skin="active"] body
+  nav:has([data-thread-user-message-navigation-rail-list="true"])
+  :is([role="tooltip"], [class*="tooltip" i], [class*="bg-background"], [class*="bg-surface"]) {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+  background: rgb(var(--ds-panel-rgb) / .30) !important;
+  background-image: none !important;
+  border-color: rgb(var(--ds-muted-rgb) / .22) !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(10px) saturate(105%) !important;
+}
+
+/* The user-message navigation rail is a separate jump navigator.  Keep it
+   visible and give its injected drag mapping a clear interaction state. */
+html[data-dream-skin="active"] body
+  nav:has([data-thread-user-message-navigation-rail-list="true"]) {
+  display: block !important;
+}
+
+html[data-dream-skin="active"] body
+  [data-thread-user-message-navigation-rail-list="true"] {
+  cursor: ns-resize !important;
+  touch-action: none !important;
+  user-select: none !important;
+}
+
+html[data-dream-skin="active"] body
+  [data-thread-user-message-navigation-rail-list="true"][data-dream-skin-scrubbing="true"] {
+  cursor: grabbing !important;
+}
+
+/* Conversation code blocks are regular markdown content, not the editable
+   Monaco/diff surface.  Keep their code legible, but remove the opaque white
+   card and header so they share the transparent conversation treatment. */
+html[data-dream-skin="active"]
+  [data-local-conversation-final-assistant="true"]
+  [data-markdown-copy="code-block"],
+html[data-dream-skin="active"]
+  [data-local-conversation-final-assistant="true"]
+  [data-markdown-copy="code-block"]
+  :is(pre, code, [class*="bg-"], [class*="surface"], [class*="background"]) {
+  background: transparent !important;
+  background-image: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* This deliberately outranks the light-shell editor rule above.  It applies
+   only to rendered conversation code, never to Monaco or the side diff UI. */
+html[data-dream-skin="active"][data-dream-shell] body main
+  [data-local-conversation-final-assistant="true"]
+  [data-markdown-copy="code-block"],
+html[data-dream-skin="active"][data-dream-shell] body main
+  [data-local-conversation-final-assistant="true"]
+  [data-markdown-copy="code-block"]
+  :is([data-markdown-copy="exclude"], pre, code, [class*="bg-"],
+    [class*="surface"], [class*="background"]) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* In the current Windows shell, the wide-artwork composer root spans the
+   full bottom lane. It is layout chrome rather than the actual input card;
+   keep it clear so it does not leave a dark strip below the conversation. */
+html[data-dream-skin="active"][data-dream-art-wide="true"][data-dream-shell]
+  :is([data-ds-part="composer"], [class*="_ComposerLayoutRoot_"], [class*="_ComposerLayoutFooter_"]) {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  --composer-layout-surface-background: transparent !important;
+  --composer-layout-surface-backdrop-filter: none !important;
+}
+
+/* The bottom thread lane supplies a native dark fade behind the composer.
+   On artwork themes it becomes a full-width black band, so remove only this
+   aria-hidden decorative gradient while preserving the input controls. */
+html[data-dream-skin="active"][data-dream-art-wide="true"]
+  [data-ds-part="thread"]
+  [aria-hidden="true"][class~="bg-gradient-to-t"][class~="from-surface"][class~="via-surface"] {
+  background: transparent !important;
+  background-image: none !important;
+}
+
+/* Settings are rendered inside the main route instead of a dialog in recent
+   Codex builds. The light-shell overlay rules therefore do not reach their
+   native token surfaces unless this route is styled explicitly. */
+html[data-dream-skin="active"][data-dream-shell="light"] main:has([data-settings-panel-slug]) {
+  color: var(--ds-text) !important;
+  background: rgb(var(--ds-panel-rgb) / .96) !important;
+  background-image: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"] main:has([data-settings-panel-slug])
+  :is([data-settings-panel-slug], [class~="bg-token-main-surface-primary"],
+    [class~="bg-token-surface-primary"], [class~="bg-token-dropdown-background"],
+    [class~="bg-token-menu-background"], [class~="bg-background-primary"],
+    [class~="bg-background-primary-soft"], [class~="bg-surface-elevated-secondary"]) {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+  background: rgb(var(--ds-panel-rgb) / .96) !important;
+  background-image: none !important;
+  border-color: rgb(var(--ds-muted-rgb) / .24) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"] main:has([data-settings-panel-slug])
+  :is([class~="text-token-text-secondary"], [class~="text-token-text-tertiary"],
+    [class~="text-token-muted-foreground"], [class~="text-token-description-foreground"]) {
+  color: var(--ds-muted) !important;
+  -webkit-text-fill-color: var(--ds-muted) !important;
+}
+
+/* The settings navigation is a sibling of the content main, so route scoping
+   must start at body. These are the current Windows settings content and
+   preference-card surfaces; their native Electron tokens otherwise stay dark. */
+html[data-dream-skin="active"][data-dream-shell="light"] body:has([data-settings-panel-slug])
+  main [class~="electron:bg-surface"] {
+  color: var(--ds-text) !important;
+  background: rgb(var(--ds-panel-rgb) / .96) !important;
+  background-image: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"] body:has([data-settings-panel-slug])
+  main div.rounded-2xl.overflow-hidden.border.border-default {
+  color: var(--ds-text) !important;
+  background: rgb(var(--ds-panel-2-rgb) / .84) !important;
+  border-color: rgb(var(--ds-muted-rgb) / .24) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="light"] body:has([data-settings-panel-slug])
+  [class~="bg-background-primary-soft/90"] {
+  color: var(--ds-text) !important;
+  background: rgb(var(--ds-panel-rgb) / .88) !important;
+  border-color: rgb(var(--ds-muted-rgb) / .24) !important;
+}
+
+/* 最大化任务窗口使用稳定原生标题层，避免任务标题、状态文案和窗口控件相互干扰。 */
+html[data-dream-skin="active"]
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"]))
+  > header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*="_Header_"]) {
+  background: rgb(var(--ds-panel-rgb) / .96) !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+}
+
+html[data-dream-skin="active"]
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"]))
+  > header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*="_Header_"])::after {
+  content: none !important;
+}
+
+/* 滚动后原生规则给 Toolbar 的直接子容器填充 --color-surface，
+   产生标题和更多菜单的粉白底。通过稳定标记定位实际容器，不依赖
+   header 是 main 的直接子级；内部按钮保留原生悬停与焦点反馈。 */
+html[data-dream-skin="active"] header[data-app-shell-header-edge-scroll="true"]
+  [data-testid="app-shell-header-context-menu-surface"]
+  [class~="@container/app-shell-header-toolbar"] > * {
+  background-color: transparent !important;
+}
+
+/* 菜单、浮层和任务输出栏会在切换模型或历史时高频重绘，禁用 GPU 模糊。 */
+html[data-dream-skin="active"]
+  :is([role="dialog"], [role="menu"], [role="listbox"], [data-radix-popper-content-wrapper],
+    [data-floating-ui-portal], [data-in-progress-fixed-content="true"],
+    div[class~="pointer-events-none"][class~="absolute"][class~="right-0"]) {
+  backdrop-filter: none !important;
+}
+
+/* 深色图片上的原生 Windows token 仍可能沿用浅色皮肤的深紫色 ink。
+   仅在 dark shell 覆盖正文与控件文字，浅色图片的黑色正文保持不变。 */
+html[data-dream-skin="active"][data-dream-shell="dark"] {
+  --color-text: var(--ds-text) !important;
+  --color-text-primary: var(--ds-text) !important;
+  --color-text-secondary: var(--ds-muted) !important;
+  --color-text-tertiary: var(--ds-muted) !important;
+  --color-codex-description: var(--ds-muted) !important;
+  --color-token-foreground: var(--ds-text) !important;
+  --color-token-text-primary: var(--ds-text) !important;
+  --color-token-text-secondary: var(--ds-muted) !important;
+  --color-token-text-tertiary: var(--ds-muted) !important;
+  --color-token-muted-foreground: var(--ds-muted) !important;
+  --color-token-description-foreground: var(--ds-muted) !important;
+  --color-token-input-placeholder-foreground: var(--ds-muted) !important;
+}
+
+/* 左侧导航的文字是原生 utility class，不一定继承 body 的颜色。 */
+html[data-dream-skin="active"][data-dream-shell="dark"] aside.app-shell-left-panel
+  :is(.sidebar-item, [class~="text-default"], [class~="text-fade-truncate"],
+    [class~="text-token-text-primary"], [class~="text-token-foreground"],
+    [class*="_viewport_"], [class*="_clipViewport_"], [class*="truncate"],
+    [class*="font-semibold"]) {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="dark"] aside.app-shell-left-panel
+  :is([class~="text-secondary"], [class~="text-tertiary"],
+    [class~="text-token-text-secondary"], [class~="text-token-text-tertiary"],
+    [class~="text-token-muted-foreground"], [class~="text-token-description-foreground"],
+    [class*="opacity-75"]) {
+  color: var(--ds-muted) !important;
+  -webkit-text-fill-color: var(--ds-muted) !important;
+}
+
+/* 对话正文与生成的 markdown 节点使用浅色 ink，避免深紫色与暗图叠加。 */
+html[data-dream-skin="active"][data-dream-shell="dark"]
+  :is([data-local-conversation-user-anchor], [data-local-conversation-final-assistant],
+    [data-markdown-text-style], [data-markdown-han-text]) {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="dark"]
+  :is([data-local-conversation-user-anchor], [data-local-conversation-final-assistant])
+  :is(p, h1, h2, h3, h4, h5, h6, li, blockquote, pre, code, strong, em, a, span,
+    [class*="_markdown"], [class*="InlineMarkdown"], [class*="inline-markdown"]) {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="dark"]
+  :is([data-local-conversation-user-anchor], [data-local-conversation-final-assistant])
+  :is([class~="text-secondary"], [class~="text-tertiary"],
+    [class~="text-token-text-secondary"], [class~="text-token-text-tertiary"],
+    [class~="text-token-muted-foreground"], [class~="text-token-description-foreground"],
+    [class~="text-text/60"], [class~="text-text/40"], [class*="text-xs"]) {
+  color: var(--ds-muted) !important;
+  -webkit-text-fill-color: var(--ds-muted) !important;
+}
+
+/* 模型菜单、设置浮层和右侧输出栏中的文字同样只在 dark shell 调整。 */
+html[data-dream-skin="active"][data-dream-shell="dark"]
+  :is([role="dialog"], [role="alertdialog"], [role="menu"], [role="listbox"],
+    [aria-modal="true"], [data-radix-popper-content-wrapper],
+    [data-radix-popper-content], [data-floating-ui-portal] > *)
+  :is(button, [role="menuitem"], [role="option"], [role="tab"], p, span, label, input) {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="dark"]
+  :is([role="dialog"], [role="alertdialog"], [role="menu"], [role="listbox"],
+    [aria-modal="true"], [data-radix-popper-content-wrapper],
+    [data-radix-popper-content], [data-floating-ui-portal] > *)
+  :is([class~="text-secondary"], [class~="text-tertiary"],
+    [class~="text-token-text-secondary"], [class~="text-token-text-tertiary"],
+    [class~="text-token-muted-foreground"], [class~="text-token-description-foreground"],
+    [class~="text-text/60"], [class~="text-text/40"]) {
+  color: var(--ds-muted) !important;
+  -webkit-text-fill-color: var(--ds-muted) !important;
+}
+
+/* 输入框正文和占位符也跟随暗图的浅色对比度。 */
+html[data-dream-skin="active"][data-dream-shell="dark"]
+  :is(textarea, input, [contenteditable="true"], .ProseMirror) {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+  caret-color: var(--ds-accent) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell="dark"]
+  :is(textarea, input)::placeholder {
+  color: var(--ds-muted) !important;
+  -webkit-text-fill-color: var(--ds-muted) !important;
+  opacity: 1 !important;
+}

@@ -1,0 +1,41 @@
+{
+  "name": "retheme",
+  "private": true,
+  "version": "0.1.0",
+  "license": "BSD-3-Clause",
+  "packageManager": "pnpm@10.31.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "test": "vitest run",
+    "test:release": "node --test scripts/*.node-test.mjs",
+    "test:theme-skill": "pnpm --dir packages/retheme-theme-skill test:package",
+    "version:check": "node scripts/sync-version.mjs --check",
+    "preview": "vite preview",
+    "tauri": "tauri"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "2.11.1",
+    "@tauri-apps/plugin-deep-link": "2.4.9",
+    "@tauri-apps/plugin-dialog": "2.7.1",
+    "@tauri-apps/plugin-opener": "^2.5.4",
+    "@tauri-apps/plugin-process": "2.3.1",
+    "@tauri-apps/plugin-updater": "2.10.1",
+    "react": "19.2.7",
+    "react-dom": "19.2.7"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "2.11.4",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "6.0.3",
+    "jsdom": "^29.1.1",
+    "typescript": "^5.9.3",
+    "vite": "8.1.5",
+    "vitest": "^4.1.10"
+  }
+}

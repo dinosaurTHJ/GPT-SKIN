@@ -1,0 +1,454 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://retheme.app/schemas/theme-v1.json",
+  "title": "ReTheme Theme Manifest v1",
+  "description": "Manifest schema for ReTheme source themes and platform-signed .ctheme packages.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "id",
+    "name",
+    "description",
+    "version",
+    "author",
+    "styles",
+    "slots",
+    "permissions",
+    "preview",
+    "experience"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[a-z0-9.-]+$",
+      "allOf": [{ "pattern": "\\." }],
+      "description": "Globally unique theme id. Use a reverse-domain id such as studio.example.theme-name."
+    },
+    "name": { "$ref": "#/$defs/themeName" },
+    "description": { "$ref": "#/$defs/description" },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-((?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
+    },
+    "author": { "$ref": "#/$defs/author" },
+    "testedCodexVersions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true,
+      "default": []
+    },
+    "supportedCodexVersions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true,
+      "deprecated": true,
+      "description": "Legacy alias for testedCodexVersions. Do not use in new themes."
+    },
+    "styles": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/stylePath" }
+    },
+    "slots": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/slot" }
+    },
+    "permissions": { "const": [] },
+    "preview": { "$ref": "#/$defs/preview" },
+    "experience": { "$ref": "#/$defs/experience" },
+    "locales": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[a-z]{2,3}(?:-[A-Z]{2}|-[A-Z][a-z]{3})*$" },
+      "additionalProperties": { "$ref": "#/$defs/localization" },
+      "default": {}
+    },
+    "access": {
+      "$ref": "#/$defs/access",
+      "description": "Platform-managed. Omit from source ZIP submissions."
+    },
+    "integrity": {
+      "const": "integrity.json",
+      "description": "Platform-managed. Omit from source ZIP submissions."
+    },
+    "signature": {
+      "const": "signature.ed25519",
+      "description": "Platform-managed. Omit from source ZIP submissions."
+    }
+  },
+  "not": {
+    "required": ["testedCodexVersions", "supportedCodexVersions"]
+  },
+  "$defs": {
+    "nonEmptyText": { "type": "string", "minLength": 1, "pattern": "\\S" },
+    "themeName": { "allOf": [{ "$ref": "#/$defs/nonEmptyText" }], "maxLength": 120 },
+    "description": { "allOf": [{ "$ref": "#/$defs/nonEmptyText" }], "maxLength": 240 },
+    "eyebrow": { "allOf": [{ "$ref": "#/$defs/nonEmptyText" }], "maxLength": 80 },
+    "title": { "allOf": [{ "$ref": "#/$defs/nonEmptyText" }], "maxLength": 120 },
+    "copyDescription": { "allOf": [{ "$ref": "#/$defs/nonEmptyText" }], "maxLength": 240 },
+    "label": { "allOf": [{ "$ref": "#/$defs/nonEmptyText" }], "maxLength": 80 },
+    "author": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-z0-9.-]+$"
+        },
+        "name": { "allOf": [{ "$ref": "#/$defs/nonEmptyText" }], "maxLength": 100 }
+      }
+    },
+    "stylePath": {
+      "type": "string",
+      "pattern": "^styles/(?!.*(?:^|/)\\.{1,2}(?:/|$))[^\\\\:]+\\.css$"
+    },
+    "assetPath": {
+      "type": "string",
+      "pattern": "^assets/(?!.*(?:^|/)\\.{1,2}(?:/|$))[^\\\\:]+\\.(?:svg|png|jpg|jpeg|webp)$"
+    },
+    "hexColor": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+    "preview": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["background", "surface", "accent"],
+      "properties": {
+        "background": { "$ref": "#/$defs/hexColor" },
+        "surface": { "$ref": "#/$defs/hexColor" },
+        "accent": { "$ref": "#/$defs/hexColor" }
+      }
+    },
+    "slot": {
+      "type": "string",
+      "enum": [
+        "app.shell",
+        "app.background",
+        "titlebar",
+        "sidebar",
+        "sidebar.scroll",
+        "sidebar.resize",
+        "sidebar.resize.indicator",
+        "sidebar.header",
+        "sidebar.header.icon",
+        "sidebar.header.label",
+        "sidebar.header.background",
+        "sidebar.header.decoration",
+        "sidebar.brand",
+        "sidebar.brand.icon",
+        "sidebar.brand.badge",
+        "sidebar.frame",
+        "sidebar.section",
+        "sidebar.section.projects",
+        "sidebar.section.header",
+        "sidebar.section.toggle",
+        "sidebar.section.label",
+        "sidebar.section.actions",
+        "sidebar.section.action",
+        "sidebar.section.action.icon",
+        "sidebar.section.decoration",
+        "sidebar.item",
+        "sidebar.item.icon",
+        "sidebar.item.label",
+        "sidebar.item.active",
+        "sidebar.item.active.icon",
+        "sidebar.item.active.label",
+        "sidebar.footer",
+        "sidebar.footer.item",
+        "sidebar.footer.icon",
+        "sidebar.footer.label",
+        "sidebar.footer.brand",
+        "sidebar.footer.brand.label",
+        "sidebar.footer.brand.timer",
+        "sidebar.footer.brand.pro",
+        "sidebar.footer.brand.version",
+        "main",
+        "main.fade",
+        "main.content.frame",
+        "main.background",
+        "main.overlay",
+        "main.frame",
+        "page",
+        "page.surface",
+        "page.header",
+        "page.content",
+        "menu",
+        "menu.item",
+        "menu.item.active",
+        "menu.item.checked",
+        "menu.icon",
+        "menu.label",
+        "menu.shortcut",
+        "menu.separator",
+        "composer",
+        "composer.backdrop",
+        "composer.context",
+        "composer.context.item",
+        "composer.context.item.icon",
+        "composer.context.item.label",
+        "composer.editor",
+        "composer.action",
+        "composer.action.icon",
+        "composer.action.label",
+        "composer.permission",
+        "composer.permission.icon",
+        "composer.permission.label",
+        "composer.submit",
+        "composer.submit.icon",
+        "composer.submit.decoration",
+        "composer.decoration",
+        "composer.panel",
+        "composer.panel.item",
+        "composer.panel.icon",
+        "composer.panel.separator",
+        "home.hero",
+        "home.hero.viewport",
+        "home.hero.copy",
+        "home.hero.eyebrow",
+        "home.hero.title",
+        "home.hero.description",
+        "home.hero.media",
+        "home.hero.media.asset",
+        "home.hero.foreground",
+        "home.hero.foreground.asset",
+        "home.hero.divider",
+        "home.hero.divider.icon",
+        "home.hero.divider.label",
+        "home.hero.divider.line",
+        "home.layout",
+        "home.content.region",
+        "home.stage",
+        "home.brand",
+        "home.prompt",
+        "home.prompt.title",
+        "home.cards",
+        "home.cards.layout",
+        "home.cards.grid",
+        "home.card",
+        "home.card.background",
+        "home.card.content",
+        "home.card.icon",
+        "home.card.icon.glyph",
+        "home.card.label",
+        "home.card.arrow",
+        "home.card.arrow.glyph",
+        "home.card.arrow.asset",
+        "composer.region",
+        "conversation.stage",
+        "conversation.header",
+        "conversation.header.content",
+        "conversation.viewport",
+        "conversation.summary.region",
+        "conversation.summary",
+        "conversation.summary.decoration",
+        "conversation",
+        "conversation.user",
+        "conversation.assistant",
+        "conversation.banner",
+        "conversation.banner.copy",
+        "conversation.banner.eyebrow",
+        "conversation.banner.title",
+        "conversation.banner.description",
+        "conversation.banner.media",
+        "conversation.banner.media.asset",
+        "conversation.banner.foreground",
+        "conversation.banner.foreground.asset",
+        "code",
+        "code.inline",
+        "diff",
+        "terminal",
+        "terminal.viewport",
+        "settings",
+        "settings.header",
+        "settings.sidebar",
+        "settings.nav",
+        "settings.nav.item",
+        "settings.nav.item.active",
+        "settings.content",
+        "settings.surface",
+        "settings.frame",
+        "settings.canvas",
+        "settings.toolbar",
+        "settings.body",
+        "settings.section",
+        "settings.section.title",
+        "settings.card",
+        "settings.row",
+        "settings.row.title",
+        "settings.row.description",
+        "settings.row.separator",
+        "settings.control",
+        "settings.control.checked",
+        "settings.switch",
+        "settings.switch.checked",
+        "settings.switch.track",
+        "settings.switch.track.checked",
+        "settings.switch.thumb",
+        "decoration.top-right",
+        "decoration.bottom-right"
+      ]
+    },
+    "asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["asset"],
+      "properties": { "asset": { "$ref": "#/$defs/assetPath" } }
+    },
+    "hero": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["eyebrow", "title", "description", "asset", "fit", "position"],
+      "properties": {
+        "eyebrow": { "$ref": "#/$defs/eyebrow" },
+        "title": { "$ref": "#/$defs/title" },
+        "description": { "$ref": "#/$defs/copyDescription" },
+        "asset": { "$ref": "#/$defs/assetPath" },
+        "fit": { "enum": ["cover", "contain"] },
+        "position": { "enum": ["center", "top", "bottom", "left", "right"] },
+        "foreground": { "$ref": "#/$defs/assetPath" },
+        "divider": { "$ref": "#/$defs/divider" }
+      }
+    },
+    "conversationBanner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["eyebrow", "title", "description", "asset", "fit", "position"],
+      "properties": {
+        "eyebrow": { "$ref": "#/$defs/eyebrow" },
+        "title": { "$ref": "#/$defs/title" },
+        "description": { "$ref": "#/$defs/copyDescription" },
+        "asset": { "$ref": "#/$defs/assetPath" },
+        "fit": { "enum": ["cover", "contain"] },
+        "position": { "enum": ["center", "top", "bottom", "left", "right"] },
+        "foreground": { "$ref": "#/$defs/assetPath" }
+      }
+    },
+    "divider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label"],
+      "properties": {
+        "label": { "$ref": "#/$defs/label" },
+        "asset": { "$ref": "#/$defs/assetPath" }
+      }
+    },
+    "homePrompt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title"],
+      "properties": { "title": { "$ref": "#/$defs/title" } }
+    },
+    "assetSlot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["slot", "asset"],
+      "properties": {
+        "slot": {
+          "enum": [
+            "app.background",
+            "main.background",
+            "main.overlay",
+            "main.frame",
+            "sidebar.brand.icon",
+            "sidebar.brand.badge",
+            "sidebar.header.background",
+            "sidebar.header.decoration",
+            "sidebar.frame",
+            "home.card.background",
+            "home.card.arrow.asset"
+          ]
+        },
+        "asset": { "$ref": "#/$defs/assetPath" }
+      }
+    },
+    "cornerDecoration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["slot", "asset"],
+      "properties": {
+        "slot": { "enum": ["decoration.top-right", "decoration.bottom-right"] },
+        "asset": { "$ref": "#/$defs/assetPath" }
+      }
+    },
+    "experience": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["homeHero"],
+      "properties": {
+        "homeHero": { "$ref": "#/$defs/hero" },
+        "homePrompt": { "$ref": "#/$defs/homePrompt" },
+        "conversationBanner": { "$ref": "#/$defs/conversationBanner" },
+        "composerSubmit": { "$ref": "#/$defs/asset" },
+        "composerDecoration": { "$ref": "#/$defs/asset" },
+        "conversationSummaryDecoration": { "$ref": "#/$defs/asset" },
+        "sidebarSectionDecoration": { "$ref": "#/$defs/asset" },
+        "assets": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/assetSlot" }
+        },
+        "decorations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/cornerDecoration" },
+          "default": []
+        }
+      }
+    },
+    "localization": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": { "$ref": "#/$defs/themeName" },
+        "description": { "$ref": "#/$defs/description" },
+        "experience": { "$ref": "#/$defs/experienceLocalization" }
+      }
+    },
+    "experienceLocalization": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "homeHero": { "$ref": "#/$defs/heroLocalization" },
+        "homePrompt": { "$ref": "#/$defs/homePrompt" },
+        "conversationBanner": { "$ref": "#/$defs/bannerLocalization" }
+      }
+    },
+    "heroLocalization": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "eyebrow": { "$ref": "#/$defs/eyebrow" },
+        "title": { "$ref": "#/$defs/title" },
+        "description": { "$ref": "#/$defs/copyDescription" },
+        "divider": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": { "label": { "$ref": "#/$defs/label" } }
+        }
+      }
+    },
+    "bannerLocalization": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "eyebrow": { "$ref": "#/$defs/eyebrow" },
+        "title": { "$ref": "#/$defs/title" },
+        "description": { "$ref": "#/$defs/copyDescription" }
+      }
+    },
+    "access": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["delivery", "slug"],
+      "properties": {
+        "delivery": { "const": "online" },
+        "slug": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

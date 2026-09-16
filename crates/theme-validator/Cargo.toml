@@ -1,0 +1,11 @@
+[package]
+name = "retheme-theme-validator"
+version = "0.1.0"
+edition = "2024"
+license = "BSD-3-Clause"
+
+[dependencies]
+retheme-theme-protocol = { path = "../theme-protocol" }
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.150"
+

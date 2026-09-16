@@ -1,0 +1,4 @@
+package_key = "replace-with-platform-package-key-at-least-32-bytes"
+license_public_key = "replace-with-64-character-hex-public-key"
+compatibility_public_key = "replace-with-64-character-hex-public-key"
+theme_public_key = "replace-with-64-character-hex-public-key"

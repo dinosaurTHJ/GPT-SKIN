@@ -1,0 +1,4 @@
+interface:
+  display_name: "ReTheme Theme Development"
+  short_description: "Build and validate stable ReTheme themes"
+  default_prompt: "Use $retheme-theme-development to create or update a production-ready ReTheme theme."

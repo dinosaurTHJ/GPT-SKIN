@@ -1,0 +1,71 @@
+/* App surfaces: visuals only; the engine owns layout and scrolling. */
+:root[data-ct-theme="studio.example.theme-name"] [data-ct-slot="app.shell"],
+:root[data-ct-theme="studio.example.theme-name"] [data-ct-slot="main"],
+:root[data-ct-theme="studio.example.theme-name"] [data-ct-slot="settings.canvas"] {
+  background: var(--example-app-background) !important;
+  color: var(--example-text) !important;
+}
+
+/* Sidebar and state-specific navigation visuals. */
+:root[data-ct-theme="studio.example.theme-name"] [data-ct-slot="sidebar"] {
+  background: var(--example-sidebar-background) !important;
+  border-right: 1px solid var(--example-border) !important;
+  box-shadow: none !important;
+}
+
+:root[data-ct-theme="studio.example.theme-name"] [data-ct-slot="sidebar.item.active"] {
+  background: var(--example-accent-soft) !important;
+  color: var(--example-accent) !important;
+}
+
+/* Home and settings cards share appearance without changing native dimensions. */
+:root[data-ct-theme="studio.example.theme-name"] [data-ct-slot="home.card"],
+:root[data-ct-theme="studio.example.theme-name"] [data-ct-slot="settings.card"] {
+  background: var(--example-surface) !important;
+  border: 1px solid var(--example-border) !important;
+  border-radius: var(--example-radius) !important;
+  box-shadow: var(--example-shadow) !important;
+}
+
+:root[data-ct-theme="studio.example.theme-name"] [data-ct-slot="home.card.label"],
+:root[data-ct-theme="studio.example.theme-name"] [data-ct-slot="home.prompt.title"] {
+  color: var(--example-text) !important;
+}
+
+/* Keep the composer editor's native height, background, and padding. */
+:root[data-ct-theme="studio.example.theme-name"] [data-ct-slot="composer"] {
+  background: var(--example-surface) !important;
+  border-color: var(--example-border) !important;
+}
+
+:root[data-ct-theme="studio.example.theme-name"] [data-ct-slot="composer.submit"],
+:root[data-ct-theme="studio.example.theme-name"] [data-ct-slot="settings.switch.track.checked"] {
+  background: var(--example-accent) !important;
+}
+
+/* Banners stay in engine-owned document flow. */
+:root[data-ct-theme="studio.example.theme-name"] [data-ct-slot="home.hero"],
+:root[data-ct-theme="studio.example.theme-name"] [data-ct-slot="conversation.banner"] {
+  border: 1px solid var(--example-border) !important;
+  border-radius: calc(var(--example-radius) + 4px) !important;
+  overflow: hidden !important;
+}
+
+/* Menus preserve native placement, item height, focus, and check state. */
+:root[data-ct-theme="studio.example.theme-name"] [data-ct-slot="menu"] {
+  background: var(--example-surface) !important;
+  border-color: var(--example-border) !important;
+}
+
+:root[data-ct-theme="studio.example.theme-name"] [data-ct-slot="menu.item.active"] {
+  background: var(--example-accent-soft) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-ct-theme="studio.example.theme-name"] *,
+  :root[data-ct-theme="studio.example.theme-name"] *::before,
+  :root[data-ct-theme="studio.example.theme-name"] *::after {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+}

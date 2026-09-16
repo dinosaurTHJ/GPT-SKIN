@@ -1,0 +1,114 @@
+{
+  // 固定协议版本。主题自身版本写在 version。
+  "schemaVersion": 1,
+
+  // 全局稳定 ID：小写反向域名格式，发布后不可修改。
+  "id": "studio.example.protocol-preview",
+
+  // 顶层字段是默认语言。本示例默认中文，并在 locales.en 提供英文。
+  "name": "协议预览",
+  "description": "用于验证 ReTheme 主题协议的最小参考主题。",
+
+  // 使用严格 SemVer；发布更新时必须递增。
+  "version": "1.0.0",
+  "author": {
+    // 作者 ID 由平台身份决定；不要冒用其他作者。
+    "id": "studio.example",
+    "name": "Example Studio"
+  },
+
+  // 只记录实际回归过的 ChatGPT 版本，不会锁定可运行版本。
+  "testedCodexVersions": [],
+
+  // CSS 按数组顺序合并。token 在前，具体插槽覆盖在后。
+  "styles": [
+    "styles/tokens.css",
+    "styles/overrides.css"
+  ],
+
+  // 声明主题实际使用的稳定插槽，不能重复或写未知插槽。
+  "slots": [
+    "app.shell",
+    "app.background",
+    "sidebar",
+    "sidebar.item.active",
+    "main",
+    "main.background",
+    "home.hero",
+    "home.prompt.title",
+    "home.card",
+    "home.card.label",
+    "conversation.banner",
+    "composer",
+    "composer.submit",
+    "settings.canvas",
+    "settings.card",
+    "settings.switch.track.checked"
+  ],
+
+  // v1 不开放脚本或额外权限，必须为空数组。
+  "permissions": [],
+
+  // 社区列表与桌面客户端使用的代表色，不会自动生成 CSS。
+  "preview": {
+    "background": "#eef4ff",
+    "surface": "#ffffff",
+    "accent": "#526ee8"
+  },
+
+  // 由引擎创建的文案和受控图片挂载。
+  "experience": {
+    // 首页 Hero 必填，位于首页正常文档流，不会浮在卡片上。
+    "homeHero": {
+      "eyebrow": "RETHEME",
+      "title": "创造自己的工作氛围",
+      "description": "稳定插槽驱动的最小示例主题。",
+      "asset": "assets/hero.svg",
+      "fit": "cover",
+      "position": "center"
+    },
+
+    // 可选：替换首页原生提示文字，并随主题恢复。
+    "homePrompt": {
+      "title": "今天想创造什么？"
+    },
+
+    // 可选：历史会话/已开始会话顶部的独立窄 Banner。
+    "conversationBanner": {
+      "eyebrow": "RETHEME",
+      "title": "保持专注",
+      "description": "让当前会话保持清晰。",
+      "asset": "assets/hero.svg",
+      "fit": "cover",
+      "position": "center"
+    },
+
+    // 角落装饰可省略；明确写空数组便于初学者理解。
+    "decorations": []
+  },
+
+  // 当前客户端主动选择 zh-CN 与 en。翻译只覆盖文案，不重复资源。
+  "locales": {
+    "en": {
+      "name": "Protocol Preview",
+      "description": "A minimal reference theme for the ReTheme protocol.",
+      "experience": {
+        "homeHero": {
+          "eyebrow": "RETHEME",
+          "title": "Create your own atmosphere",
+          "description": "A minimal theme built entirely on stable slots."
+        },
+        "homePrompt": {
+          "title": "What will we create today?"
+        },
+        "conversationBanner": {
+          "eyebrow": "RETHEME",
+          "title": "Stay focused",
+          "description": "Keep the current conversation clear."
+        }
+      }
+    }
+  }
+
+  // 源码主题禁止添加 access、integrity、signature；这些字段由平台发布时生成。
+}

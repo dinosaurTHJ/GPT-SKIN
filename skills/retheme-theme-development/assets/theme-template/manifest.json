@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "id": "studio.example.theme-name",
+  "name": "示例主题",
+  "description": "请替换为主题的中文说明。",
+  "version": "0.1.0",
+  "author": {
+    "id": "studio.example",
+    "name": "Example Studio"
+  },
+  "testedCodexVersions": [],
+  "styles": [
+    "styles/tokens.css",
+    "styles/overrides.css"
+  ],
+  "slots": [
+    "app.shell",
+    "sidebar",
+    "sidebar.item.active",
+    "main",
+    "home.hero",
+    "home.prompt.title",
+    "home.card",
+    "home.card.label",
+    "conversation.banner",
+    "composer",
+    "composer.submit",
+    "settings.canvas",
+    "settings.card",
+    "settings.switch.track.checked",
+    "menu",
+    "menu.item.active"
+  ],
+  "permissions": [],
+  "preview": {
+    "background": "#F3F6FF",
+    "surface": "#FFFFFF",
+    "accent": "#5B6FE8"
+  },
+  "experience": {
+    "homeHero": {
+      "eyebrow": "RETHEME",
+      "title": "创建你的主题",
+      "description": "使用稳定插槽完成视觉覆盖。",
+      "asset": "assets/hero.svg",
+      "fit": "cover",
+      "position": "center"
+    },
+    "homePrompt": {
+      "title": "今天想创造什么？"
+    },
+    "conversationBanner": {
+      "eyebrow": "RETHEME",
+      "title": "保持专注",
+      "description": "继续当前会话。",
+      "asset": "assets/hero.svg",
+      "fit": "cover",
+      "position": "center"
+    },
+    "decorations": []
+  },
+  "locales": {
+    "en": {
+      "name": "Example Theme",
+      "description": "Replace this with the English theme description.",
+      "experience": {
+        "homeHero": {
+          "eyebrow": "RETHEME",
+          "title": "Create your theme",
+          "description": "Cover the interface through stable slots."
+        },
+        "homePrompt": {
+          "title": "What will we create today?"
+        },
+        "conversationBanner": {
+          "eyebrow": "RETHEME",
+          "title": "Stay focused",
+          "description": "Continue the current conversation."
+        }
+      }
+    }
+  }
+}

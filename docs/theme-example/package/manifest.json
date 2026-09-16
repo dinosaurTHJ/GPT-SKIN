@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "id": "studio.example.protocol-preview",
+  "name": "协议预览",
+  "description": "用于验证 ReTheme 主题协议的最小参考主题。",
+  "version": "1.0.0",
+  "author": {
+    "id": "studio.example",
+    "name": "Example Studio"
+  },
+  "testedCodexVersions": [],
+  "styles": [
+    "styles/tokens.css",
+    "styles/overrides.css"
+  ],
+  "slots": [
+    "app.shell",
+    "app.background",
+    "sidebar",
+    "sidebar.item.active",
+    "main",
+    "main.background",
+    "home.hero",
+    "home.prompt.title",
+    "home.card",
+    "home.card.label",
+    "conversation.banner",
+    "composer",
+    "composer.submit",
+    "settings.canvas",
+    "settings.card",
+    "settings.switch.track.checked"
+  ],
+  "permissions": [],
+  "preview": {
+    "background": "#eef4ff",
+    "surface": "#ffffff",
+    "accent": "#526ee8"
+  },
+  "experience": {
+    "homeHero": {
+      "eyebrow": "RETHEME",
+      "title": "创造自己的工作氛围",
+      "description": "稳定插槽驱动的最小示例主题。",
+      "asset": "assets/hero.svg",
+      "fit": "cover",
+      "position": "center"
+    },
+    "homePrompt": {
+      "title": "今天想创造什么？"
+    },
+    "conversationBanner": {
+      "eyebrow": "RETHEME",
+      "title": "保持专注",
+      "description": "让当前会话保持清晰。",
+      "asset": "assets/hero.svg",
+      "fit": "cover",
+      "position": "center"
+    },
+    "assets": [
+      {
+        "slot": "app.background",
+        "asset": "assets/hero.svg",
+        "lightAsset": "assets/hero.svg",
+        "darkAsset": "assets/hero.svg"
+      }
+    ],
+    "decorations": []
+  },
+  "locales": {
+    "en": {
+      "name": "Protocol Preview",
+      "description": "A minimal reference theme for the ReTheme protocol.",
+      "experience": {
+        "homeHero": {
+          "eyebrow": "RETHEME",
+          "title": "Create your own atmosphere",
+          "description": "A minimal theme built entirely on stable slots."
+        },
+        "homePrompt": {
+          "title": "What will we create today?"
+        },
+        "conversationBanner": {
+          "eyebrow": "RETHEME",
+          "title": "Stay focused",
+          "description": "Keep the current conversation clear."
+        }
+      }
+    }
+  }
+}

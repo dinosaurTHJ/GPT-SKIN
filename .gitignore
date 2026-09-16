@@ -1,0 +1,14 @@
+node_modules/
+dist/
+artifacts/
+src-tauri/target/
+target/
+src-tauri/config/api.toml
+src-tauri/config/security.toml
+.DS_Store
+*.log
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
+.tauri-signing-private-key
+web/.astro/

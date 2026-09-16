@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <mask id="holes" maskUnits="userSpaceOnUse" x="0" y="0" width="1024" height="1024">
+      <rect width="1024" height="1024" fill="#ffffff"/>
+      <g transform="translate(512 512) scale(1.30) translate(-512 -512) translate(-64 -42) rotate(-15 438 700)">
+        <circle cx="558" cy="700" r="44" fill="#000000"/>
+        <circle cx="660" cy="700" r="44" fill="#000000"/>
+        <circle cx="762" cy="700" r="44" fill="#000000"/>
+      </g>
+    </mask>
+  </defs>
+  <g mask="url(#holes)" transform="translate(512 512) scale(1.30) translate(-512 -512)">
+    <rect x="386" y="605" width="436" height="190" rx="62" fill="#ff2d3f" opacity="0.62" transform="translate(-64 -42) rotate(-79 438 700)"/>
+    <rect x="386" y="605" width="436" height="190" rx="62" fill="#ffc400" opacity="0.8" transform="translate(-64 -42) rotate(-47 438 700)"/>
+    <rect x="386" y="605" width="436" height="190" rx="62" fill="#1f6bff" transform="translate(-64 -42) rotate(-15 438 700)"/>
+  </g>
+</svg>

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f1f2f0"/>
+    </linearGradient>
+    <clipPath id="sq"><rect x="100" y="100" width="824" height="824" rx="184"/></clipPath>
+    <!-- holes punch through every card layer down to the background -->
+    <mask id="holes" maskUnits="userSpaceOnUse" x="0" y="0" width="1024" height="1024">
+      <rect width="1024" height="1024" fill="#ffffff"/>
+      <g transform="translate(-64 -42) rotate(-15 438 700)">
+        <circle cx="558" cy="700" r="44" fill="#000000"/>
+        <circle cx="660" cy="700" r="44" fill="#000000"/>
+        <circle cx="762" cy="700" r="44" fill="#000000"/>
+      </g>
+    </mask>
+  </defs>
+  <!-- macOS icon grid: 824x824 squircle centered, ~10% transparent margin -->
+  <g clip-path="url(#sq)">
+    <rect x="100" y="100" width="824" height="824" fill="url(#bg)"/>
+    <!-- swatch fan: three colored cards pivoting around a common corner -->
+    <g mask="url(#holes)">
+      <rect x="386" y="605" width="436" height="190" rx="62" fill="#ff2d3f" opacity="0.62" transform="translate(-64 -42) rotate(-79 438 700)"/>
+      <rect x="386" y="605" width="436" height="190" rx="62" fill="#ffc400" opacity="0.8" transform="translate(-64 -42) rotate(-47 438 700)"/>
+      <rect x="386" y="605" width="436" height="190" rx="62" fill="#1f6bff" transform="translate(-64 -42) rotate(-15 438 700)"/>
+    </g>
+  </g>
+</svg>

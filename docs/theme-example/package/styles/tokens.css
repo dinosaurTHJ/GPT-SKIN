@@ -1,0 +1,21 @@
+/* Light is the base palette. Keep repeated visual decisions in semantic tokens. */
+:root[data-ct-theme="studio.example.protocol-preview"] {
+  --rt-page-background: #eef4ff;
+  --rt-surface: rgba(255, 255, 255, 0.82);
+  --rt-sidebar-background: rgba(244, 247, 255, 0.9);
+  --rt-text: #18213d;
+  --rt-accent: #526ee8;
+  --rt-accent-soft: rgba(82, 110, 232, 0.14);
+  --rt-border: rgba(82, 110, 232, 0.2);
+  --rt-radius: 14px;
+}
+/* ReTheme mirrors ChatGPT's actual appearance onto data-ct-color-scheme. */
+:root[data-ct-theme="studio.example.protocol-preview"][data-ct-color-scheme="dark"] {
+  --rt-page-background: #101521;
+  --rt-surface: rgba(28, 36, 55, 0.84);
+  --rt-sidebar-background: rgba(17, 23, 36, 0.92);
+  --rt-text: #edf2ff;
+  --rt-accent: #9cafef;
+  --rt-accent-soft: rgba(156, 175, 239, 0.16);
+  --rt-border: rgba(156, 175, 239, 0.22);
+}

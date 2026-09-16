@@ -1,0 +1,39 @@
+{
+  "name": "@duxweb/retheme-theme-skill",
+  "version": "0.1.0",
+  "description": "Install the ReTheme theme development Skill, create starter themes, and validate source packages without cloning ReTheme.",
+  "homepage": "https://github.com/duxweb/ReTheme#build-a-theme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/duxweb/ReTheme.git",
+    "directory": "packages/retheme-theme-skill"
+  },
+  "bugs": {
+    "url": "https://github.com/duxweb/ReTheme/issues"
+  },
+  "license": "BSD-3-Clause",
+  "type": "module",
+  "bin": {
+    "retheme-theme": "bin/retheme-theme.mjs",
+    "retheme-theme-skill": "bin/retheme-theme.mjs"
+  },
+  "files": [
+    "bin",
+    "native",
+    "skill",
+    "LICENSE",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prepack": "node scripts/prepare-package.mjs",
+    "postpack": "node scripts/cleanup-package.mjs",
+    "stage:local": "node scripts/stage-local-validator.mjs",
+    "test:package": "node scripts/test-package.mjs"
+  }
+}

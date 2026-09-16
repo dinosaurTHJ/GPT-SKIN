@@ -1,0 +1,26 @@
+/* Light palette and shared semantic values. Never set a font family. */
+:root[data-ct-theme="studio.example.theme-name"] {
+  --example-app-background: #f3f6ff;
+  --example-sidebar-background: rgba(247, 249, 255, 0.92);
+  --example-surface: rgba(255, 255, 255, 0.86);
+  --example-text: #1a2340;
+  --example-text-muted: #64708e;
+  --example-accent: #5b6fe8;
+  --example-accent-soft: rgba(91, 111, 232, 0.14);
+  --example-border: rgba(91, 111, 232, 0.22);
+  --example-radius: 14px;
+  --example-shadow: 0 14px 34px rgba(38, 54, 116, 0.1);
+}
+
+/* ReTheme mirrors ChatGPT's active appearance here. */
+:root[data-ct-theme="studio.example.theme-name"][data-ct-color-scheme="dark"] {
+  --example-app-background: #101522;
+  --example-sidebar-background: rgba(16, 22, 35, 0.94);
+  --example-surface: rgba(29, 37, 57, 0.88);
+  --example-text: #edf2ff;
+  --example-text-muted: #aeb9d5;
+  --example-accent: #9aacef;
+  --example-accent-soft: rgba(154, 172, 239, 0.17);
+  --example-border: rgba(154, 172, 239, 0.24);
+  --example-shadow: 0 16px 38px rgba(0, 0, 0, 0.24);
+}
