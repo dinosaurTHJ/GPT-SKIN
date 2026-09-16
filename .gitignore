@@ -1,6 +1,7 @@
 node_modules/
 dist/
 artifacts/
+graphify-out/
 src-tauri/target/
 target/
 src-tauri/config/api.toml

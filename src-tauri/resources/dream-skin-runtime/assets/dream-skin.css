@@ -192,7 +192,7 @@ html[data-dream-skin="active"] [class~="bg-token-dropdown-background"] {
    dark after artwork analysis selects the light shell. Keep the surface,
    controls, and copy on the same readable light palette. */
 html[data-dream-skin="active"][data-dream-shell="light"]
-  :is([role="dialog"], [aria-modal="true"], [data-radix-popper-content-wrapper]) {
+  :is([role="dialog"], [aria-modal="true"]) {
   color: var(--ds-text) !important;
   background: rgb(var(--ds-panel-rgb) / .92) !important;
   border-color: rgb(var(--ds-muted-rgb) / .24) !important;
@@ -1966,12 +1966,11 @@ html[data-dream-skin="active"][data-dream-shell="light"]
   opacity: 1 !important;
 }
 
-/* Menus, model pickers, dialogs and generic floating popovers use different
-   libraries in Codex.  Normalise every native floating surface in light mode
-   so a dark menu cannot reappear over a pale image. */
-html[data-dream-skin="active"][data-dream-shell="light"]
+/* 菜单、模型选择器、弹窗和个人菜单使用同一套半透明面板。
+   ds-text/ds-muted 由背景明暗分析决定，浅图保持深色字，暗图自动转为浅色字。 */
+html[data-dream-skin="active"]
   :is([role="dialog"], [role="alertdialog"], [role="menu"], [role="listbox"],
-    [aria-modal="true"], [data-radix-popper-content-wrapper],
+    [aria-modal="true"],
     [data-radix-popper-content], [data-floating-ui-portal] > *) {
   color: var(--ds-text) !important;
   -webkit-text-fill-color: var(--ds-text) !important;
@@ -1983,13 +1982,30 @@ html[data-dream-skin="active"][data-dream-shell="light"]
   --color-token-foreground: var(--ds-text) !important;
   --color-token-text-primary: var(--ds-text) !important;
   --color-token-text-secondary: var(--ds-muted) !important;
-  background: rgb(var(--ds-panel-rgb) / .96) !important;
+  background: rgb(var(--ds-panel-rgb) / .64) !important;
+  background-image: none !important;
   border-color: rgb(var(--ds-muted-rgb) / .26) !important;
-  box-shadow: 0 12px 30px rgb(var(--ds-bg-rgb) / .18) !important;
-  backdrop-filter: blur(12px) saturate(106%) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
 }
 
-html[data-dream-skin="active"][data-dream-shell="light"]
+/* Radix 外层只负责定位，背景由内部菜单绘制一次。
+   外层和菜单同时铺底会叠成近乎不透明的白块；不改整体 opacity，保持文字清晰。 */
+html[data-dream-skin="active"] [data-radix-popper-content-wrapper]:not([role]) {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+/* 左下角个人菜单覆盖在会话列表上；该列表本身也是文字，低透明度会形成两层字。
+   菜单提高遮挡度，仍按 ds-text / ds-muted 跟随背景明暗选择字体颜色。 */
+html[data-dream-skin="active"] [role="menu"] {
+  background: rgb(var(--ds-panel-rgb) / .94) !important;
+  border-color: rgb(var(--ds-muted-rgb) / .30) !important;
+}
+
+html[data-dream-skin="active"]
   :is([role="dialog"], [role="alertdialog"], [role="menu"], [role="listbox"],
     [aria-modal="true"], [data-radix-popper-content-wrapper],
     [data-radix-popper-content], [data-floating-ui-portal] > *)
@@ -2873,56 +2889,71 @@ html[data-dream-skin="active"][data-dream-art-wide="true"]
   background-image: none !important;
 }
 
-/* Settings are rendered inside the main route instead of a dialog in recent
-   Codex builds. The light-shell overlay rules therefore do not reach their
-   native token surfaces unless this route is styled explicitly. */
-html[data-dream-skin="active"][data-dream-shell="light"] main:has([data-settings-panel-slug]) {
+/* 设置页在主路由内渲染。将页面、偏好卡片和子页面统一为半透明，
+   让背景可见，同时用主题分析出的文字色保证深浅图片上的可读性。 */
+html[data-dream-skin="active"] main:has([data-settings-panel-slug]) {
   color: var(--ds-text) !important;
-  background: rgb(var(--ds-panel-rgb) / .96) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+  background: rgb(var(--ds-panel-rgb) / .54) !important;
   background-image: none !important;
 }
 
-html[data-dream-skin="active"][data-dream-shell="light"] main:has([data-settings-panel-slug])
+html[data-dream-skin="active"] main:has([data-settings-panel-slug])
   :is([data-settings-panel-slug], [class~="bg-token-main-surface-primary"],
     [class~="bg-token-surface-primary"], [class~="bg-token-dropdown-background"],
     [class~="bg-token-menu-background"], [class~="bg-background-primary"],
     [class~="bg-background-primary-soft"], [class~="bg-surface-elevated-secondary"]) {
   color: var(--ds-text) !important;
   -webkit-text-fill-color: var(--ds-text) !important;
-  background: rgb(var(--ds-panel-rgb) / .96) !important;
+  background: rgb(var(--ds-panel-rgb) / .60) !important;
   background-image: none !important;
   border-color: rgb(var(--ds-muted-rgb) / .24) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
 }
 
-html[data-dream-skin="active"][data-dream-shell="light"] main:has([data-settings-panel-slug])
+html[data-dream-skin="active"] main:has([data-settings-panel-slug])
   :is([class~="text-token-text-secondary"], [class~="text-token-text-tertiary"],
     [class~="text-token-muted-foreground"], [class~="text-token-description-foreground"]) {
   color: var(--ds-muted) !important;
   -webkit-text-fill-color: var(--ds-muted) !important;
 }
 
-/* The settings navigation is a sibling of the content main, so route scoping
-   must start at body. These are the current Windows settings content and
-   preference-card surfaces; their native Electron tokens otherwise stay dark. */
-html[data-dream-skin="active"][data-dream-shell="light"] body:has([data-settings-panel-slug])
+/* 设置导航与内容区是同级节点，因此从 body 开始限定范围。 */
+html[data-dream-skin="active"] body:has([data-settings-panel-slug])
   main [class~="electron:bg-surface"] {
   color: var(--ds-text) !important;
-  background: rgb(var(--ds-panel-rgb) / .96) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+  background: rgb(var(--ds-panel-rgb) / .54) !important;
   background-image: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
 }
 
-html[data-dream-skin="active"][data-dream-shell="light"] body:has([data-settings-panel-slug])
+html[data-dream-skin="active"] body:has([data-settings-panel-slug])
   main div.rounded-2xl.overflow-hidden.border.border-default {
   color: var(--ds-text) !important;
-  background: rgb(var(--ds-panel-2-rgb) / .84) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+  background: rgb(var(--ds-panel-2-rgb) / .52) !important;
   border-color: rgb(var(--ds-muted-rgb) / .24) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
 }
 
-html[data-dream-skin="active"][data-dream-shell="light"] body:has([data-settings-panel-slug])
+html[data-dream-skin="active"] body:has([data-settings-panel-slug])
   [class~="bg-background-primary-soft/90"] {
   color: var(--ds-text) !important;
-  background: rgb(var(--ds-panel-rgb) / .88) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+  background: rgb(var(--ds-panel-rgb) / .48) !important;
   border-color: rgb(var(--ds-muted-rgb) / .24) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+html[data-dream-skin="active"] body:has([data-settings-panel-slug])
+  main :is(h1, h2, h3, h4, label, button, input, select, textarea, [role="tab"], [role="switch"]) {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
 }
 
 /* 最大化任务窗口使用稳定原生标题层，避免任务标题、状态文案和窗口控件相互干扰。 */
