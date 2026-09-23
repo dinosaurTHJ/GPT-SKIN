@@ -20,8 +20,6 @@ const DEFAULT_IMAGE_LIBRARY_ROOT: &str = r"C:\image";
 const IMAGE_LIBRARY_CONFIG_FILE: &str = "image-library-root.txt";
 const IMAGE_OPACITY_CONFIG_FILE: &str = "image-opacity.txt";
 const DEFAULT_IMAGE_OPACITY: f64 = 0.8;
-const MAX_LOCAL_IMAGE_BYTES: u64 = 10 * 1024 * 1024;
-const MAX_LOCAL_VIDEO_BYTES: u64 = 20 * 1024 * 1024;
 const SUPPORTED_IMAGE_EXTENSIONS: &[&str] = &["jpg", "jpeg", "png", "webp", "gif"];
 const SUPPORTED_VIDEO_EXTENSIONS: &[&str] = &["mp4", "webm"];
 const DREAM_SKIN_PORT: i32 = 9335;
@@ -170,16 +168,13 @@ fn validate_image_path(raw_path: &str, app: &AppHandle) -> Result<(PathBuf, Stri
         .and_then(|value| value.to_str())
         .map(|value| value.to_ascii_lowercase())
         .ok_or_else(|| "背景资源缺少扩展名".to_owned())?;
-    let maximum_bytes = if SUPPORTED_IMAGE_EXTENSIONS.contains(&extension.as_str()) {
-        MAX_LOCAL_IMAGE_BYTES
-    } else if SUPPORTED_VIDEO_EXTENSIONS.contains(&extension.as_str()) {
-        MAX_LOCAL_VIDEO_BYTES
-    } else {
+    if !SUPPORTED_IMAGE_EXTENSIONS.contains(&extension.as_str())
+        && !SUPPORTED_VIDEO_EXTENSIONS.contains(&extension.as_str())
+    {
         return Err("仅支持 JPG、PNG、WebP、GIF、MP4 和 WebM".into());
-    };
-    if metadata.len() > maximum_bytes {
-        let limit = maximum_bytes / 1024 / 1024;
-        return Err(format!("背景资源超过 {limit} MB，无法作为主题资源"));
+    }
+    if metadata.len() == 0 {
+        return Err("背景资源不能为空".into());
     }
     Ok((path, extension, metadata.len()))
 }
@@ -476,14 +471,12 @@ fn list_image_assets_sync(app: AppHandle) -> Result<Vec<ImageAsset>, String> {
                 .and_then(|value| value.to_str())
                 .map(|value| value.to_ascii_lowercase());
             let Some(extension) = extension else { continue };
-            let maximum_bytes = if SUPPORTED_IMAGE_EXTENSIONS.contains(&extension.as_str()) {
-                MAX_LOCAL_IMAGE_BYTES
-            } else if SUPPORTED_VIDEO_EXTENSIONS.contains(&extension.as_str()) {
-                MAX_LOCAL_VIDEO_BYTES
-            } else {
+            if !SUPPORTED_IMAGE_EXTENSIONS.contains(&extension.as_str())
+                && !SUPPORTED_VIDEO_EXTENSIONS.contains(&extension.as_str())
+            {
                 continue;
-            };
-            if metadata.len() > maximum_bytes {
+            }
+            if metadata.len() == 0 {
                 continue;
             }
             let name = path

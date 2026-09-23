@@ -2,8 +2,6 @@
   . (Join-Path $PSScriptRoot 'config-utf8.ps1')
 }
 
-$script:DreamSkinMaxImageBytes = 10 * 1024 * 1024
-$script:DreamSkinMaxVideoBytes = 20 * 1024 * 1024
 $script:DreamSkinMaxThemeArchiveBytes = 32 * 1024 * 1024
 $script:DreamSkinMaxThemeArchiveExpandedBytes = 64 * 1024 * 1024
 $script:DreamSkinMaxThemeArchiveEntries = 32
@@ -309,17 +307,11 @@ function Assert-DreamSkinImageFile {
     throw "Theme media does not exist: $fullPath"
   }
   $extension = [System.IO.Path]::GetExtension($fullPath).ToLowerInvariant()
-  $isVideo = $extension -in @('.mp4', '.webm')
   if ($extension -notin @('.png', '.jpg', '.jpeg', '.webp', '.gif', '.mp4', '.webm')) {
     throw "Unsupported media format: $extension"
   }
   $length = (Get-Item -LiteralPath $fullPath -Force).Length
   if ($length -lt 1) { throw 'Theme media cannot be empty.' }
-  $maximumBytes = if ($isVideo) { $script:DreamSkinMaxVideoBytes } else { $script:DreamSkinMaxImageBytes }
-  if ($length -gt $maximumBytes) {
-    $limit = [int]($maximumBytes / 1MB)
-    throw "Theme media exceeds the $limit MiB limit."
-  }
   if (-not $SkipImageMetadata) {
     Get-DreamSkinValidatedImageMetadata -Path $fullPath
   }

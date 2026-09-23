@@ -44,8 +44,6 @@ const SKIN_VERSION = "1.5.14";
 // literal `const SKIN_VERSION = "...";` line, so the export stays a separate
 // statement rather than an inline `export const`.
 export { SKIN_VERSION };
-const MAX_IMAGE_ART_BYTES = 10 * 1024 * 1024;
-const MAX_VIDEO_ART_BYTES = 20 * 1024 * 1024;
 const IMAGE_ART_EXTENSIONS = new Set([".png", ".jpg", ".jpeg", ".webp", ".gif"]);
 const VIDEO_ART_EXTENSIONS = new Set([".mp4", ".webm"]);
 const ART_MIME_TYPES = new Map([
@@ -620,14 +618,8 @@ export async function loadTheme(themeDir) {
   ]);
   if (!imageStat.isFile()) throw new Error("Theme media is not a file");
   if (imageStat.size < 1) throw new Error("Theme media cannot be empty");
-  const maximumBytes = mediaType === "video" ? MAX_VIDEO_ART_BYTES : MAX_IMAGE_ART_BYTES;
-  if (imageStat.size > maximumBytes) {
-    throw new Error(`Theme media exceeds the ${maximumBytes / 1024 / 1024} MB limit`);
-  }
   const imageBytes = await fs.readFile(realImagePath);
-  if (imageBytes.length < 1 || imageBytes.length > maximumBytes) {
-    throw new Error(`Theme media must be between 1 byte and ${maximumBytes / 1024 / 1024} MB`);
-  }
+  if (imageBytes.length < 1) throw new Error("Theme media cannot be empty");
   const artMetadata = mediaType === "image" ? readImageMetadata(imageBytes, extension) : null;
   if (mediaType === "image" && !artMetadata) {
     throw new Error("Theme image metadata is invalid or exceeds the 16384px / 50MP safety limit");
