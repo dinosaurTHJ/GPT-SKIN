@@ -35,10 +35,18 @@ html[data-dream-skin="active"] {
     rgb(var(--ds-bg-rgb) / .76) 50%,
     rgb(var(--ds-bg-rgb) / .18) 84%,
     transparent 100%);
-  /* 任务背景直接展示原图，不额外叠加遮罩。 */
-  --ds-task-shade: none;
-  --ds-task-fade: none;
-  --ds-task-full-veil: none;
+  --ds-task-shade: linear-gradient(90deg,
+    rgb(var(--ds-bg-rgb) / .56) 0%,
+    rgb(var(--ds-bg-rgb) / .36) 48%,
+    rgb(var(--ds-bg-rgb) / .12) 100%);
+  --ds-task-fade: linear-gradient(180deg,
+    rgb(var(--ds-bg-rgb) / .10) 0%,
+    rgb(var(--ds-bg-rgb) / .18) 32%,
+    rgb(var(--ds-bg-rgb) / .76) 68%,
+    rgb(var(--ds-bg-rgb) / 1) 100%);
+  --ds-task-full-veil: linear-gradient(
+    rgb(var(--ds-bg-rgb) / .10),
+    rgb(var(--ds-bg-rgb) / .10));
   --ds-immersive-edge: rgb(var(--ds-bg-rgb) / .40);
   --ds-immersive-mid: rgb(var(--ds-bg-rgb) / .26);
   --ds-immersive-far: rgb(var(--ds-bg-rgb) / .16);
@@ -77,10 +85,18 @@ html[data-dream-skin="active"][data-dream-shell="light"] {
     rgb(var(--ds-panel-rgb) / .82) 50%,
     rgb(var(--ds-panel-rgb) / .20) 84%,
     transparent 100%);
-  /* 浅色模式同样不在任务背景上叠加遮罩。 */
-  --ds-task-shade: none;
-  --ds-task-fade: none;
-  --ds-task-full-veil: none;
+  --ds-task-shade: linear-gradient(90deg,
+    rgb(var(--ds-bg-rgb) / .68) 0%,
+    rgb(var(--ds-bg-rgb) / .40) 48%,
+    rgb(var(--ds-bg-rgb) / .12) 100%);
+  --ds-task-fade: linear-gradient(180deg,
+    rgb(var(--ds-bg-rgb) / .08) 0%,
+    rgb(var(--ds-bg-rgb) / .22) 34%,
+    rgb(var(--ds-bg-rgb) / .78) 70%,
+    rgb(var(--ds-bg-rgb) / 1) 100%);
+  --ds-task-full-veil: linear-gradient(
+    rgb(var(--ds-panel-rgb) / .10),
+    rgb(var(--ds-panel-rgb) / .10));
   --ds-immersive-edge: rgb(var(--ds-panel-rgb) / .44);
   --ds-immersive-mid: rgb(var(--ds-panel-rgb) / .28);
   --ds-immersive-far: rgb(var(--ds-panel-rgb) / .14);
@@ -319,8 +335,10 @@ html[data-dream-skin="active"][data-dream-media="video"] body {
 
 html[data-dream-skin="active"][data-dream-media="video"]
   main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) {
-  /* 视频背景不再铺设额外暗色蒙版。 */
-  background: transparent !important;
+  background: linear-gradient(
+    rgb(var(--ds-bg-rgb) / .34),
+    rgb(var(--ds-bg-rgb) / .18)
+  ) !important;
 }
 
 html[data-dream-skin="active"] aside.app-shell-left-panel {
@@ -3155,11 +3173,4 @@ html[data-dream-skin="active"][data-dream-shell="dark"]
   color: var(--ds-muted) !important;
   -webkit-text-fill-color: var(--ds-muted) !important;
   opacity: 1 !important;
-}
-
-/* 主题元数据可能按安全区域重新定义上述变量；最终仍统一关闭背景蒙版。 */
-html[data-dream-skin="active"] {
-  --ds-task-shade: none !important;
-  --ds-task-fade: none !important;
-  --ds-task-full-veil: none !important;
 }
