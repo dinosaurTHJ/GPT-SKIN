@@ -23,6 +23,8 @@ try {
   Assert-DreamSkinPort -Port $Port
 
   $StateRoot = Join-Path $env:LOCALAPPDATA 'CodexDreamSkin'
+  # 先暂停自动恢复，避免恢复官方主题期间被后台守护进程重新注入皮肤。
+  Set-DreamSkinPaused -Paused $true -StateRoot $StateRoot | Out-Null
   $language = Resolve-DreamSkinLanguage -StateRoot $StateRoot
   $themePaths = Get-DreamSkinThemePaths -StateRoot $StateRoot
   Ensure-DreamSkinManagedDirectory -Path $themePaths.Root -Root $themePaths.Root

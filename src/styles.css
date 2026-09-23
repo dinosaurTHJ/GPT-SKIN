@@ -603,10 +603,10 @@ button:focus-visible {
 .image-card:hover { border-color: var(--line-strong); transform: translateY(-1px); }
 .image-card.is-active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 10px 28px var(--accent-soft); }
 .image-card-cover { position: relative; display: block; width: 100%; height: 132px; overflow: hidden; padding: 0; border: 0; color: var(--ink); background: var(--surface-2); cursor: pointer; font: inherit; text-align: left; }
-.image-card-cover img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 180ms ease, filter 180ms ease; }
-.image-card-cover:hover img { transform: scale(1.035); filter: saturate(1.08); }
+.image-card-cover :is(img, video) { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 180ms ease, filter 180ms ease; }
+.image-card-cover:hover :is(img, video) { transform: scale(1.035); filter: saturate(1.08); }
 .image-card-cover:disabled { cursor: not-allowed; }
-.image-card-cover:disabled img { filter: grayscale(0.2); opacity: 0.55; }
+.image-card-cover:disabled :is(img, video) { filter: grayscale(0.2); opacity: 0.55; }
 .image-card-cover > span:first-of-type:not(.image-card-overlay) { display: grid; place-items: center; width: 100%; height: 100%; padding: 12px; color: var(--muted); font-size: 12px; text-align: center; }
 .image-card-overlay { position: absolute; right: 9px; bottom: 8px; padding: 5px 9px; border: 1px solid rgba(255,255,255,0.16); border-radius: 999px; color: #fff; background: rgba(10, 11, 17, 0.72); backdrop-filter: blur(8px); font-size: 11px; font-weight: 700; opacity: 0; transition: opacity 140ms ease; }
 .image-card-cover:hover .image-card-overlay, .image-card.is-active .image-card-overlay { opacity: 1; }

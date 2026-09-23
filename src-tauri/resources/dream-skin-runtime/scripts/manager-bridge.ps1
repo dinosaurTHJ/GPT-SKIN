@@ -27,6 +27,14 @@ function Get-ManagerSession {
   $codex = Get-DreamSkinCodexInstall
   $statePort = [int]$state.port
   $identity = Get-DreamSkinVerifiedCdpIdentity -Port $statePort -Codex $codex
+  if ($null -eq $identity) {
+    # Store 更新后，正在运行的旧版官方进程仍可能持有可用的 CDP 会话。
+    $registered = Get-DreamSkinVerifiedCdpIdentityForAnyRegistered -Port $statePort
+    if ($null -ne $registered) {
+      $codex = $registered.Codex
+      $identity = $registered.Identity
+    }
+  }
   if ($null -eq $identity) { return $null }
   return [pscustomobject]@{
     Codex = $codex
@@ -40,11 +48,14 @@ function Start-ManagerSession {
   $startScript = Join-Path $PSScriptRoot 'start-dream-skin.ps1'
   $result = Invoke-DreamSkinNative -FilePath $PowerShell -ArgumentList @(
     '-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'RemoteSigned',
-    '-File', $startScript, '-Port', "$Port", '-RestartExisting', '-OneShot'
+    '-File', $startScript, '-Port', "$Port", '-OneShot'
   )
   if ($result.ExitCode -ne 0) {
     $details = (($result.Output | Select-Object -Last 8) -join "`n").Trim()
     if (-not $details) { $details = 'Dream Skin startup failed.' }
+    if ($details -like '*Codex is open without a verified Dream Skin CDP endpoint*') {
+      throw 'ChatGPT is already open without a verified skin connection. To avoid restarting it, close ChatGPT yourself and open it once from Skin Studio. Later Apply actions will update the running window.'
+    }
     throw $details
   }
   $session = Get-ManagerSession
@@ -73,6 +84,21 @@ function Invoke-ManagerInjection {
     if (-not $details) { $details = 'Theme injection failed.' }
     throw $details
   }
+}
+
+function Ensure-ManagerAutoReapply {
+  param([Parameter(Mandatory = $true)][object]$Session)
+  # 换肤主窗口退出后，独立守护进程仍可在 ChatGPT 下一次启动时恢复已保存的主题。
+  if (Test-DreamSkinPaused -StateRoot $StateRoot) { return }
+  $autoReapplyScript = Join-Path $PSScriptRoot 'auto-reapply-dream-skin.ps1'
+  if (-not (Test-Path -LiteralPath $autoReapplyScript -PathType Leaf)) {
+    throw 'Dream Skin automatic reapply helper is missing from the runtime.'
+  }
+  $arguments = ConvertTo-DreamSkinArgumentLine -Arguments @(
+    '-NoLogo', '-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'RemoteSigned',
+    '-File', $autoReapplyScript, '-Port', "$($Session.Port)"
+  )
+  Start-Process -FilePath $PowerShell -ArgumentList $arguments -WindowStyle Hidden | Out-Null
 }
 
 function Invoke-ManagerRestore {
@@ -112,6 +138,7 @@ try {
   switch ($Action) {
     'ensure-session' {
       $session = Ensure-ManagerSession
+      Ensure-ManagerAutoReapply -Session $session
       [pscustomobject]@{ active = -not (Test-DreamSkinPaused -StateRoot $StateRoot); port = $session.Port } |
         ConvertTo-Json -Compress
     }
@@ -120,7 +147,13 @@ try {
       Assert-DreamSkinImageFile -Path $ImagePath
       $session = Ensure-ManagerSession
       Set-DreamSkinPaused -Paused $false -StateRoot $StateRoot | Out-Null
-      $null = Initialize-DreamSkinThemeStore -SkillRoot $SkillRoot -StateRoot $StateRoot
+      $themePaths = Get-DreamSkinThemePaths -StateRoot $StateRoot
+      if (Test-Path -LiteralPath (Join-Path $themePaths.Active 'theme.json') -PathType Leaf) {
+        # 预设只在首次建库时初始化；每次应用仍先恢复未完成的主题替换事务。
+        Invoke-DreamSkinThemeReplacementRecovery -Paths $themePaths
+      } else {
+        $null = Initialize-DreamSkinThemeStore -SkillRoot $SkillRoot -StateRoot $StateRoot
+      }
       $theme = [pscustomobject]@{
         schemaVersion = 1
         id = 'custom'
@@ -131,6 +164,7 @@ try {
       }
       $null = Set-DreamSkinActiveTheme -ImagePath $ImagePath -Theme $theme -StateRoot $StateRoot
       Invoke-ManagerInjection -Session $session
+      Ensure-ManagerAutoReapply -Session $session
       [pscustomobject]@{ active = $true; imagePath = [System.IO.Path]::GetFullPath($ImagePath); opacity = [math]::Round($Opacity, 3); port = $session.Port } |
         ConvertTo-Json -Compress
     }
@@ -141,7 +175,9 @@ try {
           ConvertTo-Json -Compress
         break
       }
-      Set-ManagerOpacity -Session $session | ConvertTo-Json -Compress
+      $opacityResult = Set-ManagerOpacity -Session $session
+      if ($opacityResult.active) { Ensure-ManagerAutoReapply -Session $session }
+      $opacityResult | ConvertTo-Json -Compress
     }
     'restore' {
       Invoke-ManagerRestore

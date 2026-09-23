@@ -18,7 +18,7 @@ export async function getImageLibraryRoot(): Promise<string> {
 export async function chooseImageLibraryRoot(): Promise<string | null> {
   if (!isDesktopRuntime()) return null;
   const selected = await open({
-    title: "选择本地图片目录",
+    title: "选择本地背景目录",
     multiple: false,
     directory: true,
   });

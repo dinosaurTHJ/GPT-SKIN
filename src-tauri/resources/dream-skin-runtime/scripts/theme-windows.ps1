@@ -3,6 +3,7 @@
 }
 
 $script:DreamSkinMaxImageBytes = 10 * 1024 * 1024
+$script:DreamSkinMaxVideoBytes = 20 * 1024 * 1024
 $script:DreamSkinMaxThemeArchiveBytes = 32 * 1024 * 1024
 $script:DreamSkinMaxThemeArchiveExpandedBytes = 64 * 1024 * 1024
 $script:DreamSkinMaxThemeArchiveEntries = 32
@@ -285,15 +286,16 @@ function Get-DreamSkinValidatedImageMetadata {
   }
   $node = Get-DreamSkinNodeRuntime
   $metadataScript = Join-Path $PSScriptRoot 'image-metadata.mjs'
-  $output = @(& $node.Path $metadataScript '--check' ([System.IO.Path]::GetFullPath($Path)) 2>&1)
+  $output = @(& $node.Path $metadataScript '--check-media' ([System.IO.Path]::GetFullPath($Path)) 2>&1)
   if ($LASTEXITCODE -ne 0) {
-    throw "Image metadata is invalid or exceeds the 16384px / 50MP safety limit: $Path"
+    throw "Media metadata or container signature is invalid: $Path"
   }
   try { $metadata = ($output -join "`n") | ConvertFrom-Json -ErrorAction Stop } catch {
     throw "Image metadata helper returned invalid output: $Path"
   }
-  if ($null -eq $metadata -or $null -eq $metadata.width -or $null -eq $metadata.height) {
-    throw "Image metadata is invalid or exceeds the 16384px / 50MP safety limit: $Path"
+  if ($null -eq $metadata -or $metadata.mediaType -notin @('image', 'video') -or
+    ($metadata.mediaType -eq 'image' -and ($null -eq $metadata.width -or $null -eq $metadata.height))) {
+    throw "Media metadata or container signature is invalid: $Path"
   }
 }
 
@@ -304,16 +306,19 @@ function Assert-DreamSkinImageFile {
   )
   $fullPath = [System.IO.Path]::GetFullPath($Path)
   if (-not (Test-Path -LiteralPath $fullPath -PathType Leaf)) {
-    throw "Image does not exist: $fullPath"
+    throw "Theme media does not exist: $fullPath"
   }
   $extension = [System.IO.Path]::GetExtension($fullPath).ToLowerInvariant()
-  if ($extension -notin @('.png', '.jpg', '.jpeg', '.webp')) {
-    throw "Unsupported image format: $extension"
+  $isVideo = $extension -in @('.mp4', '.webm')
+  if ($extension -notin @('.png', '.jpg', '.jpeg', '.webp', '.gif', '.mp4', '.webm')) {
+    throw "Unsupported media format: $extension"
   }
   $length = (Get-Item -LiteralPath $fullPath -Force).Length
-  if ($length -lt 1) { throw 'Theme image cannot be empty.' }
-  if ($length -gt $script:DreamSkinMaxImageBytes) {
-    throw 'Theme image exceeds the 10 MiB limit.'
+  if ($length -lt 1) { throw 'Theme media cannot be empty.' }
+  $maximumBytes = if ($isVideo) { $script:DreamSkinMaxVideoBytes } else { $script:DreamSkinMaxImageBytes }
+  if ($length -gt $maximumBytes) {
+    $limit = [int]($maximumBytes / 1MB)
+    throw "Theme media exceeds the $limit MiB limit."
   }
   if (-not $SkipImageMetadata) {
     Get-DreamSkinValidatedImageMetadata -Path $fullPath
@@ -591,7 +596,7 @@ function Set-DreamSkinActiveTheme {
   Assert-DreamSkinImageFile -Path $source
   $extension = [System.IO.Path]::GetExtension($source).ToLowerInvariant()
   $oldImage = $null
-  try { $oldImage = (Read-DreamSkinTheme -ThemeDirectory $paths.Active).ImagePath } catch {}
+  try { $oldImage = (Read-DreamSkinTheme -ThemeDirectory $paths.Active -SkipImageMetadata).ImagePath } catch {}
   if ($null -eq $Theme) {
     $Theme = [pscustomobject]@{
       schemaVersion = 1
@@ -621,7 +626,7 @@ function Set-DreamSkinActiveTheme {
     Assert-DreamSkinImageFile -Path $temporary
     Move-Item -LiteralPath $temporary -Destination $target -Force
     Assert-DreamSkinNoReparseComponents -Path $target
-    Assert-DreamSkinImageFile -Path $target
+    Assert-DreamSkinImageFile -Path $target -SkipImageMetadata
     $Theme | Add-Member -NotePropertyName image -NotePropertyValue $imageName -Force
     if ($Name) { $Theme | Add-Member -NotePropertyName name -NotePropertyValue $Name -Force }
     $Theme = Normalize-DreamSkinThemeContract -Theme $Theme
@@ -648,8 +653,8 @@ function Set-DreamSkinActiveTheme {
   Assert-DreamSkinNoReparseComponents -Path $imageArchive
   Copy-Item -LiteralPath $target -Destination $imageArchive -Force
   Assert-DreamSkinNoReparseComponents -Path $imageArchive
-  Assert-DreamSkinImageFile -Path $imageArchive
-  return Read-DreamSkinTheme -ThemeDirectory $paths.Active
+  Assert-DreamSkinImageFile -Path $imageArchive -SkipImageMetadata
+  return Read-DreamSkinTheme -ThemeDirectory $paths.Active -SkipImageMetadata
 }
 
 function Save-DreamSkinCurrentTheme {

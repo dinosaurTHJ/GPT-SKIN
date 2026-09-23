@@ -5,13 +5,14 @@
   const DISABLED_KEY = "__CODEX_DREAM_SKIN_DISABLED__";
   const STYLE_REGISTRY_KEY = "__CODEX_DREAM_SKIN_STYLE_SHEETS__";
   const STYLE_ID = "codex-dream-skin-style";
+  const VIDEO_ID = "codex-dream-skin-video";
   const SHELL_ATTR = "data-dream-shell";
   const PART_ATTR = "data-ds-part";
   const ROOT_ATTRS = [
     "data-dream-skin", SHELL_ATTR,
     "data-dream-art-wide", "data-dream-art-safe", "data-dream-task-mode",
     "data-dream-art-safe-area", "data-dream-art-task-mode", "data-dream-art-aspect",
-    "data-dream-art-ready",
+    "data-dream-art-ready", "data-dream-media",
   ];
   const VERSION = __DREAM_SKIN_VERSION_JSON__;
   const STYLE_REVISION = __DREAM_SKIN_STYLE_REVISION_JSON__;
@@ -20,6 +21,7 @@
   const ART = THEME.art && typeof THEME.art === "object" ? THEME.art : {};
   const ART_METADATA = THEME.artMetadata && typeof THEME.artMetadata === "object"
     ? THEME.artMetadata : null;
+  const MEDIA_TYPE = THEME.mediaType === "video" ? "video" : "image";
   const ANALYSIS_CACHE_KEY = "__CODEX_DREAM_SKIN_ANALYSIS_CACHE__";
   const THEME_VARIABLES = [
     "--ds-bg", "--ds-panel", "--ds-panel-2", "--ds-green", "--ds-lime", "--ds-on-accent",
@@ -61,6 +63,10 @@
   let styleMode = null;
   let styleNode = null;
   let styleSheet = null;
+  let backgroundVideo = null;
+  let profileMenuViewport = null;
+  let profileMenuElement = null;
+  let profileMenuResizeObserver = null;
   const diffStyleSnapshots = new Map();
   const now = () => typeof performance === "object" && typeof performance.now === "function"
     ? performance.now() : Date.now();
@@ -97,6 +103,25 @@
     for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
     return URL.createObjectURL(new Blob([bytes], { type: mime }));
   })();
+
+  const ensureBackgroundVideo = () => {
+    if (MEDIA_TYPE !== "video" || !document?.createElement) return null;
+    if (backgroundVideo?.isConnected) return backgroundVideo;
+    const existing = document.getElementById(VIDEO_ID);
+    const video = existing instanceof HTMLVideoElement ? existing : document.createElement("video");
+    video.id = VIDEO_ID;
+    video.muted = true;
+    video.loop = true;
+    video.autoplay = true;
+    video.playsInline = true;
+    video.preload = "auto";
+    video.setAttribute("aria-hidden", "true");
+    if (video.src !== artUrl) video.src = artUrl;
+    if (!video.isConnected) document.documentElement?.insertBefore(video, document.body || null);
+    backgroundVideo = video;
+    video.play().catch(() => {});
+    return video;
+  };
 
   const cssString = (value) => JSON.stringify(String(value ?? ""));
 
@@ -431,7 +456,12 @@
       resolve(null);
       return;
     }
-    const image = new window.Image();
+    const media = MEDIA_TYPE === "video" ? ensureBackgroundVideo() : new window.Image();
+    if (!media) {
+      metrics.analysisMs = Number((now() - startedAt).toFixed(3));
+      resolve(null);
+      return;
+    }
     let settled = false;
     const finish = (value) => {
       if (settled) return;
@@ -442,10 +472,11 @@
       resolve(value);
     };
     analysisTimer = setTimeout(() => finish(null), 6000);
-    image.onerror = () => finish(null);
-    image.onload = () => {
+    const analyzeLoadedMedia = () => {
       try {
-        const ratio = image.naturalWidth / image.naturalHeight;
+        const sourceWidth = MEDIA_TYPE === "video" ? media.videoWidth : media.naturalWidth;
+        const sourceHeight = MEDIA_TYPE === "video" ? media.videoHeight : media.naturalHeight;
+        const ratio = sourceWidth / sourceHeight;
         if (!Number.isFinite(ratio) || ratio <= 0) throw new Error("Invalid image dimensions");
         const maxDimension = 96;
         const width = Math.max(16, Math.round(ratio >= 1 ? maxDimension : maxDimension * ratio));
@@ -455,7 +486,7 @@
         canvas.height = height;
         const context = canvas.getContext?.("2d", { willReadFrequently: true });
         if (!context) throw new Error("Canvas is unavailable");
-        context.drawImage(image, 0, 0, width, height);
+        context.drawImage(media, 0, 0, width, height);
         const data = context.getImageData(0, 0, width, height).data;
         const samples = new Array(width * height);
         const bins = Array.from({ length: 24 }, () => ({ weight: 0, r: 0, g: 0, b: 0 }));
@@ -548,8 +579,8 @@
         const aspect = ratio >= 2.25 ? "ultrawide" : ratio >= 1.45 ? "wide"
           : ratio >= 1.08 ? "landscape" : ratio >= 0.9 ? "square" : "portrait";
         finish({
-          width: image.naturalWidth,
-          height: image.naturalHeight,
+          width: sourceWidth,
+          height: sourceHeight,
           ratio,
           wide: ratio >= 1.75,
           aspect,
@@ -565,7 +596,18 @@
         finish(null);
       }
     };
-    image.src = artUrl;
+    if (MEDIA_TYPE === "video") {
+      media.addEventListener("error", () => finish(null), { once: true });
+      if (media.readyState >= 2 && media.videoWidth > 0 && media.videoHeight > 0) {
+        queueMicrotask(analyzeLoadedMedia);
+      } else {
+        media.addEventListener("loadeddata", analyzeLoadedMedia, { once: true });
+      }
+    } else {
+      media.onerror = () => finish(null);
+      media.onload = analyzeLoadedMedia;
+      media.src = artUrl;
+    }
   });
 
   const installStyle = () => {
@@ -620,7 +662,9 @@
     const shell = resolvedShell();
     setAttribute(root, "data-dream-skin", "active");
     setAttribute(root, SHELL_ATTR, shell);
-    setStyleProperty(root, "--dream-skin-art", `url("${artUrl}")`);
+    setAttribute(root, "data-dream-media", MEDIA_TYPE);
+    setStyleProperty(root, "--dream-skin-art", MEDIA_TYPE === "video" ? "none" : `url("${artUrl}")`);
+    if (MEDIA_TYPE === "video") ensureBackgroundVideo();
     applyTheme(root, shell);
     applyArtMetadata(root);
     return shell;
@@ -937,6 +981,54 @@
     return tokens.some((token) => token !== "config" && active.has(token));
   };
 
+  const clearProfileMenuCover = () => {
+    profileMenuResizeObserver?.disconnect();
+    profileMenuResizeObserver = null;
+    profileMenuElement?.removeAttribute("data-dream-skin-profile-menu");
+    profileMenuElement = null;
+    profileMenuViewport?.removeAttribute("data-dream-skin-profile-menu-cover");
+    profileMenuViewport?.style.removeProperty("--ds-profile-menu-cover-bottom");
+    profileMenuViewport = null;
+  };
+
+  const refreshProfileMenuCover = () => {
+    const sidebar = document.querySelector("aside.app-shell-left-panel");
+    const viewport = sidebar?.querySelector("[data-app-action-sidebar-scroll], .vertical-scroll-fade-mask");
+    const sidebarRect = sidebar?.getBoundingClientRect();
+    const trigger = sidebar && [...sidebar.querySelectorAll('button[aria-haspopup="menu"][aria-expanded="true"]')]
+      .find((button) => button.getBoundingClientRect().bottom >= sidebarRect.bottom - 64);
+    const triggerRect = trigger?.getBoundingClientRect();
+    const menu = triggerRect && [...document.querySelectorAll('[role="menu"]')].find((candidate) => {
+      const rect = candidate.getBoundingClientRect();
+      return rect.width > 0 && rect.height > 0 &&
+        rect.left >= sidebarRect.left - 12 && rect.right <= sidebarRect.right + 12 &&
+        Math.abs(rect.bottom - triggerRect.top) <= 24;
+    });
+    if (!viewport || !menu) {
+      if (profileMenuViewport) clearProfileMenuCover();
+      return;
+    }
+    const coveredHeight = Math.max(0,
+      Math.ceil(viewport.getBoundingClientRect().bottom - menu.getBoundingClientRect().top));
+    if (coveredHeight < 1) {
+      if (profileMenuViewport) clearProfileMenuCover();
+      return;
+    }
+    if (profileMenuViewport !== viewport || profileMenuElement !== menu) {
+      clearProfileMenuCover();
+      profileMenuViewport = viewport;
+      profileMenuElement = menu;
+      if (typeof ResizeObserver === "function") {
+        profileMenuResizeObserver = new ResizeObserver(refreshProfileMenuCover);
+        profileMenuResizeObserver.observe(menu);
+        profileMenuResizeObserver.observe(viewport);
+      }
+    }
+    viewport.style.setProperty("--ds-profile-menu-cover-bottom", `${coveredHeight}px`);
+    viewport.setAttribute("data-dream-skin-profile-menu-cover", "true");
+    menu.setAttribute("data-dream-skin-profile-menu", "true");
+  };
+
   const detectScope = () => {
     const overlay = selectorHit("overlay-menu") || selectorHit("overlay-dialog") ||
       selectorHit("overlay-popper");
@@ -964,6 +1056,7 @@
   const refreshScope = () => {
     metrics.routePasses += 1;
     const scope = detectScope();
+    refreshProfileMenuCover();
     const state = window[STATE_KEY];
     if (state?.installToken === installToken) state.scope = scope;
     return scope;
@@ -1000,6 +1093,7 @@
     }
     removeParts();
     restoreDiffSurfaces();
+    clearProfileMenuCover();
     state?.rootObserver?.disconnect();
     state?.partObserver?.disconnect();
     if (bodyReadyHandler && typeof document.removeEventListener === "function") {
@@ -1027,6 +1121,15 @@
     styleNode?.remove();
     if (document.getElementById(STYLE_ID) === styleNode) document.getElementById(STYLE_ID)?.remove();
     if (styleRegistry.size === 0) delete window[STYLE_REGISTRY_KEY];
+    const video = state?.backgroundVideo || backgroundVideo || document.getElementById(VIDEO_ID);
+    if (video) {
+      try {
+        video.pause();
+        video.removeAttribute("src");
+        video.load();
+        video.remove();
+      } catch {}
+    }
     if (state?.artUrl) URL.revokeObjectURL(state.artUrl);
     delete window[STATE_KEY];
     return true;
@@ -1114,6 +1217,7 @@
     navigationHandler,
     visibilityHandler,
     artUrl,
+    backgroundVideo,
     installToken,
     styleMode,
     styleNode,

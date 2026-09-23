@@ -3,7 +3,7 @@ import { constants as fsConstants } from "node:fs";
 import { createHash } from "node:crypto";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { readImageMetadata } from "./image-metadata.mjs";
+import { readImageMetadata, validateVideoContainer } from "./image-metadata.mjs";
 import {
   normalizeThemeColor,
   normalizeThemeText,
@@ -44,7 +44,19 @@ const SKIN_VERSION = "1.5.14";
 // literal `const SKIN_VERSION = "...";` line, so the export stays a separate
 // statement rather than an inline `export const`.
 export { SKIN_VERSION };
-const MAX_ART_BYTES = 10 * 1024 * 1024;
+const MAX_IMAGE_ART_BYTES = 10 * 1024 * 1024;
+const MAX_VIDEO_ART_BYTES = 20 * 1024 * 1024;
+const IMAGE_ART_EXTENSIONS = new Set([".png", ".jpg", ".jpeg", ".webp", ".gif"]);
+const VIDEO_ART_EXTENSIONS = new Set([".mp4", ".webm"]);
+const ART_MIME_TYPES = new Map([
+  [".png", "image/png"],
+  [".jpg", "image/jpeg"],
+  [".jpeg", "image/jpeg"],
+  [".webp", "image/webp"],
+  [".gif", "image/gif"],
+  [".mp4", "video/mp4"],
+  [".webm", "video/webm"],
+]);
 const MAX_SAFE_CSS_BYTES = 256 * 1024;
 const STRONG_THEME_AUDIT_MS = 30000;
 const MIN_RENDERER_VIEWPORT_WIDTH = 320;
@@ -549,8 +561,10 @@ export async function loadTheme(themeDir) {
     throw new Error("Theme image must remain inside the selected theme directory");
   }
   const extension = path.extname(imagePath).toLowerCase();
-  if (![".png", ".jpg", ".jpeg", ".webp"].includes(extension)) {
-    throw new Error(`Unsupported theme image format: ${extension || "missing"}`);
+  const mediaType = VIDEO_ART_EXTENSIONS.has(extension) ? "video"
+    : IMAGE_ART_EXTENSIONS.has(extension) ? "image" : null;
+  if (!mediaType) {
+    throw new Error(`Unsupported theme media format: ${extension || "missing"}`);
   }
   const realImagePath = await fs.realpath(imagePath);
   const realRelativeImage = path.relative(realThemeDir, realImagePath);
@@ -604,19 +618,24 @@ export async function loadTheme(themeDir) {
     fs.stat(realImagePath),
     loadSafeCss(realThemeDir),
   ]);
-  if (!imageStat.isFile()) throw new Error("Theme image is not a file");
-  if (imageStat.size < 1) throw new Error("Theme image cannot be empty");
-  if (imageStat.size > MAX_ART_BYTES) {
-    throw new Error(`Theme image exceeds the ${MAX_ART_BYTES / 1024 / 1024} MB limit`);
+  if (!imageStat.isFile()) throw new Error("Theme media is not a file");
+  if (imageStat.size < 1) throw new Error("Theme media cannot be empty");
+  const maximumBytes = mediaType === "video" ? MAX_VIDEO_ART_BYTES : MAX_IMAGE_ART_BYTES;
+  if (imageStat.size > maximumBytes) {
+    throw new Error(`Theme media exceeds the ${maximumBytes / 1024 / 1024} MB limit`);
   }
   const imageBytes = await fs.readFile(realImagePath);
-  if (imageBytes.length < 1 || imageBytes.length > MAX_ART_BYTES) {
-    throw new Error(`Theme image must be between 1 byte and ${MAX_ART_BYTES / 1024 / 1024} MB`);
+  if (imageBytes.length < 1 || imageBytes.length > maximumBytes) {
+    throw new Error(`Theme media must be between 1 byte and ${maximumBytes / 1024 / 1024} MB`);
   }
-  const artMetadata = readImageMetadata(imageBytes, extension);
-  if (!artMetadata) {
+  const artMetadata = mediaType === "image" ? readImageMetadata(imageBytes, extension) : null;
+  if (mediaType === "image" && !artMetadata) {
     throw new Error("Theme image metadata is invalid or exceeds the 16384px / 50MP safety limit");
   }
+  if (mediaType === "video" && !validateVideoContainer(imageBytes, extension)) {
+    throw new Error("Theme video container signature is invalid");
+  }
+  theme.mediaType = mediaType;
   theme.artMetadata = artMetadata;
   const fingerprint = createHash("sha256")
     .update(themeText, "utf8")
@@ -649,8 +668,8 @@ export async function loadPayload(themeDir = path.join(root, "assets"), candidat
   const combinedCss = loadedTheme.safeCssRuntime
     ? `${css}\n${loadedTheme.safeCssRuntime}\n` : css;
   const extension = path.extname(loadedTheme.imagePath).toLowerCase();
-  const mime = extension === ".jpg" || extension === ".jpeg" ? "image/jpeg"
-    : extension === ".webp" ? "image/webp" : "image/png";
+  const mime = ART_MIME_TYPES.get(extension);
+  if (!mime) throw new Error(`Unsupported theme media format: ${extension || "missing"}`);
   const artDataUrl = `data:${mime};base64,${loadedTheme.imageBytes.toString("base64")}`;
   const styleRevision = createHash("sha256").update(combinedCss).digest("hex").slice(0, 20);
   loadedTheme.theme.artKey = createHash("sha256")
@@ -1430,7 +1449,7 @@ async function runOneShot(options) {
             );
           }
           await applyToSession(session, payload);
-          await new Promise((resolve) => setTimeout(resolve, 850));
+          // 立即校验；未完成首帧时 waitForVerifiedSession 自己会重试。
         }
         if (options.reload) {
           await session.send("Page.reload", { ignoreCache: true });

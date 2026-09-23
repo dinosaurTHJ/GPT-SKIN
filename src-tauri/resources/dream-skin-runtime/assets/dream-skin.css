@@ -309,6 +309,38 @@ html[data-dream-skin="active"] body::before {
   content: none;
 }
 
+/* 视频由独立的硬件解码层播放；图片和 GIF 继续沿用原背景规则。 */
+#codex-dream-skin-video {
+  display: none;
+}
+
+html[data-dream-skin="active"][data-dream-media="video"] > #codex-dream-skin-video {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  object-position: var(--ds-art-position);
+  opacity: var(--ds-theme-image-opacity, .80);
+  pointer-events: none;
+}
+
+html[data-dream-skin="active"][data-dream-media="video"] body {
+  position: relative;
+  z-index: 1;
+  background-color: transparent !important;
+}
+
+html[data-dream-skin="active"][data-dream-media="video"]
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) {
+  background: linear-gradient(
+    rgb(var(--ds-bg-rgb) / .34),
+    rgb(var(--ds-bg-rgb) / .18)
+  ) !important;
+}
+
 html[data-dream-skin="active"] aside.app-shell-left-panel {
   background:
     linear-gradient(180deg,
@@ -1998,11 +2030,25 @@ html[data-dream-skin="active"] [data-radix-popper-content-wrapper]:not([role]) {
   backdrop-filter: none !important;
 }
 
-/* 左下角个人菜单覆盖在会话列表上；该列表本身也是文字，低透明度会形成两层字。
-   菜单提高遮挡度，仍按 ds-text / ds-muted 跟随背景明暗选择字体颜色。 */
+/* 个人菜单与其他浮层使用相同透明度；打开时由 renderer 只裁掉菜单下方的
+   会话列表，保留背景图/视频，并在菜单收起后立即恢复列表。 */
 html[data-dream-skin="active"] [role="menu"] {
-  background: rgb(var(--ds-panel-rgb) / .94) !important;
+  background: rgb(var(--ds-panel-rgb) / .64) !important;
   border-color: rgb(var(--ds-muted-rgb) / .30) !important;
+}
+
+/* 个人菜单用侧栏同一套图像透明度和色系，不再叠出独立黑框。 */
+html[data-dream-skin="active"] [role="menu"][data-dream-skin-profile-menu="true"] {
+  background: linear-gradient(90deg,
+    rgb(var(--ds-panel-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))),
+    rgb(var(--ds-bg-rgb) / calc(1 - var(--ds-theme-image-opacity, .80)))) !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"]
+  aside.app-shell-left-panel [data-dream-skin-profile-menu-cover="true"] {
+  clip-path: inset(0 0 var(--ds-profile-menu-cover-bottom, 0px) 0) !important;
 }
 
 html[data-dream-skin="active"]
@@ -2012,6 +2058,32 @@ html[data-dream-skin="active"]
   :is(button, [role="menuitem"], [role="option"], [role="tab"], p, span, label, input) {
   color: var(--ds-text) !important;
   -webkit-text-fill-color: var(--ds-text) !important;
+}
+
+/* 选中文字的工具条完全透出背景；仅文字随主题变色并加轻微描边阴影。 */
+html[data-dream-skin="active"] body > div.pointer-events-none.w-max.fixed.z-50
+  > [role="presentation"][class~="bg-surface-elevated-secondary/90"] {
+  color: var(--ds-text) !important;
+  background: transparent !important;
+  background-image: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+html[data-dream-skin="active"] body > div.pointer-events-none.w-max.fixed.z-50
+  > [role="presentation"][class~="bg-surface-elevated-secondary/90"] button {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+  background: transparent !important;
+  text-shadow: 0 1px 2px rgb(var(--ds-bg-rgb) / .86),
+    0 0 4px rgb(var(--ds-bg-rgb) / .66);
+}
+
+html[data-dream-skin="active"] body > div.pointer-events-none.w-max.fixed.z-50
+  > [role="presentation"][class~="bg-surface-elevated-secondary/90"]
+  > [aria-hidden="true"] {
+  background: transparent !important;
 }
 
 /* The active-work toast and the scroll-to-bottom affordance are separate
@@ -2036,18 +2108,17 @@ html[data-dream-skin="active"][data-dream-shell="light"]
   -webkit-text-fill-color: var(--ds-text) !important;
 }
 
-/* The status pill sits above a separate, full-width progress rail.  The
-   original Electron rail is a black gradient, so skin the rail container as
-   well instead of leaving a dark strip below the otherwise themed pill. */
+/* 文件变更提示的外层是横跨内容区的进度轨道，只保留中间状态胶囊；
+   外层不铺色，避免媒体背景上出现整条黑框。 */
 html[data-dream-skin="active"]
   [data-in-progress-fixed-content="true"] {
   color: var(--ds-text) !important;
   -webkit-text-fill-color: var(--ds-text) !important;
-  background: rgb(var(--ds-panel-rgb) / .48) !important;
+  background: transparent !important;
   background-image: none !important;
-  border-color: rgb(var(--ds-muted-rgb) / .24) !important;
+  border-color: transparent !important;
   box-shadow: none !important;
-  backdrop-filter: blur(8px) saturate(104%) !important;
+  backdrop-filter: none !important;
 }
 
 html[data-dream-skin="active"]
@@ -2105,6 +2176,23 @@ html[data-dream-skin="active"]
   background: transparent !important;
   background-image: none !important;
   box-shadow: none !important;
+}
+
+/* 文件修改状态只保留文字和控件，不在背景上铺横条或深色胶囊。 */
+html[data-dream-skin="active"]
+  [data-in-progress-fixed-content="true"]
+  :is([class*="bg-background-primary-soft"], [class*="bg-surface"],
+    [class*="bg-gradient"], [class*="progress" i], [role="progressbar"]) {
+  background: transparent !important;
+  background-image: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+html[data-dream-skin="active"]
+  [data-in-progress-fixed-content="true"] :is(span, p, button) {
+  text-shadow: 0 1px 3px rgb(var(--ds-bg-rgb) / .72);
 }
 
 html[data-dream-skin="active"][data-dream-shell="light"]

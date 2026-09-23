@@ -21,7 +21,9 @@ const IMAGE_LIBRARY_CONFIG_FILE: &str = "image-library-root.txt";
 const IMAGE_OPACITY_CONFIG_FILE: &str = "image-opacity.txt";
 const DEFAULT_IMAGE_OPACITY: f64 = 0.8;
 const MAX_LOCAL_IMAGE_BYTES: u64 = 10 * 1024 * 1024;
-const SUPPORTED_IMAGE_EXTENSIONS: &[&str] = &["jpg", "jpeg", "png", "webp"];
+const MAX_LOCAL_VIDEO_BYTES: u64 = 20 * 1024 * 1024;
+const SUPPORTED_IMAGE_EXTENSIONS: &[&str] = &["jpg", "jpeg", "png", "webp", "gif"];
+const SUPPORTED_VIDEO_EXTENSIONS: &[&str] = &["mp4", "webm"];
 const DREAM_SKIN_PORT: i32 = 9335;
 
 struct TrayLabels {
@@ -152,27 +154,32 @@ fn allow_image_library_root(app: &AppHandle, root: &Path) -> Result<(), String> 
 
 fn validate_image_path(raw_path: &str, app: &AppHandle) -> Result<(PathBuf, String, u64), String> {
     let root = canonical_image_library_root(app)?;
-    let path = fs::canonicalize(raw_path).map_err(|error| format!("图片路径无效：{error}"))?;
+    let path = fs::canonicalize(raw_path).map_err(|error| format!("背景资源路径无效：{error}"))?;
     if !canonical_path_is_inside(&root, &path) {
         return Err(format!(
-            "只能使用 {} 目录及其子目录中的图片",
+            "只能使用 {} 目录及其子目录中的背景资源",
             root.display()
         ));
     }
-    let metadata = fs::metadata(&path).map_err(|error| format!("无法读取图片：{error}"))?;
+    let metadata = fs::metadata(&path).map_err(|error| format!("无法读取背景资源：{error}"))?;
     if !metadata.is_file() {
-        return Err("选择的路径不是图片文件".into());
-    }
-    if metadata.len() > MAX_LOCAL_IMAGE_BYTES {
-        return Err("图片超过 10 MB，无法作为主题资源".into());
+        return Err("选择的路径不是背景资源文件".into());
     }
     let extension = path
         .extension()
         .and_then(|value| value.to_str())
         .map(|value| value.to_ascii_lowercase())
-        .ok_or_else(|| "图片缺少扩展名".to_owned())?;
-    if !SUPPORTED_IMAGE_EXTENSIONS.contains(&extension.as_str()) {
-        return Err("仅支持 JPG、PNG 和 WebP 图片".into());
+        .ok_or_else(|| "背景资源缺少扩展名".to_owned())?;
+    let maximum_bytes = if SUPPORTED_IMAGE_EXTENSIONS.contains(&extension.as_str()) {
+        MAX_LOCAL_IMAGE_BYTES
+    } else if SUPPORTED_VIDEO_EXTENSIONS.contains(&extension.as_str()) {
+        MAX_LOCAL_VIDEO_BYTES
+    } else {
+        return Err("仅支持 JPG、PNG、WebP、GIF、MP4 和 WebM".into());
+    };
+    if metadata.len() > maximum_bytes {
+        let limit = maximum_bytes / 1024 / 1024;
+        return Err(format!("背景资源超过 {limit} MB，无法作为主题资源"));
     }
     Ok((path, extension, metadata.len()))
 }
@@ -344,7 +351,7 @@ fn should_hide_main_window(label: &str, close_requested: bool) -> bool {
     label == "main" && close_requested
 }
 
-fn restore_theme(app: &AppHandle, exit_after_restore: bool) {
+fn restore_theme(app: &AppHandle) {
     let app = app.clone();
     tauri::async_runtime::spawn(async move {
         let _ = tauri::async_runtime::spawn_blocking({
@@ -352,9 +359,6 @@ fn restore_theme(app: &AppHandle, exit_after_restore: bool) {
             move || run_dream_skin_bridge(&app, "restore", None, None)
         })
         .await;
-        if exit_after_restore {
-            app.exit(0);
-        }
     });
 }
 
@@ -372,8 +376,9 @@ fn setup_tray(app: &mut tauri::App) -> tauri::Result<()> {
         .menu(&menu)
         .on_menu_event(|app, event| match event.id().as_ref() {
             TRAY_OPEN_ID => show_main_window(app),
-            TRAY_RESTORE_ID => restore_theme(app, false),
-            TRAY_QUIT_ID => restore_theme(app, true),
+            TRAY_RESTORE_ID => restore_theme(app),
+            // 退出管理程序不应恢复皮肤，也不能影响正在运行的 ChatGPT。
+            TRAY_QUIT_ID => app.exit(0),
             _ => {}
         })
         .on_tray_icon_event(|tray, event| {
@@ -471,16 +476,21 @@ fn list_image_assets_sync(app: AppHandle) -> Result<Vec<ImageAsset>, String> {
                 .and_then(|value| value.to_str())
                 .map(|value| value.to_ascii_lowercase());
             let Some(extension) = extension else { continue };
-            if !SUPPORTED_IMAGE_EXTENSIONS.contains(&extension.as_str())
-                || metadata.len() > MAX_LOCAL_IMAGE_BYTES
-            {
+            let maximum_bytes = if SUPPORTED_IMAGE_EXTENSIONS.contains(&extension.as_str()) {
+                MAX_LOCAL_IMAGE_BYTES
+            } else if SUPPORTED_VIDEO_EXTENSIONS.contains(&extension.as_str()) {
+                MAX_LOCAL_VIDEO_BYTES
+            } else {
+                continue;
+            };
+            if metadata.len() > maximum_bytes {
                 continue;
             }
             let name = path
                 .file_stem()
                 .and_then(|value| value.to_str())
                 .filter(|value| !value.is_empty())
-                .unwrap_or("未命名图片")
+                .unwrap_or("未命名背景")
                 .to_owned();
             assets.push(ImageAsset {
                 id: image_id(&path),

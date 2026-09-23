@@ -44,11 +44,18 @@ function formatImageSize(size: number) {
   return `${Math.max(1, Math.round(size / 1024))} KB`;
 }
 
+function isVideoAsset(asset: ImageAsset) {
+  return asset.extension === "mp4" || asset.extension === "webm";
+}
+
 function ImageCard({ asset, active, applying, onApply }: { asset: ImageAsset; active: boolean; applying: boolean; onApply: () => void }) {
   return (
     <article className={`image-card ${active ? "is-active" : ""}`}>
       <button className="image-card-cover" disabled={applying} onClick={onApply} title={`应用 ${asset.name}`}>
-        {isDesktopRuntime() ? <img src={convertFileSrc(asset.path)} alt="" loading="lazy" /> : <span>{asset.name}</span>}
+        {isDesktopRuntime() ? isVideoAsset(asset)
+          ? <video src={convertFileSrc(asset.path)} muted loop playsInline preload="metadata" aria-hidden="true" />
+          : <img src={convertFileSrc(asset.path)} alt="" loading="lazy" />
+          : <span>{asset.name}</span>}
         <span className="image-card-overlay">{active ? "正在使用" : applying ? "应用中…" : "点击应用"}</span>
       </button>
       <div className="image-card-meta">
@@ -93,7 +100,7 @@ function ThemesPage({ assets, rootPath, status, search, setSearch, applyingPath,
       </div>
 
       <div className="page-toolbar">
-        <label className="toolbar-search"><span aria-hidden="true">⌕</span><input type="search" placeholder="搜索本地图片…" aria-label="搜索本地图片" value={search} onChange={(event) => setSearch(event.target.value)} /></label>
+        <label className="toolbar-search"><span aria-hidden="true">⌕</span><input type="search" placeholder="搜索本地背景…" aria-label="搜索本地背景" value={search} onChange={(event) => setSearch(event.target.value)} /></label>
         <span className="toolbar-spacer" />
         <button className="button secondary" onClick={onRestore}><Icon name="refresh" size={15} />恢复官方</button>
       </div>
@@ -102,10 +109,10 @@ function ThemesPage({ assets, rootPath, status, search, setSearch, applyingPath,
         {error && <div className="notice is-error">{error}</div>}
         <section className="local-image-library" aria-labelledby="local-images-title">
           <div className="section-head image-library-head">
-            <div><h2 id="local-images-title">{rootPath} 本地图片</h2><small>已扫描 {assets.length} 张图片，包含所有子目录</small></div>
+            <div><h2 id="local-images-title">{rootPath} 本地背景</h2><small>已扫描 {assets.length} 个背景资源，包含所有子目录</small></div>
             <div className="image-library-actions">
               <button className="button ghost" disabled={rootChanging} onClick={onChooseRoot}>{rootChanging ? "保存中…" : "更换目录"}</button>
-              <select value={category} onChange={(event) => setCategory(event.target.value)} aria-label="图片分类">
+              <select value={category} onChange={(event) => setCategory(event.target.value)} aria-label="背景分类">
                 {categories.map((item) => <option value={item} key={item}>{item}</option>)}
               </select>
               <button className="button ghost" onClick={onRefresh}>重新扫描</button>
@@ -115,7 +122,7 @@ function ThemesPage({ assets, rootPath, status, search, setSearch, applyingPath,
             {visibleAssets.map((asset) => <ImageCard key={asset.id} asset={asset} active={status.imagePath === asset.path} applying={applyingPath === asset.path} onApply={() => onApply(asset)} />)}
           </div>
           {visibleAssets.length < filtered.length && <button className="button ghost load-more" onClick={() => setDisplayLimit((limit) => limit + 24)}>加载更多（剩余 {filtered.length - visibleAssets.length} 张）</button>}
-          {!filtered.length && <p className="image-empty">当前目录没有匹配的图片。</p>}
+          {!filtered.length && <p className="image-empty">当前目录没有匹配的背景资源。</p>}
         </section>
       </div>
     </section>
@@ -125,7 +132,7 @@ function ThemesPage({ assets, rootPath, status, search, setSearch, applyingPath,
 function StorePage({ onOpenStore }: { onOpenStore: () => void }) {
   return (
     <section className="page settings-page" aria-labelledby="store-title">
-      <div className="page-heading"><p className="eyebrow">DREAMSKIN GALLERY</p><h1 id="store-title">在线商店</h1><p>在线商店入口保留；本地图片换肤仍然可以独立运行。</p></div>
+      <div className="page-heading"><p className="eyebrow">DREAMSKIN GALLERY</p><h1 id="store-title">在线商店</h1><p>在线商店入口保留；本地媒体换肤仍然可以独立运行。</p></div>
       <div className="settings-scroll">
         <div className="settings-group">
           <h2>DreamSkin 在线主题库</h2>
@@ -136,7 +143,7 @@ function StorePage({ onOpenStore }: { onOpenStore: () => void }) {
         </div>
         <div className="settings-group">
           <h2>当前换肤方式</h2>
-          <div className="setting-row"><div><strong>本地图片主题</strong><p>从“本地主题”中点击图片即可实时切换，恢复官方外观也不需要重启。</p></div><span className="setting-state"><i />本地可用</span></div>
+          <div className="setting-row"><div><strong>本地媒体主题</strong><p>从“本地主题”中点击背景即可实时切换，恢复官方外观也不需要重启。</p></div><span className="setting-state"><i />本地可用</span></div>
         </div>
       </div>
     </section>
@@ -149,19 +156,19 @@ function SettingsPage({ rootPath, rootChanging, onChooseRoot, onOpenChatGPT, onR
       <div className="page-heading"><p className="eyebrow">LOCAL SERVICE</p><h1 id="settings-title">设置</h1><p>所有主题文件和配置都保存在本机。</p></div>
       <div className="settings-scroll">
         <div className="settings-group">
-          <h2>本地图片目录</h2>
-          <div className="setting-row"><div><strong>扫描目录</strong><p className="path-text">{rootPath}</p><p>会递归读取该目录及其子目录中的 JPG、PNG 和 WebP。</p></div><button className="button ghost" disabled={rootChanging} onClick={onChooseRoot}><Icon name="folder" size={15} />更换目录</button></div>
+          <h2>本地背景目录</h2>
+          <div className="setting-row"><div><strong>扫描目录</strong><p className="path-text">{rootPath}</p><p>会递归读取 JPG、PNG、WebP、GIF、MP4 和 WebM。</p></div><button className="button ghost" disabled={rootChanging} onClick={onChooseRoot}><Icon name="folder" size={15} />更换目录</button></div>
         </div>
         <div className="settings-group">
           <h2>ChatGPT 页面</h2>
           <div className="setting-row"><div><strong>当前连接</strong><p>{active ? "本地主题已直接注入当前页面" : "尚未应用本地主题"}</p></div><button className="button secondary" onClick={onOpenChatGPT}><Icon name="monitor" size={15} />打开 ChatGPT</button></div>
           <div className="setting-row"><div><strong>恢复官方外观</strong><p>移除本地样式，不关闭或重启 ChatGPT。</p></div><button className="button secondary" onClick={onRestore}><Icon name="refresh" size={15} />恢复</button></div>
-          <div className="setting-row"><div><strong>自动明暗</strong><p>按当前图片采样亮度自动选择深色或浅色外观，切换过程不重启 ChatGPT。</p></div><span className="setting-state"><i />自动</span></div>
-          <div className="setting-row opacity-setting"><div><strong>图片透明度</strong><p>调整背景图片显示强度，当前主题会实时更新。</p></div><label className="opacity-control"><input type="range" min="0.1" max="1" step="0.01" value={opacity} onChange={(event) => onOpacityChange(Number(event.target.value))} aria-label="图片透明度" /><output>{Math.round(opacity * 100)}%</output></label></div>
+          <div className="setting-row"><div><strong>自动明暗</strong><p>按当前背景首帧采样亮度自动选择深色或浅色外观，切换过程不重启 ChatGPT。</p></div><span className="setting-state"><i />自动</span></div>
+          <div className="setting-row opacity-setting"><div><strong>背景透明度</strong><p>调整背景媒体显示强度，当前主题会实时更新。</p></div><label className="opacity-control"><input type="range" min="0.1" max="1" step="0.01" value={opacity} onChange={(event) => onOpacityChange(Number(event.target.value))} aria-label="背景透明度" /><output>{Math.round(opacity * 100)}%</output></label></div>
         </div>
         <div className="settings-group">
           <h2>服务范围</h2>
-          <div className="setting-row"><div><strong>本地换肤 + 在线商店</strong><p>图片主题和实时注入在本机完成；在线商店入口保留，账号与云端同步不参与本地换肤。</p></div><span className="setting-state"><i />可用</span></div>
+          <div className="setting-row"><div><strong>本地换肤 + 在线商店</strong><p>媒体主题和实时注入在本机完成；在线商店入口保留，账号与云端同步不参与本地换肤。</p></div><span className="setting-state"><i />可用</span></div>
         </div>
       </div>
     </section>

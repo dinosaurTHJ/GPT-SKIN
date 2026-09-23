@@ -44,6 +44,13 @@ function pngDimensions(bytes) {
   return width > 0 && height > 0 ? { width, height } : null;
 }
 
+function gifDimensions(bytes) {
+  if (bytes.length < 10 || !["GIF87a", "GIF89a"].includes(ascii(bytes, 0, 6))) return null;
+  const width = uint16le(bytes, 6);
+  const height = uint16le(bytes, 8);
+  return width > 0 && height > 0 ? { width, height } : null;
+}
+
 function jpegDimensions(bytes) {
   if (bytes.length < 12 || bytes[0] !== 0xff || bytes[1] !== 0xd8) return null;
   let offset = 2;
@@ -134,6 +141,7 @@ export function readRawDimensions(value, extension = "") {
   if (normalized === ".jpg" || normalized === ".jpeg" ||
     (bytes[0] === 0xff && bytes[1] === 0xd8)) return jpegDimensions(bytes);
   if (normalized === ".webp" || ascii(bytes, 8, 4) === "WEBP") return webpDimensions(bytes);
+  if (normalized === ".gif" || ascii(bytes, 0, 3) === "GIF") return gifDimensions(bytes);
   return null;
 }
 
@@ -142,20 +150,46 @@ export function readImageMetadata(value, extension = "") {
   return dimensions ? classifyImageDimensions(dimensions) : null;
 }
 
+export function validateVideoContainer(value, extension = "") {
+  const bytes = value instanceof Uint8Array ? value : new Uint8Array(value);
+  const normalized = extension.toLowerCase();
+  if (normalized === ".mp4") {
+    return bytes.length >= 12 && ascii(bytes, 4, 4) === "ftyp"
+      ? { mediaType: "video", container: "mp4" } : null;
+  }
+  if (normalized === ".webm") {
+    return bytes.length >= 4 && bytes[0] === 0x1a && bytes[1] === 0x45 &&
+      bytes[2] === 0xdf && bytes[3] === 0xa3
+      ? { mediaType: "video", container: "webm" } : null;
+  }
+  return null;
+}
+
+export function readMediaMetadata(value, extension = "") {
+  const normalized = extension.toLowerCase();
+  if (normalized === ".mp4" || normalized === ".webm") {
+    return validateVideoContainer(value, normalized);
+  }
+  const image = readImageMetadata(value, normalized);
+  return image ? { mediaType: "image", ...image } : null;
+}
+
 // Keep the PowerShell theme store on the same strict parser as the injector.
 // The CLI is intentionally tiny: it only reads a user-selected file and emits
 // validated dimensions; it never writes or follows a caller-provided output.
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const [mode, imagePath] = process.argv.slice(2);
-  if (mode !== "--check" || !imagePath) {
-    console.error("Usage: image-metadata.mjs --check <image>");
+  if (!["--check", "--check-media"].includes(mode) || !imagePath) {
+    console.error("Usage: image-metadata.mjs --check <image> | --check-media <media>");
     process.exitCode = 2;
   } else {
     try {
       const resolved = path.resolve(imagePath);
       const bytes = await fs.readFile(resolved);
-      const metadata = readImageMetadata(bytes, path.extname(resolved));
-      if (!metadata) throw new Error("Image metadata is invalid or exceeds the 16384px / 50MP safety limit");
+      const metadata = mode === "--check-media"
+        ? readMediaMetadata(bytes, path.extname(resolved))
+        : readImageMetadata(bytes, path.extname(resolved));
+      if (!metadata) throw new Error("Media metadata or container signature is invalid");
       console.log(JSON.stringify(metadata));
     } catch (error) {
       console.error(error?.message ?? String(error));
