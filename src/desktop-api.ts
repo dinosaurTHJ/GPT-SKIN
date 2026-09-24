@@ -1,6 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
-import { openUrl } from "@tauri-apps/plugin-opener";
 import type { ImageAsset, LiveThemeStatus } from "./types";
 
 export const isDesktopRuntime = () => "__TAURI_INTERNALS__" in window;
@@ -29,15 +28,6 @@ export async function chooseImageLibraryRoot(): Promise<string | null> {
 export async function openChatGPTWindow(): Promise<boolean> {
   if (!isDesktopRuntime()) return true;
   return invoke<boolean>("open_chatgpt_window");
-}
-
-export async function openOnlineStore(): Promise<void> {
-  const url = "https://dreamskin.cc/gallery";
-  if (!isDesktopRuntime()) {
-    window.open(url, "_blank", "noopener,noreferrer");
-    return;
-  }
-  await openUrl(url);
 }
 
 export async function applyImageTheme(imagePath: string, _locale: string, opacity = 0.8): Promise<LiveThemeStatus> {

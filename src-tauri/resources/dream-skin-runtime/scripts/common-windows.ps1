@@ -558,12 +558,21 @@ function ConvertTo-DreamSkinArgumentLine {
 }
 
 function Get-DreamSkinProcessExecutablePath {
-  param([Parameter(Mandatory = $true)][object]$ProcessInfo)
-  if ($ProcessInfo.ExecutablePath) { return "$($ProcessInfo.ExecutablePath)" }
+  param([AllowNull()][object]$ProcessInfo)
+  if ($null -eq $ProcessInfo) { return $null }
+  $executablePath = "$($ProcessInfo.ExecutablePath)".Trim()
+  if ($executablePath) { return $executablePath }
+  $processId = 0
+  if (-not [int]::TryParse("$($ProcessInfo.ProcessId)", [ref]$processId) -or $processId -le 0) {
+    return $null
+  }
   try {
-    $process = Get-Process -Id ([int]$ProcessInfo.ProcessId) -ErrorAction Stop
-    if ($process.Path) { return "$($process.Path)" }
-    return "$($process.MainModule.FileName)"
+    $process = Get-Process -Id $processId -ErrorAction Stop
+    $path = "$($process.Path)".Trim()
+    if ($path) { return $path }
+    $path = "$($process.MainModule.FileName)".Trim()
+    if ($path) { return $path }
+    return $null
   } catch {
     return $null
   }
@@ -1115,8 +1124,13 @@ function Get-DreamSkinPortListeners {
   # netstat 的监听表通常在百毫秒内返回；Get-NetTCPConnection 在当前
   # PowerShell 5.1 环境每次需 1-2 秒。仅接受明确的 TCP LISTENING 行，
   # 解析失败时回退到原有系统 API，保持端口所有权校验不变。
-  $netstatPath = Join-Path ([Environment]::SystemDirectory) 'netstat.exe'
-  if (Test-Path -LiteralPath $netstatPath -PathType Leaf) {
+  $systemDirectory = [Environment]::SystemDirectory
+  $netstatPath = if (-not [string]::IsNullOrWhiteSpace($systemDirectory)) {
+    [System.IO.Path]::Combine($systemDirectory, 'netstat.exe')
+  } else {
+    $null
+  }
+  if (-not [string]::IsNullOrWhiteSpace($netstatPath) -and [System.IO.File]::Exists($netstatPath)) {
     try {
       $rows = @(& $netstatPath -ano -p tcp 2>$null)
       if ($LASTEXITCODE -eq 0) {
@@ -1148,17 +1162,22 @@ function Test-DreamSkinPortAvailable {
 }
 
 function Test-DreamSkinCodexPortOwner {
-  param([int]$Port, [Parameter(Mandatory = $true)][object]$Codex)
+  param([int]$Port, [AllowNull()][object]$Codex)
+  if ($null -eq $Codex -or -not "$($Codex.Executable)".Trim()) { return $false }
   $listeners = Get-DreamSkinPortListeners -Port $Port
   if ($listeners.Count -eq 0) { return $false }
   foreach ($listener in $listeners) {
-    if ($listener.LocalAddress -notin @('127.0.0.1', '::1')) { return $false }
+    $processId = 0
+    if ($listener.LocalAddress -notin @('127.0.0.1', '::1') -or
+      -not [int]::TryParse("$($listener.OwningProcess)", [ref]$processId) -or $processId -le 0) {
+      return $false
+    }
     # Get-Process.Path 通常可直接取得监听进程路径；CIM 只在受限系统上回退。
     # 两次所有权复核仍保留，但不再让每次应用主题都等待两次慢速 WMI 查询。
     $processPath = Get-DreamSkinProcessExecutablePath -ProcessInfo `
-      ([pscustomobject]@{ ProcessId = [int]$listener.OwningProcess })
+      ([pscustomobject]@{ ProcessId = $processId })
     if (-not $processPath) {
-      $process = Get-CimInstance Win32_Process -Filter "ProcessId = $([int]$listener.OwningProcess)" -ErrorAction SilentlyContinue
+      $process = Get-CimInstance Win32_Process -Filter "ProcessId = $processId" -ErrorAction SilentlyContinue
       $processPath = if ($process) { Get-DreamSkinProcessExecutablePath -ProcessInfo $process } else { $null }
     }
     if (-not $processPath -or -not (Test-DreamSkinPathEqual -Left $processPath -Right $Codex.Executable)) {

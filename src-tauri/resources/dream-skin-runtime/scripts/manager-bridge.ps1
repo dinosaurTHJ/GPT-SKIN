@@ -48,7 +48,8 @@ function Start-ManagerSession {
   $startScript = Join-Path $PSScriptRoot 'start-dream-skin.ps1'
   $result = Invoke-DreamSkinNative -FilePath $PowerShell -ArgumentList @(
     '-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'RemoteSigned',
-    '-File', $startScript, '-Port', "$Port", '-OneShot'
+    '-File', $startScript, '-Port', "$Port", '-OneShot',
+    '-OperationLockTimeoutMilliseconds', '120000'
   )
   if ($result.ExitCode -ne 0) {
     $details = (($result.Output | Select-Object -Last 8) -join "`n").Trim()
@@ -201,6 +202,7 @@ try {
     }
   }
 } catch {
-  Write-Error $_.Exception.Message
+  [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)
+  [Console]::WriteLine($_.Exception.Message)
   exit 1
 }

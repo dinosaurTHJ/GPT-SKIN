@@ -1,6 +1,6 @@
 [package]
 name = "retheme"
-version = "0.1.0"
+version = "0.1.4"
 description = "A safe local theme manager for Codex"
 authors = ["ReTheme"]
 license = "BSD-3-Clause"
@@ -32,7 +32,6 @@ serde_json = "1.0.150"
 sha2 = "0.10.9"
 tauri = { version = "2.11.5", features = ["tray-icon", "protocol-asset"] }
 tauri-plugin-dialog = "2.7.1"
-tauri-plugin-opener = "2.5.4"
 tempfile = "3.23.0"
 tokio = { version = "1.49.0", features = ["time"] }
 toml = "0.9.8"

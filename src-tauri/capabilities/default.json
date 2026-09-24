@@ -8,15 +8,6 @@
     "deep-link:default",
     "dialog:allow-open",
     "process:allow-restart",
-    "updater:default",
-    {
-      "identifier": "opener:allow-open-url",
-      "allow": [
-        { "url": "https://retheme.app" },
-        { "url": "https://retheme.app/*" },
-        { "url": "https://github.com/*" },
-        { "url": "https://connect.linux.do/*" }
-      ]
-    }
+    "updater:default"
   ]
 }
