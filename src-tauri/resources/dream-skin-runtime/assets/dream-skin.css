@@ -3188,3 +3188,22 @@ html[data-dream-skin="active"][data-dream-shell="dark"]
   -webkit-text-fill-color: var(--ds-muted) !important;
   opacity: 1 !important;
 }
+
+/* 右侧输出与来源摘要沿用对话气泡的透明背景，标题栏也不能重复铺底。 */
+html[data-dream-skin="active"] [data-summary-panel-variant="summary"] {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  box-shadow: 0 2px 10px rgb(0 0 0 / .16) !important;
+}
+
+html[data-dream-skin="active"] [data-summary-panel-variant="summary"] header,
+html[data-dream-skin="active"] [data-summary-panel-variant="summary"] header::before {
+  background: transparent !important;
+}
+
+/* 暗色背景下，摘要文字与会话正文使用同一套对比色。 */
+html[data-dream-skin="active"][data-dream-shell="dark"]
+  [data-summary-panel-variant="summary"] :is(button, p, span, label) {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+}
