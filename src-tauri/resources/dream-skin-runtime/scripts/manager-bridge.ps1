@@ -1,4 +1,4 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param(
   [Parameter(Mandatory = $true)]
   [ValidateSet('ensure-session', 'apply-image', 'set-opacity', 'restore', 'status')]
@@ -11,6 +11,11 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+# 原生子进程和 Rust 按 UTF-8 交换输出，避免中文异常被系统代码页解码成乱码。
+$utf8 = [System.Text.UTF8Encoding]::new($false)
+[Console]::OutputEncoding = $utf8
+[Console]::InputEncoding = $utf8
+$OutputEncoding = $utf8
 $SkillRoot = Split-Path -Parent $PSScriptRoot
 $StateRoot = Join-Path $env:LOCALAPPDATA 'CodexDreamSkin'
 $StatePath = Join-Path $StateRoot 'state.json'
@@ -103,11 +108,11 @@ function Ensure-ManagerAutoReapply {
 }
 
 function Invoke-ManagerRestore {
-  # 仅移除页面样式会残留外观配置；同时恢复换肤前快照，才能回到原始官方配色。
+  # 保持官方应用运行，通过原有 CDP 连接移除皮肤并恢复外观配置。
   $restoreScript = Join-Path $PSScriptRoot 'restore-dream-skin.ps1'
   $result = Invoke-DreamSkinNative -FilePath $PowerShell -ArgumentList @(
     '-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'RemoteSigned',
-    '-File', $restoreScript, '-RestoreBaseTheme', '-ForceRestart'
+    '-File', $restoreScript, '-RestoreBaseTheme', '-KeepRunning'
   )
   if ($result.ExitCode -ne 0) {
     $details = (($result.Output | Select-Object -Last 8) -join "`n").Trim()
@@ -202,7 +207,7 @@ try {
     }
   }
 } catch {
-  [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)
-  [Console]::WriteLine($_.Exception.Message)
+  # 直接输出原始异常，避免 Write-Error 包装信息挤掉真正的失败原因。
+  [Console]::Error.WriteLine($_.Exception.Message)
   exit 1
 }

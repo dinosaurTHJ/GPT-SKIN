@@ -398,6 +398,12 @@ html[data-dream-skin="active"] aside.app-shell-left-panel button[aria-label^="�
   text-shadow: none !important;
 }
 
+/* 新版会话列表内部自带 65% 背景；移除重复铺底，统一使用外侧栏的透明度。 */
+html[data-dream-skin="active"] aside.app-shell-left-panel
+  :is(.sidebar-navigation, [class*="_ConversationSidebar_"]) {
+  background: transparent !important;
+}
+
 html[data-dream-skin="active"] aside.app-shell-left-panel button[aria-label^="切换模式"]::after {
   content: " ·";
   color: var(--ds-secondary);
@@ -1597,8 +1603,10 @@ html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface
   border-top: 0 !important;
 }
 
+/* 新版把 data-app-shell-main-content-top-fade 放在会话父容器上；
+   只隐藏实际渐变节点，避免连同输入框和会话正文一起隐藏。 */
 html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])
-  :is(.app-shell-main-content-top-fade, [data-app-shell-main-content-top-fade], [class*="_MainContentTopFade_"]) {
+  :is(.app-shell-main-content-top-fade, [class*="_MainContentTopFade_"]) {
   display: none !important;
   background: transparent !important;
 }

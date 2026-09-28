@@ -1224,7 +1224,7 @@ html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface
 }
 
 html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])
-  :is(.app-shell-main-content-top-fade, [data-app-shell-main-content-top-fade], [class*="_MainContentTopFade_"]) {
+  :is(.app-shell-main-content-top-fade, [class*="_MainContentTopFade_"]) {
   display: none !important;
   background: transparent !important;
 }
@@ -1316,4 +1316,10 @@ html[data-dream-skin="active"] [data-ds-part="message"] { border-radius: 16px; }
       animation-iteration-count: 1 !important;
     }
   }
+}
+
+/* 新版会话列表只沿用外侧栏的透明度，避免内部 65% 背景重复叠加。 */
+html[data-dream-skin="active"] aside.app-shell-left-panel
+  :is(.sidebar-navigation, [class*="_ConversationSidebar_"]) {
+  background: transparent !important;
 }
