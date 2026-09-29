@@ -510,10 +510,56 @@ html[data-dream-skin="active"] main:is(.main-surface, [data-app-shell-main-surfa
   background: transparent !important;
 }
 
-html[data-dream-skin="active"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])
-  div[class~="bg-token-main-surface-primary"][class~="border-l"] {
-  background: rgb(var(--ds-panel-rgb) / .62) !important;
-  backdrop-filter: blur(10px) saturate(106%) !important;
+/* Codex can mount the tools/chat side panel beside the main surface. Keep
+   its token-backed divider clear with a soft dialog-like edge. */
+html[data-dream-skin="active"]
+  :is(div, section, aside)[class~="bg-token-main-surface-primary"][class~="border-l"] {
+  background: transparent !important;
+  border-left: 1px solid rgb(var(--ds-muted-rgb) / .20) !important;
+  box-shadow: -8px 0 24px rgb(var(--ds-bg-rgb) / .14) !important;
+  backdrop-filter: none !important;
+}
+
+html[data-dream-skin="active"]
+  :is(div, section, aside)[class~="bg-token-main-surface-primary"][class~="border-l"]
+  :is(div, section, aside)[class~="bg-token-main-surface-primary"] {
+  background: transparent !important;
+}
+
+/* Right and bottom docks share this native panel shell. Let the artwork show
+   through chat, browser, review, terminal, and their controls; only the rim
+   casts a soft dialog-like shadow. */
+html[data-dream-skin="active"]
+  :is(div.absolute.border-l, div.absolute.border-t)
+  div.isolate.flex-col[class~="[contain:layout_paint]"] {
+  background: transparent !important;
+  border: 1px solid rgb(var(--ds-muted-rgb) / .24) !important;
+  box-shadow: 0 0 28px rgb(var(--ds-bg-rgb) / .18),
+    inset 0 0 18px rgb(var(--ds-bg-rgb) / .10),
+    inset 0 1px rgb(var(--ds-text-rgb) / .08) !important;
+  backdrop-filter: none !important;
+}
+
+html[data-dream-skin="active"]
+  :is(div.absolute.border-l, div.absolute.border-t)
+  div.isolate.flex-col[class~="[contain:layout_paint]"]
+  :is(div, section, aside, article, header, footer, nav, main, button, [role="tab"]) {
+  background: transparent !important;
+  backdrop-filter: none !important;
+}
+
+/* Browser contents live in a separate webview overlay, outside the dock DOM. */
+html[data-dream-skin="active"]
+  [class~="bg-surface"]:has([class~="@container/browser-toolbar"]),
+html[data-dream-skin="active"]
+  webview[style*="background-color: var(--color-surface-tertiary"] {
+  background: transparent !important;
+}
+
+html[data-dream-skin="active"]
+  [class~="@container/browser-toolbar"] :is(div, button, input) {
+  background: transparent !important;
+  backdrop-filter: none !important;
 }
 
 html[data-dream-skin="active"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) article {

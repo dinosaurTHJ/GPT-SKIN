@@ -1,7 +1,7 @@
 {
   "name": "retheme",
   "private": true,
-  "version": "0.1.5",
+  "version": "0.1.6",
   "license": "BSD-3-Clause",
   "packageManager": "pnpm@10.31.0",
   "type": "module",

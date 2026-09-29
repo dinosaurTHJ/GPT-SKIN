@@ -67,6 +67,12 @@
   let profileMenuViewport = null;
   let profileMenuElement = null;
   let profileMenuResizeObserver = null;
+  let threadClipScroll = null;
+  let threadClipContent = null;
+  let threadClipFooter = null;
+  let threadClipResizeObserver = null;
+  let threadClipFrame = 0;
+  let threadClipOriginal = null;
   const diffStyleSnapshots = new Map();
   const now = () => typeof performance === "object" && typeof performance.now === "function"
     ? performance.now() : Date.now();
@@ -1059,10 +1065,83 @@
     };
   };
 
+  const updateThreadClip = () => {
+    threadClipFrame = 0;
+    if (!threadClipScroll?.isConnected || !threadClipContent?.isConnected ||
+      !threadClipFooter?.isConnected) return;
+    const content = threadClipContent.getBoundingClientRect();
+    const footer = threadClipFooter.getBoundingClientRect();
+    // 只裁掉滚动到输入框后面的消息；背景视频仍由页面原有图层绘制。
+    const overlap = Math.max(0, Math.min(content.height, content.bottom - footer.top + 1));
+    const clip = overlap > 0 ? `inset(0px 0px ${overlap.toFixed(2)}px 0px)` : null;
+    if (clip) {
+      if (threadClipContent.style.clipPath !== clip) threadClipContent.style.clipPath = clip;
+    } else if (threadClipOriginal?.value) {
+      threadClipContent.style.setProperty(
+        "clip-path", threadClipOriginal.value, threadClipOriginal.priority,
+      );
+    } else {
+      threadClipContent.style.removeProperty("clip-path");
+    }
+  };
+  const scheduleThreadClip = () => {
+    if (!threadClipFrame) threadClipFrame = requestAnimationFrame(updateThreadClip);
+  };
+  const clearThreadClip = () => {
+    if (threadClipFrame) cancelAnimationFrame(threadClipFrame);
+    threadClipFrame = 0;
+    threadClipScroll?.removeEventListener("scroll", scheduleThreadClip);
+    window.removeEventListener("resize", scheduleThreadClip);
+    threadClipResizeObserver?.disconnect();
+    if (threadClipContent && threadClipOriginal) {
+      if (threadClipOriginal.value) threadClipContent.style.setProperty(
+        "clip-path", threadClipOriginal.value, threadClipOriginal.priority,
+      );
+      else threadClipContent.style.removeProperty("clip-path");
+    }
+    threadClipScroll = null;
+    threadClipContent = null;
+    threadClipFooter = null;
+    threadClipResizeObserver = null;
+    threadClipOriginal = null;
+  };
+  const bindThreadClip = () => {
+    const active = document.documentElement?.getAttribute("data-dream-skin") === "active" &&
+      document.documentElement?.getAttribute("data-dream-art-wide") === "true";
+    const scroll = active ? document.querySelector(".thread-scroll-container") : null;
+    const footer = scroll?.querySelector('[data-thread-scroll-footer="true"]');
+    const content = scroll?.querySelector("[data-thread-user-message-navigation-content]") ??
+      scroll?.querySelector('[data-thread-find-target="conversation"]');
+    if (scroll === threadClipScroll && content === threadClipContent &&
+      footer === threadClipFooter) {
+      if (scroll) scheduleThreadClip();
+      return;
+    }
+    clearThreadClip();
+    if (!scroll || !content || !footer) return;
+    threadClipScroll = scroll;
+    threadClipContent = content;
+    threadClipFooter = footer;
+    threadClipOriginal = {
+      value: content.style.getPropertyValue("clip-path"),
+      priority: content.style.getPropertyPriority("clip-path"),
+    };
+    scroll.addEventListener("scroll", scheduleThreadClip, { passive: true });
+    window.addEventListener("resize", scheduleThreadClip, { passive: true });
+    if (typeof ResizeObserver === "function") {
+      threadClipResizeObserver = new ResizeObserver(scheduleThreadClip);
+      threadClipResizeObserver.observe(scroll, { box: "border-box" });
+      threadClipResizeObserver.observe(content, { box: "border-box" });
+      threadClipResizeObserver.observe(footer, { box: "border-box" });
+    }
+    scheduleThreadClip();
+  };
+
   const refreshScope = () => {
     metrics.routePasses += 1;
     const scope = detectScope();
     refreshProfileMenuCover();
+    bindThreadClip();
     const state = window[STATE_KEY];
     if (state?.installToken === installToken) state.scope = scope;
     return scope;
@@ -1079,6 +1158,7 @@
       // Diff 根节点是昂贵的 shadow DOM，仅在路由或内容结构变化后刷新。
       refreshDiffSurfaces();
     }
+    if (rootPass || partPass) bindThreadClip();
     if (scopePass) refreshScope();
   };
 
@@ -1100,6 +1180,7 @@
     removeParts();
     restoreDiffSurfaces();
     clearProfileMenuCover();
+    clearThreadClip();
     state?.rootObserver?.disconnect();
     state?.partObserver?.disconnect();
     if (bodyReadyHandler && typeof document.removeEventListener === "function") {
