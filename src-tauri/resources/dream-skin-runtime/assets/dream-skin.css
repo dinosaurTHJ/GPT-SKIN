@@ -2873,6 +2873,13 @@ html[data-dream-skin="active"]
   box-shadow: none !important;
 }
 
+/* 运行中追加消息使用独立的 composer rail，排队卡片不铺底色。 */
+html[data-dream-skin="active"] [data-composer-rail] [data-composer-rail-item],
+html[data-dream-skin="active"] [data-composer-rail] [data-composer-rail-item] * {
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+}
+
 /* The compact user-message navigator is a separate overflow container, not
    the thread scroller.  Its native Chromium track used the default pale/grey
    rail (and arrow wells), so override that exact stable application hook. */
@@ -3253,6 +3260,15 @@ html[data-dream-skin="active"] [data-summary-panel-variant="summary"] {
 html[data-dream-skin="active"] [data-summary-panel-variant="summary"] header,
 html[data-dream-skin="active"] [data-summary-panel-variant="summary"] header::before {
   background: transparent !important;
+}
+
+/* 来源列表的每行自带深色背景，清除后沿用侧栏的透明底与分隔线。 */
+html[data-dream-skin="active"][data-dream-shell] [data-app-shell-tabs]
+  [role="tabpanel"][data-tab-id="thread-sources"],
+html[data-dream-skin="active"][data-dream-shell] [data-app-shell-tabs]
+  [role="tabpanel"][data-tab-id="thread-sources"] * {
+  background-color: transparent !important;
+  backdrop-filter: none !important;
 }
 
 /* 暗色背景下，摘要文字与会话正文使用同一套对比色。 */

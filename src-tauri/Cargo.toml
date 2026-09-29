@@ -1,6 +1,6 @@
 [package]
 name = "retheme"
-version = "0.1.7"
+version = "0.1.8"
 description = "A safe local theme manager for Codex"
 authors = ["ReTheme"]
 license = "BSD-3-Clause"
