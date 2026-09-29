@@ -1071,8 +1071,9 @@
       !threadClipFooter?.isConnected) return;
     const content = threadClipContent.getBoundingClientRect();
     const footer = threadClipFooter.getBoundingClientRect();
-    // 只裁掉滚动到输入框后面的消息；背景视频仍由页面原有图层绘制。
-    const overlap = Math.max(0, Math.min(content.height, content.bottom - footer.top + 1));
+    // 输入框上方预留约 80px 的透明遮挡区，对齐会话底部的完整交互区域。
+    const cutoff = footer.top - 80;
+    const overlap = Math.max(0, Math.min(content.height, content.bottom - cutoff + 1));
     const clip = overlap > 0 ? `inset(0px 0px ${overlap.toFixed(2)}px 0px)` : null;
     if (clip) {
       if (threadClipContent.style.clipPath !== clip) threadClipContent.style.clipPath = clip;
