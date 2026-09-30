@@ -1,12 +1,12 @@
 # ChatGPT Skin Studio：Codex 桌面端主题与换肤
 
-**Codex Skin / Codex Theme for Windows** — custom wallpapers, video backgrounds, transparent panels and usage status for the OpenAI Codex desktop app.
+**Codex Skin / Codex Theme for Windows** — custom wallpapers, video backgrounds, transparent panels, daily token usage and quota status for the OpenAI Codex desktop app.
 
 ## 项目简介
 
 ChatGPT Skin Studio（GPT-SKIN）是面向 **OpenAI Codex Windows 桌面客户端**的本地主题与换肤工具，提供 Codex 自定义壁纸、动态视频背景、透明面板和文字对比度适配。聊天、模型切换、个人资料及用量信息仍由官方客户端提供。Skin Studio 负责外观，并在标题栏只读汇总当前账户的额度与重置券。
 
-[下载 Windows x64 安装包](https://github.com/dinosaurTHJ/GPT-SKIN/releases/tag/v0.1.10) · [源代码](https://github.com/dinosaurTHJ/GPT-SKIN)
+[下载 Windows x64 安装包](https://github.com/dinosaurTHJ/GPT-SKIN/releases/tag/v0.1.11) · [源代码](https://github.com/dinosaurTHJ/GPT-SKIN)
 
 ## Codex 是什么
 
@@ -18,12 +18,22 @@ Codex 是 OpenAI 面向软件开发的编程 Agent，可协助编写代码、审
 
 ## 安装与使用
 
-1. 从 Release 下载 `ChatGPT-Skin-Studio_0.1.10_windows-x64-setup.exe` 并安装。安装包包含前端、Rust 程序、换肤脚本和 Node.js 运行时，使用者无需安装 Node.js、pnpm 或 Rust。
+1. 从 Release 下载 `ChatGPT-Skin-Studio_0.1.11_windows-x64-setup.exe` 并安装。安装包包含前端、Rust 程序、换肤脚本和 Node.js 运行时，使用者无需安装 Node.js、pnpm 或 Rust。
 2. 打开 ChatGPT Skin Studio，点击“更换目录”，选择本地背景目录。默认目录为 `C:\image`，也可以选择其他目录；程序会扫描子目录并按目录分类。
 3. 第一次连接前，先保存工作并正常退出 ChatGPT / Codex，再从 Skin Studio 点击“打开 ChatGPT”。已经建立换肤连接后，切换背景无需重启客户端。
 4. 选择图片或视频并点击“应用”。通过“背景透明度”调整效果；“恢复官方”用于移除当前皮肤并恢复原有外观。
 
 本次发布面向 Windows 10/11 x64，依赖桌面客户端和 Microsoft Edge WebView2。它是可直接安装的本地换肤版本，无需配置在线主题商店账号或 API 密钥。
+
+## v0.1.11 今日已用 Tokens
+
+顶部状态栏新增 **今日已用 Tokens**，与 5 小时额度、周额度和重置券信息一起显示，沿用深色半透明阴影框。
+
+![今日已用 Tokens 本机实际效果](docs/images/v0.1.11-daily-tokens-titlebar.png)
+
+数据来自官方个人资料活动热力图使用的每日 Token 统计，按电脑本地日期选择当天记录，每分钟读取一次。鼠标悬停可以查看完整数值、统计日期和服务器生成时间。官方统计属于服务端汇总，可能有延迟；接口失败、统计异常或缺少当日记录时显示“未获取”，只有官方明确返回 0 时才显示 0。
+
+此功能复用官方客户端登录态，无需配置额外 API 密钥。安装包包含完整换肤运行时；已有的动态壁纸、透明设置页和额度刷新时间功能继续保留。
 
 ## v0.1.10 顶部额度栏
 
@@ -96,7 +106,7 @@ Codex 是 OpenAI 面向软件开发的编程 Agent，可协助编写代码、审
 | 浮动菜单可读性 | 个人菜单覆盖在会话列表上时使用高遮挡背景，避免菜单与后方标题重叠。 |
 | 最大化窗口适配 | 修正最大化状态下标题区域和更多操作按钮的异常底色。 |
 | 流畅交互 | 减少高频样式重算与无效界面扫描，改善翻阅会话记录和切换模型时的响应。 |
-| 顶部额度信息 | 标题栏显示 5 小时和周额度剩余、刷新时间，以及重置券次数与到期时间，每分钟更新。 |
+| 顶部额度信息 | 标题栏显示今日已用 Tokens、5 小时和周额度剩余、刷新时间，以及重置券次数与到期时间，每分钟更新。 |
 | 主题持久化与恢复 | 换肤后可退出 Skin Studio；恢复官方界面时回到 ChatGPT 原有配色。 |
 
 ## 本项目优势
@@ -111,7 +121,7 @@ Codex 是 OpenAI 面向软件开发的编程 Agent，可协助编写代码、审
 
 ### 额度与到期时间集中查看
 
-无需离开当前会话即可查看 5 小时与周额度的剩余比例和刷新时间，同时掌握可用重置次数及各自的到期时间。信息来自官方客户端的真实数据，按本地时区显示；统一的透明状态栏减少反复进入使用情况页面的操作。
+无需离开当前会话即可查看今日已用 Tokens、5 小时与周额度的剩余比例和刷新时间，同时掌握可用重置次数及各自的到期时间。信息来自官方客户端的真实数据，按本地时区显示；统一的透明状态栏减少反复进入使用情况页面的操作。
 
 ### 根据背景调整可读性
 

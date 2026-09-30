@@ -814,6 +814,26 @@
     return { text: `${remaining}%`, reset, title: `额度重置：${reset}` };
   };
 
+  // 与官方个人资料热力图采用同一本地日期和每日 Token 桶，不用额度比例推算。
+  const dailyUsageText = (profile) => {
+    const today = new Date();
+    const day = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+    const unavailable = { text: "今日已用 Tokens：未获取", title: `统计日期：${day}；官方每日统计尚未获取` };
+    const buckets = profile?.stats?.daily_usage_buckets;
+    if (!Array.isArray(buckets) || profile?.metadata?.stats_error) return unavailable;
+    const matches = buckets.filter((entry) => entry?.start_date === day);
+    // 缺失或重复的日期不能确定真实用量，只有明确返回的 0 才显示为 0。
+    if (matches.length !== 1) return unavailable;
+    const tokens = matches[0].tokens;
+    if (!Number.isSafeInteger(tokens) || tokens < 0) return unavailable;
+    const total = new Intl.NumberFormat("zh-CN").format(tokens);
+    const generated = usageDateText(usageDate(profile?.metadata?.generated_at));
+    return {
+      text: `今日已用 Tokens：${total}`,
+      title: `今日已用 ${total} Tokens；统计日期：${day}；服务器生成时间：${generated}；来源：官方个人资料每日统计，汇总可能有延迟`,
+    };
+  };
+
   // 根据当前安装的模块地址寻找桌面请求实例，不依赖易变的压缩导出名称。
   const getUsageApi = async () => {
     if (!usageBar.apiPromise) {
@@ -852,6 +872,7 @@
     if (field.title !== title) field.title = title;
   };
   const showUsageUnavailable = () => {
+    setUsageField("tokens", "今日已用 Tokens：未获取");
     setUsageField("five", "5 小时剩余：未获取");
     setUsageField("week", "周额度剩余：未获取");
     setUsageField("resets", "重置次数：未获取");
@@ -871,15 +892,20 @@
     try {
       const api = await getUsageApi();
       if (usageBar.stopped || controller.signal.aborted) return;
-      const [usageResult, creditsResult] = await Promise.allSettled([
+      const [usageResult, creditsResult, profileResult] = await Promise.allSettled([
         api.safeGet("/wham/usage", {
           signal: controller.signal,
           additionalHeaders: { "OAI-App-Brand": "codex", "x-openai-codex-pricing-chooser": "1" },
         }),
         api.safeGet("/wham/rate-limit-reset-credits", { signal: controller.signal }),
+        api.safeGet("/wham/profiles/me", { signal: controller.signal }),
       ]);
       if (usageBar.stopped) return;
       showUsageUnavailable();
+      if (profileResult.status === "fulfilled") {
+        const daily = dailyUsageText(profileResult.value);
+        setUsageField("tokens", daily.text, daily.title);
+      }
       if (usageResult.status === "fulfilled") {
         const limits = usageResult.value?.rate_limit;
         const five = usageWindowText(limits, 18000);
@@ -962,7 +988,7 @@
       const panel = document.createElement("div");
       panel.className = "ds-usage-panel";
       usageBar.fields = {};
-      for (const name of ["five", "week", "resets", "expires"]) {
+      for (const name of ["tokens", "five", "week", "resets", "expires"]) {
         const field = document.createElement("span");
         field.dataset.usageField = name;
         usageBar.fields[name] = field;

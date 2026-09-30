@@ -3539,6 +3539,7 @@ html[data-dream-skin="active"] #codex-dream-skin-usage-status [data-usage-field]
   overflow: hidden;
   text-overflow: ellipsis;
 }
+html[data-dream-skin="active"] #codex-dream-skin-usage-status [data-usage-field="tokens"],
 html[data-dream-skin="active"] #codex-dream-skin-usage-status [data-usage-field="resets"] {
   flex-shrink: 0;
 }
