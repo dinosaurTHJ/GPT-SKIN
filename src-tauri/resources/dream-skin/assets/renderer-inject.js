@@ -783,11 +783,226 @@
     return scope;
   };
 
+  // 顶部额度栏只调用客户端已有的只读接口，登录凭据仍由原生请求层管理。
+  const USAGE_BAR_ID = "codex-dream-skin-usage-status";
+  const usageBar = {
+    element: null, fields: null, timer: null, controller: null, apiPromise: null,
+    running: false, stopped: false, lastAttempt: 0,
+  };
+
+  // 将有效服务端时间转换为本地时间；缺失或无效时间不显示为已过期。
+  const usageDate = (value) => {
+    if (typeof value !== "string" && typeof value !== "number") return null;
+    const date = new Date(typeof value === "number" ? value * 1000 : value);
+    return Number.isFinite(date.getTime()) ? date : null;
+  };
+  const usageDateText = (date) => date ? new Intl.DateTimeFormat("zh-CN", {
+    year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit",
+    hour12: false,
+  }).format(date).replaceAll("/", "-") : "未提供";
+
+  // 按窗口时长识别额度，避免不同套餐的 primary/secondary 顺序导致错配。
+  const usageWindowText = (limits, seconds) => {
+    const window = [limits?.primary_window, limits?.secondary_window]
+      .find((entry) => entry?.limit_window_seconds === seconds);
+    const used = window?.used_percent;
+    if (typeof used !== "number" || !Number.isFinite(used) || used < 0 || used > 100) {
+      return { text: "未获取", reset: "未获取", title: "当前账户的额度信息尚未获取" };
+    }
+    const remaining = Math.round((100 - used) * 10) / 10;
+    const reset = usageDateText(usageDate(window.reset_at));
+    return { text: `${remaining}%`, reset, title: `额度重置：${reset}` };
+  };
+
+  // 根据当前安装的模块地址寻找桌面请求实例，不依赖易变的压缩导出名称。
+  const getUsageApi = async () => {
+    if (!usageBar.apiPromise) {
+      usageBar.apiPromise = (async () => {
+        let sharedUrl = [...document.querySelectorAll('link[rel="modulepreload"][href]')]
+          .map((link) => link.href).find((url) => /\/app-shared-[\w-]+\.js$/.test(url));
+        if (!sharedUrl) {
+          const entry = document.querySelector('script[type="module"][src]');
+          if (!entry || new URL(entry.src).origin !== location.origin) throw new Error("模块不可用");
+          const response = await fetch(entry.src, { signal: usageBar.controller?.signal });
+          if (!response.ok) throw new Error("模块不可用");
+          const path = (await response.text()).match(/\.\/app-shared-[\w-]+\.js/);
+          if (path) sharedUrl = new URL(path[0], entry.src).href;
+        }
+        if (!sharedUrl || new URL(sharedUrl).origin !== location.origin) throw new Error("模块不可用");
+        const exports = await import(sharedUrl);
+        const api = Object.values(exports).find((value) => {
+          if (!value || typeof value.safeGet !== "function" ||
+              typeof value.getRequestTarget !== "function") return false;
+          try {
+            return value.getRequestTarget("/wham/usage").headers?.originator === "Codex Desktop";
+          } catch { return false; }
+        });
+        if (!api) throw new Error("桌面请求实例不可用");
+        return api;
+      })().catch((error) => { usageBar.apiPromise = null; throw error; });
+    }
+    return usageBar.apiPromise;
+  };
+
+  // 只更新自身节点，用 textContent 呈现服务端数据，不插入 HTML。
+  const setUsageField = (name, text, title = text) => {
+    const field = usageBar.fields?.[name];
+    if (!field) return;
+    if (field.textContent !== text) field.textContent = text;
+    if (field.title !== title) field.title = title;
+  };
+  const showUsageUnavailable = () => {
+    setUsageField("five", "5 小时剩余：未获取");
+    setUsageField("week", "周额度剩余：未获取");
+    setUsageField("resets", "重置次数：未获取");
+    setUsageField("expires", "过期时间：未获取");
+  };
+
+  // 复用原生使用情况和重置券接口；失败后清除旧值，防止账户切换时误显示。
+  const refreshUsageBar = async () => {
+    // 首次加载即读取一次，后台窗口之后暂停轮询，恢复可见时再刷新。
+    if (usageBar.stopped || usageBar.running ||
+        (document.visibilityState === "hidden" && usageBar.lastAttempt > 0)) return;
+    usageBar.running = true;
+    usageBar.lastAttempt = Date.now();
+    const controller = new AbortController();
+    usageBar.controller = controller;
+    const timeout = setTimeout(() => controller.abort(), 15000);
+    try {
+      const api = await getUsageApi();
+      if (usageBar.stopped || controller.signal.aborted) return;
+      const [usageResult, creditsResult] = await Promise.allSettled([
+        api.safeGet("/wham/usage", {
+          signal: controller.signal,
+          additionalHeaders: { "OAI-App-Brand": "codex", "x-openai-codex-pricing-chooser": "1" },
+        }),
+        api.safeGet("/wham/rate-limit-reset-credits", { signal: controller.signal }),
+      ]);
+      if (usageBar.stopped) return;
+      showUsageUnavailable();
+      if (usageResult.status === "fulfilled") {
+        const limits = usageResult.value?.rate_limit;
+        const five = usageWindowText(limits, 18000);
+        const week = usageWindowText(limits, 604800);
+        const fiveText = `5 小时剩余：${five.text}（${five.reset} 刷新）`;
+        const weekText = `周额度剩余：${week.text}（${week.reset} 刷新）`;
+        setUsageField("five", fiveText, `${fiveText}；${five.title}`);
+        setUsageField("week", weekText, `${weekText}；${week.title}`);
+      }
+      if (creditsResult.status === "fulfilled") {
+        const credits = creditsResult.value;
+        const count = credits?.available_count;
+        if (Number.isSafeInteger(count) && count >= 0) {
+          setUsageField("resets", `重置次数：${count}`);
+          // 仅列出尚未使用且未过期的重置券，按到期时间排列并合并相同时间。
+          const groups = new Map();
+          for (const credit of Array.isArray(credits.credits) ? credits.credits : []) {
+            if (credit?.status !== "available") continue;
+            const date = usageDate(credit.expires_at);
+            if (date && date.getTime() <= Date.now()) continue;
+            const key = date ? date.getTime() : Infinity;
+            groups.set(key, (groups.get(key) ?? 0) + 1);
+          }
+          const times = [...groups.entries()].sort(([a], [b]) => a - b)
+            .map(([time, quantity]) => `${usageDateText(Number.isFinite(time) ? new Date(time) : null)}${quantity > 1 ? `（${quantity} 次）` : ""}`);
+          const expiry = count === 0 ? "无可用重置" : times.join("、") || "未提供";
+          setUsageField("expires", `过期时间：${expiry}`, `重置券过期时间（本地时间）：${expiry}`);
+        }
+      }
+    } catch {
+      if (!usageBar.stopped) showUsageUnavailable();
+    } finally {
+      clearTimeout(timeout);
+      usageBar.running = false;
+      if (usageBar.controller === controller) usageBar.controller = null;
+    }
+  };
+
+  // 红框位于原生标题栏：避让左侧菜单、导航按钮和右侧窗口控制按钮。
+  const positionUsageBar = () => {
+    const host = usageBar.element;
+    if (!host) return;
+    const header = [...document.querySelectorAll("header")].find((element) => {
+      const rect = element.getBoundingClientRect();
+      return rect.top < 2 && rect.height > 20 && rect.height < 64 && rect.width > innerWidth * .8;
+    });
+    if (!header) { host.hidden = true; return; }
+    let area;
+    try { area = navigator.windowControlsOverlay?.getTitlebarAreaRect(); } catch {}
+    const headerRect = header.getBoundingClientRect();
+    const height = area?.height > 0 ? Math.min(area.height, headerRect.height) : headerRect.height;
+    const right = area?.width > 0 ? area.x + area.width : headerRect.right - 140;
+    let left = Math.max(headerRect.left + 12, 160);
+    for (const element of document.querySelectorAll('[role="menubar"], header button')) {
+      const rect = element.getBoundingClientRect();
+      if (rect.width > 0 && rect.top < height && rect.bottom > 0 && rect.right < right * .5) {
+        left = Math.max(left, rect.right + 12);
+      }
+    }
+    const width = Math.max(0, right - left - 12);
+    host.hidden = width < 260;
+    const styles = { left: `${left}px`, top: `${Math.max(0, (height - 28) / 2)}px`, width: `${width}px` };
+    for (const [name, value] of Object.entries(styles)) {
+      if (host.style[name] !== value) host.style[name] = value;
+    }
+  };
+
+  // 回到窗口或页面可见时补充刷新；同一分钟内不重复请求。
+  const resumeUsageBar = () => {
+    positionUsageBar();
+    if (Date.now() - usageBar.lastAttempt >= 60000) void refreshUsageBar();
+  };
+  const ensureUsageBar = () => {
+    if (!document.body || usageBar.stopped) return;
+    if (!usageBar.element) {
+      const host = document.createElement("div");
+      host.id = USAGE_BAR_ID;
+      host.setAttribute("role", "group");
+      host.setAttribute("aria-label", "账户额度与重置券状态");
+      const panel = document.createElement("div");
+      panel.className = "ds-usage-panel";
+      usageBar.fields = {};
+      for (const name of ["five", "week", "resets", "expires"]) {
+        const field = document.createElement("span");
+        field.dataset.usageField = name;
+        usageBar.fields[name] = field;
+        panel.append(field);
+      }
+      host.append(panel);
+      usageBar.element = host;
+      showUsageUnavailable();
+      window.addEventListener("resize", positionUsageBar, { passive: true });
+      window.addEventListener("focus", resumeUsageBar);
+      document.addEventListener("visibilitychange", resumeUsageBar);
+      navigator.windowControlsOverlay?.addEventListener("geometrychange", positionUsageBar);
+      usageBar.timer = setInterval(() => { void refreshUsageBar(); }, 60000);
+      void refreshUsageBar();
+    }
+    if (!usageBar.element.isConnected) document.body.append(usageBar.element);
+    positionUsageBar();
+  };
+
+  // 恢复默认或重新换肤时撤销请求、计时器和节点，不留下重复状态栏。
+  const stopUsageBar = () => {
+    usageBar.stopped = true;
+    clearInterval(usageBar.timer);
+    usageBar.controller?.abort();
+    window.removeEventListener("resize", positionUsageBar);
+    window.removeEventListener("focus", resumeUsageBar);
+    document.removeEventListener("visibilitychange", resumeUsageBar);
+    navigator.windowControlsOverlay?.removeEventListener("geometrychange", positionUsageBar);
+    usageBar.element?.remove();
+    usageBar.element = null;
+    usageBar.fields = null;
+    usageBar.apiPromise = null;
+  };
+
   const ensure = ({ root: rootPass = true, scope: scopePass = false, parts: partPass = false } = {}) => {
     if (window[DISABLED_KEY]) return;
     const root = document.documentElement;
     if (!root) return;
     metrics.ensureCalls += 1;
+    ensureUsageBar();
     if (rootPass) applyRootState(root);
     if (partPass) refreshParts();
     if (scopePass) refreshScope();
@@ -796,6 +1011,7 @@
   const cleanup = () => {
     const state = window[STATE_KEY];
     if (state?.installToken !== installToken) return false;
+    stopUsageBar();
     window[DISABLED_KEY] = true;
     const root = document.documentElement;
     for (const name of ROOT_ATTRS) root?.removeAttribute(name);

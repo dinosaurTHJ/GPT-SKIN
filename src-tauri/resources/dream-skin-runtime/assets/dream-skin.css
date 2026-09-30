@@ -3499,3 +3499,56 @@ html[data-dream-skin="active"][data-dream-shell] body [cmdk-input]::placeholder 
   -webkit-text-fill-color: var(--ds-muted) !important;
   opacity: 1 !important;
 }
+
+/* 顶部账户额度：透明阴影框，仅占用原生标题栏的空白区域。 */
+html[data-dream-skin="active"] #codex-dream-skin-usage-status {
+  position: fixed;
+  height: 28px;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+}
+html[data-dream-skin="active"] #codex-dream-skin-usage-status[hidden] {
+  display: none;
+}
+html[data-dream-skin="active"] #codex-dream-skin-usage-status .ds-usage-panel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 100%;
+  overflow: hidden;
+  padding: 4px 12px;
+  border: 1px solid rgb(var(--ds-line-rgb) / .24);
+  border-radius: 9px;
+  background: rgb(var(--ds-panel-rgb) / .38);
+  box-shadow: 0 3px 12px rgb(var(--ds-bg-rgb) / .22);
+  color: var(--ds-text);
+  -webkit-text-fill-color: var(--ds-text);
+  text-shadow: 0 1px 3px rgb(0 0 0 / .55);
+  font-size: 12px;
+  line-height: 18px;
+  white-space: nowrap;
+  pointer-events: auto;
+  -webkit-app-region: no-drag;
+}
+html[data-dream-skin="active"] #codex-dream-skin-usage-status [data-usage-field] {
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+html[data-dream-skin="active"] #codex-dream-skin-usage-status [data-usage-field="resets"] {
+  flex-shrink: 0;
+}
+html[data-dream-skin="active"] #codex-dream-skin-usage-status [data-usage-field] + [data-usage-field] {
+  padding-left: 10px;
+  border-left: 1px solid rgb(var(--ds-line-rgb) / .28);
+}
+html[data-dream-skin="active"] #codex-dream-skin-usage-status [data-usage-field="expires"] {
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
