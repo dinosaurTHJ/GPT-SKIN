@@ -1190,14 +1190,17 @@ export async function verifySession(
         visible: Boolean(node.isConnected !== false && cssVisible && intersectsViewport),
       };
     };
-    const homeIndicator = document.querySelector(${selectorLiteral("home-icon")});
-    const homeSignal = homeIndicator ?? document.querySelector(${selectorLiteral("game-source")}) ??
-      document.querySelector(${selectorLiteral("home-suggestions")});
+    // 页面缓存中也保留旧首页与输入框，校验必须选择可见实例。
+    const visibleNode = (selector) => [...document.querySelectorAll(selector)]
+      .find((node) => box(node)?.visible) ?? null;
+    const homeIndicator = visibleNode(${selectorLiteral("home-icon")});
+    const homeSignal = homeIndicator ?? visibleNode(${selectorLiteral("game-source")}) ??
+      visibleNode(${selectorLiteral("home-suggestions")});
     const homeRoute = homeSignal?.closest('[role="main"]') ?? null;
     // Codex 26.721.x can render the home content before home-icon. Reuse the
     // already-resolved semantic home container so a healthy home session is
     // not rejected solely because the stricter home-icon selector is late.
-    const home = document.querySelector(${selectorLiteral("home-route")}) ?? homeRoute;
+    const home = visibleNode(${selectorLiteral("home-route")}) ?? homeRoute;
     const suggestions = home?.querySelector(${selectorLiteral("home-suggestions")}) ?? null;
     const cardButtons = suggestions ? [...suggestions.querySelectorAll('button')] : [];
     const cards = cardButtons.map(box);
@@ -1217,9 +1220,9 @@ export async function verifySession(
     const visibleSuggestionLabels = suggestionLabels.filter((item) => item?.visible);
     const suggestionLabelColorsMatch = visibleSuggestionLabels.every((item) =>
       item.color === item.expectedColor);
-    const settingsAnchor = document.querySelector(${selectorLiteral("settings-panel")}) ||
-      document.querySelector(${selectorLiteral("appearance-radio")}) ||
-      document.querySelector(${stableTestidLiteral("theme-preview")});
+    const settingsAnchor = visibleNode(${selectorLiteral("settings-panel")}) ||
+      visibleNode(${selectorLiteral("appearance-radio")}) ||
+      visibleNode(${stableTestidLiteral("theme-preview")});
     const runtime = window.__CODEX_DREAM_SKIN_STATE__;
     const adopted = runtime?.styleMode === 'adopted' &&
       [...document.adoptedStyleSheets].includes(runtime.styleSheet);
@@ -1264,11 +1267,11 @@ export async function verifySession(
       visibleCardCount: visibleCards.length,
       suggestionLabels,
       suggestionLabelColorsMatch,
-      composer: box(document.querySelector(${selectorLiteral("composer-chrome")})),
-      shell: box(document.querySelector(${selectorLiteral("shell-main")})),
-      sidebar: box(document.querySelector(${selectorLiteral("left-panel")})),
-      genericMain: box(document.querySelector('[data-ds-part="main"], [data-ds-part="home"]')),
-      genericInput: box(document.querySelector('[data-ds-part="composer"]')),
+      composer: box(visibleNode(${selectorLiteral("composer-chrome")})),
+      shell: box(visibleNode(${selectorLiteral("shell-main")})),
+      sidebar: box(visibleNode(${selectorLiteral("left-panel")})),
+      genericMain: box(visibleNode('[data-ds-part="main"], [data-ds-part="home"]')),
+      genericInput: box(visibleNode('[data-ds-part="composer"]')),
       nativeWindow: ${JSON.stringify(nativeWindow)},
       documentVisibility: document.visibilityState ?? null,
       documentHidden: document.hidden === true,

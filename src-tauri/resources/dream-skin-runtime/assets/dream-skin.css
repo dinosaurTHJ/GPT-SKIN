@@ -454,7 +454,7 @@ html[data-dream-skin="active"] main:is(.main-surface, [data-app-shell-main-surfa
   box-shadow: -8px 0 28px rgb(var(--ds-bg-rgb) / .18) !important;
 }
 
-html[data-dream-skin="active"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"]))::before {
+html[data-dream-skin="active"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="thread"]::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -467,21 +467,22 @@ html[data-dream-skin="active"] main:is(.main-surface, [data-app-shell-main-surfa
   opacity: var(--ds-theme-image-opacity, .80);
 }
 
-html[data-dream-skin="active"][data-dream-shell="light"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"]))::before {
+html[data-dream-skin="active"][data-dream-shell="light"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="thread"]::before {
   opacity: var(--ds-theme-image-opacity, .80);
 }
 
 html[data-dream-skin="active"]:is([data-dream-art-wide="true"], [data-dream-art-aspect="wide"], [data-dream-art-aspect="ultrawide"])
-  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"]))::before {
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="thread"]::before {
   background-position: center, center, var(--ds-art-position);
   background-size: 100% 100%, 100% 100%, cover;
 }
 
+/* 当前路由由 renderer 按可见 Workspace 标记，隐藏的首页缓存不能阻止会话换肤。 */
 /* Studio's full mode keeps the task artwork at normal strength with only the
    baseline readability veil. Ambient mode deliberately uses the heavier task
    fade/shade below, while off removes the artwork entirely. */
 html[data-dream-skin="active"]:is([data-dream-task-mode="full"], [data-dream-art-task-mode="full"])
-  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"]))::before {
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="thread"]::before {
   inset: 0;
   height: auto;
   background-image: var(--ds-task-full-veil), var(--dream-skin-art);
@@ -491,12 +492,12 @@ html[data-dream-skin="active"]:is([data-dream-task-mode="full"], [data-dream-art
 }
 
 html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"], [data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"])
-  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"]))::before {
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="thread"]::before {
   inset: 0;
   height: auto;
 }
 
-html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"], [data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"])[data-dream-art-wide="true"]:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])):not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) [role="main"])) body {
+html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"], [data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"])[data-dream-art-wide="true"][data-dream-main-present="true"][data-dream-base-state="thread"] body {
   background-image: linear-gradient(
     rgb(var(--ds-bg-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))),
     rgb(var(--ds-bg-rgb) / calc(1 - var(--ds-theme-image-opacity, .80)))
@@ -507,7 +508,7 @@ html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-
   background-attachment: fixed !important;
 }
 
-html[data-dream-skin="active"]:is([data-dream-task-mode="full"], [data-dream-art-task-mode="full"])[data-dream-art-wide="true"]:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])):not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) [role="main"])) body {
+html[data-dream-skin="active"]:is([data-dream-task-mode="full"], [data-dream-art-task-mode="full"])[data-dream-art-wide="true"][data-dream-main-present="true"][data-dream-base-state="thread"] body {
   background-image: linear-gradient(
     rgb(var(--ds-bg-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))),
     rgb(var(--ds-bg-rgb) / calc(1 - var(--ds-theme-image-opacity, .80)))
@@ -518,7 +519,7 @@ html[data-dream-skin="active"]:is([data-dream-task-mode="full"], [data-dream-art
   background-attachment: fixed !important;
 }
 
-html[data-dream-skin="active"]:is([data-dream-task-mode="full"], [data-dream-art-task-mode="full"])[data-dream-art-wide="true"]:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])):not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) [role="main"]))
+html[data-dream-skin="active"]:is([data-dream-task-mode="full"], [data-dream-art-task-mode="full"])[data-dream-art-wide="true"][data-dream-main-present="true"][data-dream-base-state="thread"]
   aside.app-shell-left-panel {
   background: linear-gradient(90deg,
     var(--ds-immersive-sidebar),
@@ -529,13 +530,13 @@ html[data-dream-skin="active"]:is([data-dream-task-mode="full"], [data-dream-art
   backdrop-filter: none !important;
 }
 
-html[data-dream-skin="active"]:is([data-dream-task-mode="full"], [data-dream-art-task-mode="full"])[data-dream-art-wide="true"]:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])):not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) [role="main"]))
+html[data-dream-skin="active"]:is([data-dream-task-mode="full"], [data-dream-art-task-mode="full"])[data-dream-art-wide="true"][data-dream-main-present="true"][data-dream-base-state="thread"]
   aside.app-shell-left-panel::after {
   background: transparent !important;
 }
 
-html[data-dream-skin="active"]:is([data-dream-task-mode="full"], [data-dream-art-task-mode="full"])[data-dream-art-wide="true"]:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])):not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) [role="main"]))
-  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) {
+html[data-dream-skin="active"]:is([data-dream-task-mode="full"], [data-dream-art-task-mode="full"])[data-dream-art-wide="true"][data-dream-main-present="true"][data-dream-base-state="thread"]
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="thread"] {
   background: linear-gradient(90deg,
     var(--ds-immersive-edge),
     var(--ds-immersive-mid) 64%,
@@ -546,11 +547,11 @@ html[data-dream-skin="active"]:is([data-dream-task-mode="full"], [data-dream-art
 }
 
 html[data-dream-skin="active"]:is([data-dream-task-mode="full"], [data-dream-art-task-mode="full"])[data-dream-art-wide="true"]
-  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"]))::before {
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="thread"]::before {
   content: none;
 }
 
-html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"], [data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"])[data-dream-art-wide="true"]:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])):not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) [role="main"]))
+html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"], [data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"])[data-dream-art-wide="true"][data-dream-main-present="true"][data-dream-base-state="thread"]
   aside.app-shell-left-panel {
   background: linear-gradient(90deg,
     var(--ds-task-immersive-sidebar),
@@ -563,13 +564,13 @@ html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-
 
 /* Native sidebar resize chrome inherits the sidebar background and extends
    20px into the main surface. Keeping it clear preserves one continuous image. */
-html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"], [data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"])[data-dream-art-wide="true"]:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])):not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) [role="main"]))
+html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"], [data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"])[data-dream-art-wide="true"][data-dream-main-present="true"][data-dream-base-state="thread"]
   aside.app-shell-left-panel::after {
   background: transparent !important;
 }
 
-html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"], [data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"])[data-dream-art-wide="true"]:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])):not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) [role="main"]))
-  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) {
+html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"], [data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"])[data-dream-art-wide="true"][data-dream-main-present="true"][data-dream-base-state="thread"]
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="thread"] {
   background: linear-gradient(90deg,
     var(--ds-task-immersive-edge),
     var(--ds-task-immersive-mid) 64%,
@@ -580,19 +581,19 @@ html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-
 }
 
 html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"], [data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"])[data-dream-art-wide="true"]
-  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"]))::before {
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="thread"]::before {
   content: none;
 }
 
 /* Wide ambient mode keeps the native main surface over the body artwork. Tie
    that tint to the image setting as well; at 100% the surface must be clear,
    otherwise a fixed light-shell panel washes the artwork out. */
-html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"], [data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"])[data-dream-art-wide="true"]:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])):not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) [role="main"]))
-  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) {
+html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"], [data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"])[data-dream-art-wide="true"][data-dream-main-present="true"][data-dream-base-state="thread"]
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="thread"] {
   background: rgb(var(--ds-bg-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))) !important;
 }
 
-html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"], [data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"])[data-dream-art-wide="true"]:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])):not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) [role="main"]))
+html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"], [data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"])[data-dream-art-wide="true"][data-dream-main-present="true"][data-dream-base-state="thread"]
   .composer-surface-chrome {
   background: rgb(var(--ds-panel-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))) !important;
   border: 0 !important;
@@ -603,7 +604,7 @@ html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-
   backdrop-filter: none !important;
 }
 
-html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"], [data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"])[data-dream-art-wide="true"]:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])):not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) [role="main"]))
+html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"], [data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"])[data-dream-art-wide="true"][data-dream-main-present="true"][data-dream-base-state="thread"]
   main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) > header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*="_Header_"]) {
   background: transparent !important;
   border-bottom: 0 !important;
@@ -612,7 +613,7 @@ html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-
 }
 
 html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"], [data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"], [data-dream-task-mode="full"], [data-dream-art-task-mode="full"])[data-dream-art-wide="true"]
-  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) [class*="_markdown"] {
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="thread"] [class*="_markdown"] {
   color: var(--ds-text) !important;
   text-shadow:
     0 1px 2px rgb(var(--ds-bg-rgb) / .82),
@@ -620,14 +621,14 @@ html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-
 }
 
 html[data-dream-skin="active"][data-dream-shell="light"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"], [data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"], [data-dream-task-mode="full"], [data-dream-art-task-mode="full"])[data-dream-art-wide="true"]
-  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) [class*="_markdown"] {
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="thread"] [class*="_markdown"] {
   text-shadow:
     0 1px 2px rgb(var(--ds-panel-rgb) / .92),
     0 0 10px rgb(var(--ds-panel-rgb) / .72);
 }
 
 html[data-dream-skin="active"]:is([data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"])
-  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"]))::before {
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="thread"]::before {
   inset: 0 0 auto;
   height: clamp(280px, 46vh, 520px);
   background-position: center top, center top, var(--ds-art-position);
@@ -635,7 +636,7 @@ html[data-dream-skin="active"]:is([data-dream-task-mode="banner"], [data-dream-a
 }
 
 html[data-dream-skin="active"]:is([data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"]):is([data-dream-art-wide="true"], [data-dream-art-aspect="wide"], [data-dream-art-aspect="ultrawide"])
-  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"]))::before {
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="thread"]::before {
   inset: 0;
   height: auto;
   background-position: center, center, var(--ds-art-position);
@@ -643,16 +644,16 @@ html[data-dream-skin="active"]:is([data-dream-task-mode="banner"], [data-dream-a
 }
 
 html[data-dream-skin="active"]:is([data-dream-task-mode="off"], [data-dream-art-task-mode="off"])
-  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"]))::before {
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="thread"]::before {
   content: none;
 }
 
-html[data-dream-skin="active"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) > :not(header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*="_Header_"])) {
+html[data-dream-skin="active"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="thread"] > :not(header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*="_Header_"])) {
   position: relative;
   z-index: 1;
 }
 
-html[data-dream-skin="active"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) [role="main"] {
+html[data-dream-skin="active"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="thread"] [role="main"] {
   background: transparent !important;
   color: var(--ds-text) !important;
   text-shadow:
@@ -660,7 +661,7 @@ html[data-dream-skin="active"] main:is(.main-surface, [data-app-shell-main-surfa
     0 0 10px rgb(var(--ds-bg-rgb) / .46);
 }
 
-html[data-dream-skin="active"][data-dream-shell="light"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) [role="main"] {
+html[data-dream-skin="active"][data-dream-shell="light"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="thread"] [role="main"] {
   text-shadow: none;
 }
 
@@ -715,7 +716,7 @@ html[data-dream-skin="active"]
 
 /* Browser contents live in a separate webview overlay, outside the dock DOM. */
 html[data-dream-skin="active"]
-  [class~="bg-surface"]:has([class~="@container/browser-toolbar"]),
+  [class~="bg-surface"][data-dream-browser-toolbar="true"],
 html[data-dream-skin="active"]
   webview[style*="background-color: var(--color-surface-tertiary"] {
   background: transparent !important;
@@ -796,7 +797,7 @@ html[data-dream-skin="active"]
 /* The edited-files card is a native diff surface, not a dialog. Match its
    current stable surface token and preserve the diff-specific status colors. */
 html[data-dream-skin="active"][data-dream-shell="light"]
-  [class~="bg-surface-elevated-secondary/50"]:has([class*="turn-diff"]) {
+  [class~="bg-surface-elevated-secondary/50"][data-dream-turn-diff="true"] {
   color: var(--ds-text) !important;
   background: rgb(var(--ds-panel-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))) !important;
   border-color: rgb(var(--ds-muted-rgb) / .24) !important;
@@ -804,7 +805,7 @@ html[data-dream-skin="active"][data-dream-shell="light"]
 }
 
 html[data-dream-skin="active"][data-dream-shell="light"]
-  [class~="bg-surface-elevated-secondary/50"]:has([class*="turn-diff"])
+  [class~="bg-surface-elevated-secondary/50"][data-dream-turn-diff="true"]
   :is([class~="text-default"], [class~="text-secondary"], [class~="text-tertiary"],
     [class~="turn-diff-default-subtitle"], [class~="turn-diff-hover-subtitle"]) {
   color: var(--ds-text) !important;
@@ -812,7 +813,7 @@ html[data-dream-skin="active"][data-dream-shell="light"]
 }
 
 html[data-dream-skin="active"][data-dream-shell="light"]
-  [class~="bg-surface-elevated-secondary/50"]:has([class*="turn-diff"])
+  [class~="bg-surface-elevated-secondary/50"][data-dream-turn-diff="true"]
   :is([class~="text-codex-git-added"], [class~="text-codex-git-deleted"]) {
   -webkit-text-fill-color: currentColor !important;
 }
@@ -821,7 +822,7 @@ html[data-dream-skin="active"][data-dream-shell="light"]
    utility variable. Override those descendants as well; changing only the
    outer card leaves the file rows and code preview dark on a bright artwork. */
 html[data-dream-skin="active"][data-dream-shell="light"]
-  [class~="bg-surface-elevated-secondary/50"]:has([class*="turn-diff"])
+  [class~="bg-surface-elevated-secondary/50"][data-dream-turn-diff="true"]
   :is([class~="bg-surface/70"], [class~="bg-surface-secondary/92"],
     [class~="bg-primary-soft-alpha"], [class*="bg-background-primary-soft"],
     [class*="codex-diffs-surface-override"]) {
@@ -830,40 +831,40 @@ html[data-dream-skin="active"][data-dream-shell="light"]
 }
 
 html[data-dream-skin="active"][data-dream-shell="light"]
-  [class~="bg-surface-elevated-secondary/50"]:has([class*="turn-diff"])
+  [class~="bg-surface-elevated-secondary/50"][data-dream-turn-diff="true"]
   [class*="codex-diffs-surface-override"] {
   --codex-diffs-surface-override: rgb(var(--ds-panel-2-rgb) / .72) !important;
 }
 
 html[data-dream-skin="active"][data-dream-shell="light"]
-  [class~="bg-surface-elevated-secondary/50"]:has([class*="turn-diff"])
+  [class~="bg-surface-elevated-secondary/50"][data-dream-turn-diff="true"]
   :is(button, pre, code) {
   color: var(--ds-text) !important;
   -webkit-text-fill-color: var(--ds-text) !important;
 }
 
 html[data-dream-skin="active"][data-dream-shell="light"]
-  [class~="bg-surface-elevated-secondary/50"]:has([class*="turn-diff"])
+  [class~="bg-surface-elevated-secondary/50"][data-dream-turn-diff="true"]
   :is([class~="text-codex-description"], [class~="text-secondary"],
     [class~="text-tertiary"], [class~="text-text/40"]) {
   color: var(--ds-muted) !important;
   -webkit-text-fill-color: var(--ds-muted) !important;
 }
 
-html[data-dream-skin="active"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) article {
+html[data-dream-skin="active"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="thread"] article {
   border: 1px solid rgb(var(--ds-muted-rgb) / .12);
   background: rgb(var(--ds-panel-rgb) / .44);
   box-shadow: 0 8px 24px rgb(var(--ds-bg-rgb) / .10);
   backdrop-filter: blur(7px) saturate(105%);
 }
 
-html[data-dream-skin="active"][data-dream-shell="light"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) article {
+html[data-dream-skin="active"][data-dream-shell="light"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="thread"] article {
   background: rgb(var(--ds-panel-rgb) / .72);
 }
 
 html[data-dream-skin="active"][data-dream-shell="light"]
-  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):has([role="main"])::after,
-html[data-dream-skin="active"][data-dream-shell="light"] [role="main"]:has([data-testid="home-icon"]) [data-feature="game-source"]::before {
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="home"]::after,
+html[data-dream-skin="active"][data-dream-shell="light"] [role="main"][data-dream-home-hero="true"] [data-feature="game-source"]::before {
   text-shadow: none;
 }
 
@@ -876,7 +877,7 @@ html[data-dream-skin="active"] main:is(.main-surface, [data-app-shell-main-surfa
 
 /* Decorative chrome lives on the native shell; no injected positioning host is needed. */
 html[data-dream-skin="active"]
-  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) > header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*="_Header_"])::before {
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="thread"] > header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*="_Header_"])::before {
   content: var(--dream-skin-name, "Codex Dream Skin") " · "
     var(--dream-skin-brand-subtitle, "CODEX DREAM SKIN");
   position: absolute;
@@ -896,12 +897,12 @@ html[data-dream-skin="active"]
 
 /* The title is manager chrome, not part of the native Codex header. */
 html[data-dream-skin="active"]
-  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) > header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*="_Header_"])::before {
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="thread"] > header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*="_Header_"])::before {
   content: none !important;
 }
 
 html[data-dream-skin="active"]
-  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) > header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*="_Header_"])::after {
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="thread"] > header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*="_Header_"])::after {
   content: var(--dream-skin-status, "DREAM SKIN ONLINE");
   position: absolute;
   right: 84px;
@@ -919,7 +920,7 @@ html[data-dream-skin="active"]
 }
 
 html[data-dream-skin="active"]
-  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):has([role="main"])::after {
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="home"]::after {
   content: var(--dream-skin-quote, "MAKE SOMETHING WONDERFUL");
   position: absolute;
   right: 28px;
@@ -934,9 +935,9 @@ html[data-dream-skin="active"]
 }
 
 html[data-dream-skin="active"][data-dream-shell="light"]
-  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) > header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*="_Header_"])::before,
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="thread"] > header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*="_Header_"])::before,
 html[data-dream-skin="active"][data-dream-shell="light"]
-  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) > header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*="_Header_"])::after {
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="thread"] > header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*="_Header_"])::after {
   text-shadow: none;
 }
 
@@ -976,17 +977,17 @@ html[data-dream-skin="active"] main:is(.main-surface, [data-app-shell-main-surfa
   scrollbar-color: rgb(var(--ds-accent-rgb) / .38) transparent;
 }
 
-html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) {
+html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] {
   --thread-content-max-width: min(1180px, calc(100cqw - 44px)) !important;
   overflow-x: hidden !important;
 }
 
-html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) > div:first-child {
+html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] > div:first-child {
   min-height: 100% !important;
   padding-top: 15px !important;
 }
 
-html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child {
+html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] > div:first-child > div:first-child {
   flex: 0 0 440px !important;
   min-height: 440px !important;
   align-items: flex-start !important;
@@ -1001,19 +1002,19 @@ html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) > di
    (see #244). Override with higher specificity only when that new slot is
    present, so pre-26.721 layouts are untouched. */
 html[data-dream-skin="active"]
-  [role="main"]:has([data-testid="home-icon"]) > div:first-child:has(> .home-banners) {
+  [role="main"][data-dream-home-hero="true"] > div:first-child[data-dream-home-banners="true"] {
   min-height: 0 !important;
   padding-top: 0 !important;
 }
 
 html[data-dream-skin="active"]
-  [role="main"]:has([data-testid="home-icon"]) > div:first-child:has(> .home-banners) > .home-banners {
+  [role="main"][data-dream-home-hero="true"] > div:first-child[data-dream-home-banners="true"] > .home-banners {
   flex: 0 1 auto !important;
   min-height: 0 !important;
 }
 
 html[data-dream-skin="active"]
-  [role="main"]:has([data-testid="home-icon"]) > div:first-child:has(> .home-banners) > .home-banners > div:first-child {
+  [role="main"][data-dream-home-hero="true"] > div:first-child[data-dream-home-banners="true"] > .home-banners > div:first-child {
   height: auto !important;
   min-height: 0 !important;
   border: 0 !important;
@@ -1023,7 +1024,7 @@ html[data-dream-skin="active"]
 }
 
 html[data-dream-skin="active"]
-  [role="main"]:has([data-testid="home-icon"]) > div:first-child:has(> .home-banners) > .home-banners > div:first-child::before {
+  [role="main"][data-dream-home-hero="true"] > div:first-child[data-dream-home-banners="true"] > .home-banners > div:first-child::before {
   content: none !important;
 }
 
@@ -1034,7 +1035,7 @@ html[data-dream-skin="active"]
    is dormant rather than misrendered. Left as-is pending a real fixture of
    the new nested shape; the critical content-invisible bug is the block
    above this one. */
-html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child {
+html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] > div:first-child > div:first-child > div:first-child {
   position: relative !important;
   isolation: isolate;
   width: calc(100% - 44px) !important;
@@ -1054,7 +1055,7 @@ html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) > di
   box-shadow: 0 16px 38px rgb(var(--ds-bg-rgb) / .30) !important;
 }
 
-html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child::before {
+html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] > div:first-child > div:first-child > div:first-child::before {
   content: "";
   position: absolute;
   inset: 0 auto 0 0;
@@ -1066,25 +1067,25 @@ html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) > di
 }
 
 html[data-dream-skin="active"]:is([data-dream-art-safe="right"], [data-dream-art-safe-area="right"])
-  [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child::before {
+  [role="main"][data-dream-home-hero="true"] > div:first-child > div:first-child > div:first-child::before {
   inset: 0 0 0 auto;
 }
 
 html[data-dream-skin="active"]:is([data-dream-art-safe="center"], [data-dream-art-safe-area="center"])
-  [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child::before {
+  [role="main"][data-dream-home-hero="true"] > div:first-child > div:first-child > div:first-child::before {
   inset: 0 14%;
   width: auto;
   border-radius: 0;
 }
 
 html[data-dream-skin="active"]:is([data-dream-art-safe="none"], [data-dream-art-safe-area="none"])
-  [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child::before {
+  [role="main"][data-dream-home-hero="true"] > div:first-child > div:first-child > div:first-child::before {
   inset: 0;
   width: auto;
   border-radius: 21px;
 }
 
-html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child > div:first-child {
+html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] > div:first-child > div:first-child > div:first-child > div:first-child {
   position: relative;
   z-index: 1;
   height: 100%;
@@ -1094,37 +1095,37 @@ html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) > di
 }
 
 html[data-dream-skin="active"]:is([data-dream-art-safe="right"], [data-dream-art-safe-area="right"])
-  [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child > div:first-child {
+  [role="main"][data-dream-home-hero="true"] > div:first-child > div:first-child > div:first-child > div:first-child {
   justify-content: flex-end !important;
 }
 
 html[data-dream-skin="active"]:is([data-dream-art-safe="center"], [data-dream-art-safe-area="center"])
-  [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child > div:first-child {
+  [role="main"][data-dream-home-hero="true"] > div:first-child > div:first-child > div:first-child > div:first-child {
   justify-content: center !important;
 }
 
-html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child > div:first-child > div:first-child {
+html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] > div:first-child > div:first-child > div:first-child > div:first-child > div:first-child {
   width: min(46%, 520px) !important;
   align-items: flex-start !important;
   gap: 0 !important;
 }
 
 html[data-dream-skin="active"]:is([data-dream-art-safe="right"], [data-dream-art-safe-area="right"])
-  [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child > div:first-child > div:first-child {
+  [role="main"][data-dream-home-hero="true"] > div:first-child > div:first-child > div:first-child > div:first-child > div:first-child {
   align-items: flex-end !important;
   text-align: right !important;
 }
 
 html[data-dream-skin="active"]:is([data-dream-art-safe="center"], [data-dream-art-safe-area="center"])
-  [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child > div:first-child > div:first-child {
+  [role="main"][data-dream-home-hero="true"] > div:first-child > div:first-child > div:first-child > div:first-child > div:first-child {
   width: min(58%, 640px) !important;
   align-items: center !important;
   text-align: center !important;
 }
 
-html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) [data-testid="home-icon"] { display: none !important; }
+html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] [data-testid="home-icon"] { display: none !important; }
 
-html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) [data-feature="game-source"] {
+html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] [data-feature="game-source"] {
   display: block !important;
   max-width: 100% !important;
   color: var(--ds-text) !important;
@@ -1137,7 +1138,7 @@ html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) [dat
   pointer-events: auto !important;
 }
 
-html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) [data-feature="game-source"]::before {
+html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] [data-feature="game-source"]::before {
   content: var(--dream-skin-name, "Codex Dream Skin");
   display: block;
   margin-bottom: 9px;
@@ -1147,7 +1148,7 @@ html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) [dat
   text-shadow: 0 0 14px rgb(var(--ds-accent-rgb) / .26);
 }
 
-html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) [data-feature="game-source"]::after {
+html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] [data-feature="game-source"]::after {
   content: var(--dream-skin-tagline, "把喜欢的画面变成可交互的 Codex 工作台。");
   display: block;
   margin-top: 13px;
@@ -1158,7 +1159,7 @@ html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) [dat
   letter-spacing: 0;
 }
 
-html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) [data-feature="game-source"] button {
+html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] [data-feature="game-source"] button {
   margin: 0 5px;
   padding: 2px 9px 3px;
   border: 1px solid rgb(var(--ds-accent-rgb) / .36);
@@ -1169,7 +1170,7 @@ html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) [dat
   text-underline-offset: 5px;
 }
 
-html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) [data-feature="game-source"] button::before {
+html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] [data-feature="game-source"] button::before {
   content: var(--dream-skin-project-prefix, "选择项目 · ");
   font-size: .46em;
   font-weight: 700;
@@ -1177,16 +1178,16 @@ html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) [dat
   opacity: .86;
 }
 
-html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child > div:nth-child(2) {
+html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] > div:first-child > div:first-child > div:first-child > div:nth-child(2) {
   left: 14px !important;
   right: 14px !important;
   top: 100% !important;
   margin-top: 13px !important;
 }
 
-html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) .group\/home-suggestions { overflow: visible !important; }
+html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] .group\/home-suggestions { overflow: visible !important; }
 
-html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) .group\/home-suggestions button {
+html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] .group\/home-suggestions button {
   position: relative !important;
   min-height: 118px !important;
   padding: 14px 13px 12px !important;
@@ -1207,17 +1208,17 @@ html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) .gro
     border-color .18s cubic-bezier(.22, 1, .36, 1) !important;
 }
 
-html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) .group\/home-suggestions button [class~="text-token-text-primary"] {
+html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] .group\/home-suggestions button [class~="text-token-text-primary"] {
   color: var(--ds-text) !important;
 }
 
-html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) .group\/home-suggestions button:hover {
+html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] .group\/home-suggestions button:hover {
   transform: translateY(-2px) !important;
   border-color: rgb(var(--ds-accent-rgb) / .42) !important;
   box-shadow: 0 12px 28px rgb(var(--ds-bg-rgb) / .24) !important;
 }
 
-html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) .group\/home-suggestions button > span:first-child > span:first-child {
+html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] .group\/home-suggestions button > span:first-child > span:first-child {
   width: 38px;
   height: 38px;
   /* Native spans carry justify-start; grid + place-items cannot override
@@ -1233,7 +1234,7 @@ html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) .gro
   box-shadow: 0 0 0 6px rgb(var(--ds-accent-rgb) / .05);
 }
 
-html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) .group\/home-suggestions button svg {
+html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] .group\/home-suggestions button svg {
   width: 21px !important;
   height: 21px !important;
   display: block !important;
@@ -1242,8 +1243,8 @@ html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) .gro
   color: var(--ds-accent) !important;
 }
 
-html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) .group\/home-suggestions button > span:first-child { justify-content: center !important; }
-html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) .group\/home-suggestions button > span:last-child { align-items: center !important; text-align: center !important; }
+html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] .group\/home-suggestions button > span:first-child { justify-content: center !important; }
+html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] .group\/home-suggestions button > span:last-child { align-items: center !important; text-align: center !important; }
 
 html[data-dream-skin="active"] .composer-surface-chrome {
   overflow: visible !important;
@@ -1331,7 +1332,7 @@ html[data-dream-skin="active"][data-dream-shell="light"]
    renderer assigns these parts only from one coherent main/composer/sidebar
    structure; keep the minimum background and transparency contract functional
    before a new exact selector contract is available. */
-html[data-dream-skin="active"]:not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]))) [data-ds-part="sidebar"] {
+html[data-dream-skin="active"][data-dream-main-present="false"] [data-ds-part="sidebar"] {
   background:
     linear-gradient(180deg,
       rgb(var(--ds-panel-rgb) / .98),
@@ -1342,9 +1343,9 @@ html[data-dream-skin="active"]:not(:has(main:is(.main-surface, [data-app-shell-m
   backdrop-filter: none !important;
 }
 
-html[data-dream-skin="active"]:not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]))) [data-ds-part="main"],
-html[data-dream-skin="active"]:not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])))
-  :not(:has([data-ds-part="main"])) > [data-ds-part="home"] {
+html[data-dream-skin="active"][data-dream-main-present="false"] [data-ds-part="main"],
+html[data-dream-skin="active"][data-dream-main-present="false"]
+  [data-ds-part="home"][data-dream-home-standalone="true"] {
   position: relative !important;
   isolation: isolate;
   overflow: hidden !important;
@@ -1354,9 +1355,9 @@ html[data-dream-skin="active"]:not(:has(main:is(.main-surface, [data-app-shell-m
   box-shadow: -8px 0 28px rgb(var(--ds-bg-rgb) / .18) !important;
 }
 
-html[data-dream-skin="active"]:not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]))) [data-ds-part="main"]::before,
-html[data-dream-skin="active"]:not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])))
-  :not(:has([data-ds-part="main"])) > [data-ds-part="home"]::before {
+html[data-dream-skin="active"][data-dream-main-present="false"] [data-ds-part="main"]::before,
+html[data-dream-skin="active"][data-dream-main-present="false"]
+  [data-ds-part="home"][data-dream-home-standalone="true"]::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -1369,14 +1370,14 @@ html[data-dream-skin="active"]:not(:has(main:is(.main-surface, [data-app-shell-m
   opacity: .80;
 }
 
-html[data-dream-skin="active"]:not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]))) [data-ds-part="main"] > *,
-html[data-dream-skin="active"]:not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])))
-  :not(:has([data-ds-part="main"])) > [data-ds-part="home"] > * {
+html[data-dream-skin="active"][data-dream-main-present="false"] [data-ds-part="main"] > *,
+html[data-dream-skin="active"][data-dream-main-present="false"]
+  [data-ds-part="home"][data-dream-home-standalone="true"] > * {
   position: relative;
   z-index: 1;
 }
 
-html[data-dream-skin="active"]:not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]))) [data-ds-part="composer"] {
+html[data-dream-skin="active"][data-dream-main-present="false"] [data-ds-part="composer"] {
   position: relative;
   z-index: 2;
   overflow: visible !important;
@@ -1387,12 +1388,12 @@ html[data-dream-skin="active"]:not(:has(main:is(.main-surface, [data-app-shell-m
   backdrop-filter: blur(16px) saturate(108%) !important;
 }
 
-html[data-dream-skin="active"]:not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]))) [data-ds-part="composer"]::before {
+html[data-dream-skin="active"][data-dream-main-present="false"] [data-ds-part="composer"]::before {
   content: none !important;
 }
 
-html[data-dream-skin="active"][data-dream-art-wide="true"]:not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])))
-  body:has([data-ds-part="main"], [data-ds-part="home"]) {
+html[data-dream-skin="active"][data-dream-art-wide="true"][data-dream-main-present="false"][data-dream-main-or-home="true"]
+  body {
   background-image: var(--dream-skin-art) !important;
   background-position: var(--ds-art-position) !important;
   background-size: cover !important;
@@ -1400,7 +1401,7 @@ html[data-dream-skin="active"][data-dream-art-wide="true"]:not(:has(main:is(.mai
   background-attachment: fixed !important;
 }
 
-html[data-dream-skin="active"][data-dream-art-wide="true"]:not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])))
+html[data-dream-skin="active"][data-dream-art-wide="true"][data-dream-main-present="false"]
   [data-ds-part="sidebar"] {
   background: linear-gradient(90deg,
     var(--ds-immersive-sidebar),
@@ -1409,10 +1410,10 @@ html[data-dream-skin="active"][data-dream-art-wide="true"]:not(:has(main:is(.mai
   box-shadow: none !important;
 }
 
-html[data-dream-skin="active"][data-dream-art-wide="true"]:not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])))
+html[data-dream-skin="active"][data-dream-art-wide="true"][data-dream-main-present="false"]
   [data-ds-part="main"],
-html[data-dream-skin="active"][data-dream-art-wide="true"]:not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])))
-  :not(:has([data-ds-part="main"])) > [data-ds-part="home"] {
+html[data-dream-skin="active"][data-dream-art-wide="true"][data-dream-main-present="false"]
+  [data-ds-part="home"][data-dream-home-standalone="true"] {
   background: linear-gradient(90deg,
     var(--ds-immersive-edge),
     var(--ds-immersive-mid) 64%,
@@ -1421,16 +1422,16 @@ html[data-dream-skin="active"][data-dream-art-wide="true"]:not(:has(main:is(.mai
   box-shadow: none !important;
 }
 
-html[data-dream-skin="active"][data-dream-art-wide="true"]:not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])))
+html[data-dream-skin="active"][data-dream-art-wide="true"][data-dream-main-present="false"]
   [data-ds-part="main"]::before,
-html[data-dream-skin="active"][data-dream-art-wide="true"]:not(:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])))
-  :not(:has([data-ds-part="main"])) > [data-ds-part="home"]::before {
+html[data-dream-skin="active"][data-dream-art-wide="true"][data-dream-main-present="false"]
+  [data-ds-part="home"][data-dream-home-standalone="true"]::before {
   content: none;
 }
 
 /* A wide image can carry the home screen too. The native hero remains live,
    but the artwork is painted once on the window instead of repeated in a card. */
-html[data-dream-skin="active"][data-dream-art-wide="true"]:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) [role="main"]) body {
+html[data-dream-skin="active"][data-dream-art-wide="true"][data-dream-main-home="true"] body {
   background-image: var(--dream-skin-art) !important;
   background-position: var(--ds-art-position) !important;
   background-size: cover !important;
@@ -1438,7 +1439,7 @@ html[data-dream-skin="active"][data-dream-art-wide="true"]:has(main:is(.main-sur
   background-attachment: fixed !important;
 }
 
-html[data-dream-skin="active"][data-dream-art-wide="true"]:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) [role="main"])
+html[data-dream-skin="active"][data-dream-art-wide="true"][data-dream-main-home="true"]
   aside.app-shell-left-panel {
   background: linear-gradient(90deg,
     var(--ds-immersive-sidebar),
@@ -1449,12 +1450,12 @@ html[data-dream-skin="active"][data-dream-art-wide="true"]:has(main:is(.main-sur
   backdrop-filter: none !important;
 }
 
-html[data-dream-skin="active"][data-dream-art-wide="true"]:has(main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) [role="main"])
+html[data-dream-skin="active"][data-dream-art-wide="true"][data-dream-main-home="true"]
   aside.app-shell-left-panel::after {
   background: transparent !important;
 }
 
-html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):has([role="main"]) {
+html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="home"] {
   background: linear-gradient(90deg,
     var(--ds-immersive-edge),
     var(--ds-immersive-mid) 64%,
@@ -1464,7 +1465,7 @@ html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface
   box-shadow: none !important;
 }
 
-html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):has([role="main"])
+html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="home"]
   > header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*="_Header_"]) {
   background: transparent !important;
   border-bottom: 0 !important;
@@ -1486,21 +1487,21 @@ html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface
   filter: drop-shadow(0 1px 2px rgb(var(--ds-bg-rgb) / .72));
 }
 
-html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):has([role="main"])
-  [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child {
+html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="home"]
+  [role="main"][data-dream-home-hero="true"] > div:first-child > div:first-child > div:first-child {
   border: 0 !important;
   border-radius: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
 }
 
-html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):has([role="main"])
-  [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child::before {
+html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="home"]
+  [role="main"][data-dream-home-hero="true"] > div:first-child > div:first-child > div:first-child::before {
   content: none !important;
 }
 
-html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):has([role="main"])
-  [role="main"]:has([data-testid="home-icon"]) .group\/home-suggestions button {
+html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="home"]
+  [role="main"][data-dream-home-hero="true"] .group\/home-suggestions button {
   background: rgb(var(--ds-panel-rgb) / .56) !important;
   box-shadow:
     0 8px 22px rgb(var(--ds-bg-rgb) / .16),
@@ -1550,7 +1551,7 @@ html[data-dream-skin="active"] [class*="_homeUtilityBar_"] {
   backdrop-filter: blur(16px) saturate(108%) !important;
 }
 
-html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]):has([class*="_homeUtilityBar_"])
+html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"][data-dream-home-utility="true"]
   .composer-surface-chrome {
   border: 0 !important;
   border-radius: 0 0 22px 22px !important;
@@ -1571,7 +1572,7 @@ html[data-dream-skin="active"][data-dream-art-wide="true"] [class*="_homeUtility
 }
 
 html[data-dream-skin="active"][data-dream-art-wide="true"]
-  [role="main"]:has([data-testid="home-icon"]):has([class*="_homeUtilityBar_"]) .composer-surface-chrome {
+  [role="main"][data-dream-home-hero="true"][data-dream-home-utility="true"] .composer-surface-chrome {
   box-shadow:
     0 10px 30px rgb(var(--ds-bg-rgb) / .20),
     inset 1px 0 var(--ds-immersive-line),
@@ -1617,17 +1618,17 @@ html[data-dream-skin="active"] .composer-surface-chrome p.placeholder::after {
 /* Search routes ship an opaque sticky band and input surface. Keep the
    control legible while allowing the selected image to remain continuous. */
 html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"])[data-dream-art-wide="true"]
-  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) div.sticky:has(input[type="text"]) {
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="thread"] div.sticky[data-dream-thread-search="true"] {
   background: transparent !important;
 }
 
 html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"])[data-dream-art-wide="true"]
-  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) div.sticky:has(input[type="text"])::after {
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="thread"] div.sticky[data-dream-thread-search="true"]::after {
   background: transparent !important;
 }
 
 html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"])[data-dream-art-wide="true"]
-  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"])) div.no-drag:has(> input[type="text"]) {
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="thread"] div.no-drag[data-dream-title-input="true"] {
   background: var(--ds-immersive-composer) !important;
   border: 0 !important;
   box-shadow:
@@ -1639,7 +1640,7 @@ html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-
 /* Pull Requests and similar utility routes wrap their content in a native
    full-size opaque surface. Only clear full-window wrappers, not cards. */
 html[data-dream-skin="active"]:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"])[data-dream-art-wide="true"]
-  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"]))
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="thread"]
   [class~="bg-token-main-surface-primary"][class~="h-full"][class~="w-full"] {
   background: transparent !important;
 }
@@ -1665,7 +1666,7 @@ html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface
   background: transparent !important;
 }
 
-html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) div:has(> .horizontal-scroll-fade-mask .group\/project-selector) {
+html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] div[data-dream-project-strip="true"] {
   position: relative;
   padding-top: 28px !important;
   border: 1px solid rgb(var(--ds-muted-rgb) / .16);
@@ -1673,7 +1674,7 @@ html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) div:
   background: rgb(var(--ds-panel-rgb) / .92) !important;
 }
 
-html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) div:has(> .horizontal-scroll-fade-mask .group\/project-selector)::before {
+html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] div[data-dream-project-strip="true"]::before {
   content: var(--dream-skin-project-label, "选择项目");
   position: absolute;
   left: 13px;
@@ -1686,7 +1687,7 @@ html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) div:
   white-space: nowrap;
 }
 
-html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) .group\/project-selector > button {
+html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] .group\/project-selector > button {
   border-color: rgb(var(--ds-accent-rgb) / .22) !important;
   background: rgb(var(--ds-accent-rgb) / .08) !important;
   color: var(--ds-text) !important;
@@ -1715,28 +1716,28 @@ html[data-dream-skin="active"] [data-ds-part="message"] { border-radius: 16px; }
 
 @media (max-width: 1120px) {
   html[data-dream-skin="active"]
-    main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):has([role="main"])::after { content: none; }
-  html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) { --thread-content-max-width: min(940px, calc(100cqw - 30px)) !important; }
-  html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child { width: calc(100% - 28px) !important; }
+    main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="home"]::after { content: none; }
+  html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] { --thread-content-max-width: min(940px, calc(100cqw - 30px)) !important; }
+  html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] > div:first-child > div:first-child > div:first-child { width: calc(100% - 28px) !important; }
 }
 
 @media (max-width: 900px) {
-  html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child {
+  html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] > div:first-child > div:first-child {
     flex-basis: 408px !important;
     min-height: 408px !important;
   }
-  html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child {
+  html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] > div:first-child > div:first-child > div:first-child {
     height: 232px !important;
     min-height: 232px !important;
   }
-  html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child > div:first-child { padding: 0 26px; }
-  html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) > div:first-child > div:first-child > div:first-child > div:first-child > div:first-child {
+  html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] > div:first-child > div:first-child > div:first-child > div:first-child { padding: 0 26px; }
+  html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] > div:first-child > div:first-child > div:first-child > div:first-child > div:first-child {
     width: min(58%, 460px) !important;
   }
-  html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) [data-feature="game-source"] { font-size: 18px !important; }
-  html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) [data-feature="game-source"]::before { margin-bottom: 7px; font-size: 10px; }
-  html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) [data-feature="game-source"]::after { margin-top: 9px; font-size: 11px; }
-  html[data-dream-skin="active"] [role="main"]:has([data-testid="home-icon"]) .group\/home-suggestions button { min-height: 112px !important; font-size: 12px !important; }
+  html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] [data-feature="game-source"] { font-size: 18px !important; }
+  html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] [data-feature="game-source"]::before { margin-bottom: 7px; font-size: 10px; }
+  html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] [data-feature="game-source"]::after { margin-top: 9px; font-size: 11px; }
+  html[data-dream-skin="active"] [role="main"][data-dream-home-hero="true"] .group\/home-suggestions button { min-height: 112px !important; font-size: 12px !important; }
 }
 
 @layer dreamskin-accessibility {
@@ -1779,12 +1780,12 @@ html[data-dream-skin="active"] aside.app-shell-left-panel {
    rectangle over the image. Keep the card, rows, and inline diff surface
    variable transparent in both shells. */
 html[data-dream-skin="active"]
-  [class~="bg-surface-elevated-secondary/50"]:has([class*="turn-diff"]) {
+  [class~="bg-surface-elevated-secondary/50"][data-dream-turn-diff="true"] {
   background: transparent !important;
 }
 
 html[data-dream-skin="active"]
-  [class~="bg-surface-elevated-secondary/50"]:has([class*="turn-diff"])
+  [class~="bg-surface-elevated-secondary/50"][data-dream-turn-diff="true"]
   :is([class~="bg-surface/70"], [class~="bg-surface-secondary/92"],
     [class~="bg-primary-soft-alpha"], [class*="bg-background-primary-soft"],
     [class*="codex-diffs-surface-override"]) {
@@ -1793,7 +1794,7 @@ html[data-dream-skin="active"]
 }
 
 html[data-dream-skin="active"]
-  [class~="bg-surface-elevated-secondary/50"]:has([class*="turn-diff"])
+  [class~="bg-surface-elevated-secondary/50"][data-dream-turn-diff="true"]
   [class*="codex-diffs-surface-override"] {
   --codex-diffs-surface-override: transparent !important;
 }
@@ -1859,13 +1860,13 @@ html[data-dream-skin="active"]
    artwork. The shell attribute is included to outrank the light-specific
    token rules on current Windows builds. */
 html[data-dream-skin="active"]:is([data-dream-shell="light"], [data-dream-shell="dark"])
-  [class~="bg-surface-elevated-secondary/50"]:has([class*="turn-diff"]) {
+  [class~="bg-surface-elevated-secondary/50"][data-dream-turn-diff="true"] {
   background: transparent !important;
   box-shadow: none !important;
 }
 
 html[data-dream-skin="active"]:is([data-dream-shell="light"], [data-dream-shell="dark"])
-  [class~="bg-surface-elevated-secondary/50"]:has([class*="turn-diff"])
+  [class~="bg-surface-elevated-secondary/50"][data-dream-turn-diff="true"]
   :is([class~="bg-surface/70"], [class~="bg-surface-secondary/92"],
     [class~="bg-primary-soft-alpha"], [class*="bg-background-primary-soft"],
     [class*="codex-diffs-surface-override"]) {
@@ -1875,7 +1876,7 @@ html[data-dream-skin="active"]:is([data-dream-shell="light"], [data-dream-shell=
 }
 
 html[data-dream-skin="active"]:is([data-dream-shell="light"], [data-dream-shell="dark"])
-  [class~="bg-surface-elevated-secondary/50"]:has([class*="turn-diff"])
+  [class~="bg-surface-elevated-secondary/50"][data-dream-turn-diff="true"]
   [class*="codex-diffs-surface-override"] {
   --codex-diffs-surface-override: transparent !important;
 }
@@ -1938,7 +1939,15 @@ html[data-dream-skin="active"][data-dream-art-wide="true"][data-dream-shell="dar
    itself keeps content clear of the composer without obscuring artwork. */
 html[data-dream-skin="active"][data-dream-art-wide="true"]
   [data-thread-scroll-footer="true"]
-  > div[class~="pointer-events-none"][class~="absolute"][class~="inset-x-0"][class~="bottom-0"][class~="z-0"][class~="h-full"][class~="bg-gradient-to-t"][class~="from-surface"][class~="via-surface"] {
+  > div[class~="pointer-events-none"][class~="absolute"][class~="inset-x-0"][class~="bottom-0"][class~="z-0"][class~="h-full"][class~="bg-gradient-to-t"][class~="from-surface"][class~="via-surface"],
+/* 新版把输入区装饰渐变改成了实色 surface，仍只清理直接的非交互铺底层。 */
+html[data-dream-skin="active"][data-dream-art-wide="true"]
+  [data-thread-scroll-footer="true"]
+  > div[class~="pointer-events-none"][class~="absolute"][class~="inset-x-0"][class~="bottom-0"][class~="z-0"][class~="bg-surface"],
+/* 实色铺底上方另有 32px 渐变，单独清除以免留下横向亮带。 */
+html[data-dream-skin="active"][data-dream-art-wide="true"]
+  .thread-scroll-container
+  [aria-hidden="true"][class~="pointer-events-none"][class~="absolute"][class~="inset-x-0"][class~="z-0"][class~="h-8"][class~="bg-gradient-to-t"][class~="from-surface"] {
   display: none !important;
   opacity: 0 !important;
   background: transparent !important;
@@ -2004,7 +2013,7 @@ html[data-dream-skin="active"][data-dream-shell="light"]
 html[data-dream-skin="active"]
   :is([data-local-conversation-user-anchor], [data-local-conversation-final-assistant])
   :is(pre, [data-markdown-copy="code-block"], [class*="CodeBlock"], [class*="code-block"],
-    div:has(> pre), div:has(> [data-markdown-copy="code-block"])) {
+    div[data-dream-code-wrapper="true"]) {
   color: var(--ds-text) !important;
   -webkit-text-fill-color: var(--ds-text) !important;
   background: rgb(var(--ds-panel-2-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))) !important;
@@ -2016,7 +2025,7 @@ html[data-dream-skin="active"]
 html[data-dream-skin="active"]
   :is([data-local-conversation-user-anchor], [data-local-conversation-final-assistant])
   :is(pre, [data-markdown-copy="code-block"], [class*="CodeBlock"], [class*="code-block"],
-    div:has(> pre), div:has(> [data-markdown-copy="code-block"]))
+    div[data-dream-code-wrapper="true"])
   :is(pre, code, button, span, svg) {
   color: var(--ds-text) !important;
   -webkit-text-fill-color: var(--ds-text) !important;
@@ -2383,7 +2392,7 @@ html[data-dream-skin="active"]
 html[data-dream-skin="active"]
   [data-thread-find-target="conversation"]
   :is([class*="turn-diff"], [class*="TurnDiff"],
-    [class*="bg-surface-elevated-secondary/50"]:has([class*="turn-diff"])) {
+    [class*="bg-surface-elevated-secondary/50"][data-dream-turn-diff="true"]) {
   background: transparent !important;
   background-image: none !important;
   box-shadow: none !important;
@@ -2517,7 +2526,7 @@ html[data-dream-skin="active"][data-dream-shell="dark"]
    in-thread Monaco rules.  Keep their title bar and scroll rail in the same
    palette as the editor body. */
 html[data-dream-skin="active"][data-dream-shell="light"]
-  :is([role="dialog"], [aria-modal="true"]):has(:is(.monaco-editor, .monaco-diff-editor, .editor-widget, diffs-container)) {
+  :is([role="dialog"], [aria-modal="true"])[data-dream-editor-dialog="true"] {
   color: rgb(30 32 36) !important;
   -webkit-text-fill-color: rgb(30 32 36) !important;
   background: rgb(252 252 252 / .96) !important;
@@ -2525,7 +2534,7 @@ html[data-dream-skin="active"][data-dream-shell="light"]
 }
 
 html[data-dream-skin="active"][data-dream-shell="dark"]
-  :is([role="dialog"], [aria-modal="true"]):has(:is(.monaco-editor, .monaco-diff-editor, .editor-widget, diffs-container)) {
+  :is([role="dialog"], [aria-modal="true"])[data-dream-editor-dialog="true"] {
   color: rgb(235 238 244) !important;
   -webkit-text-fill-color: rgb(235 238 244) !important;
   background: rgb(24 26 31 / .96) !important;
@@ -2533,7 +2542,7 @@ html[data-dream-skin="active"][data-dream-shell="dark"]
 }
 
 html[data-dream-skin="active"][data-dream-shell="light"]
-  :is([role="dialog"], [aria-modal="true"]):has(:is(.monaco-editor, .monaco-diff-editor, .editor-widget, diffs-container))
+  :is([role="dialog"], [aria-modal="true"])[data-dream-editor-dialog="true"]
   :is(header, [role="toolbar"], [class*="Header"], [class*="header"], [class*="Toolbar"], [class*="toolbar"]) {
   color: rgb(30 32 36) !important;
   -webkit-text-fill-color: rgb(30 32 36) !important;
@@ -2544,7 +2553,7 @@ html[data-dream-skin="active"][data-dream-shell="light"]
 }
 
 html[data-dream-skin="active"][data-dream-shell="dark"]
-  :is([role="dialog"], [aria-modal="true"]):has(:is(.monaco-editor, .monaco-diff-editor, .editor-widget, diffs-container))
+  :is([role="dialog"], [aria-modal="true"])[data-dream-editor-dialog="true"]
   :is(header, [role="toolbar"], [class*="Header"], [class*="header"], [class*="Toolbar"], [class*="toolbar"]) {
   color: rgb(235 238 244) !important;
   -webkit-text-fill-color: rgb(235 238 244) !important;
@@ -2555,26 +2564,26 @@ html[data-dream-skin="active"][data-dream-shell="dark"]
 }
 
 html[data-dream-skin="active"]
-  :is([role="dialog"], [aria-modal="true"]):has(:is(.monaco-editor, .monaco-diff-editor, .editor-widget, diffs-container))
+  :is([role="dialog"], [aria-modal="true"])[data-dream-editor-dialog="true"]
   :is(.monaco-scrollable-element, .overflow-guard, [data-app-action-review-scroll]) {
   scrollbar-color: rgb(var(--ds-accent-rgb) / .72) transparent !important;
 }
 
 html[data-dream-skin="active"]
-  :is([role="dialog"], [aria-modal="true"]):has(:is(.monaco-editor, .monaco-diff-editor, .editor-widget, diffs-container))
+  :is([role="dialog"], [aria-modal="true"])[data-dream-editor-dialog="true"]
   :is(.monaco-scrollable-element, .overflow-guard, [data-app-action-review-scroll])::-webkit-scrollbar {
   width: 10px !important;
   height: 10px !important;
 }
 
 html[data-dream-skin="active"]
-  :is([role="dialog"], [aria-modal="true"]):has(:is(.monaco-editor, .monaco-diff-editor, .editor-widget, diffs-container))
+  :is([role="dialog"], [aria-modal="true"])[data-dream-editor-dialog="true"]
   :is(.monaco-scrollable-element, .overflow-guard, [data-app-action-review-scroll])::-webkit-scrollbar-track {
   background: transparent !important;
 }
 
 html[data-dream-skin="active"]
-  :is([role="dialog"], [aria-modal="true"]):has(:is(.monaco-editor, .monaco-diff-editor, .editor-widget, diffs-container))
+  :is([role="dialog"], [aria-modal="true"])[data-dream-editor-dialog="true"]
   :is(.monaco-scrollable-element, .overflow-guard, [data-app-action-review-scroll])::-webkit-scrollbar-thumb {
   background: rgb(var(--ds-accent-rgb) / .62) !important;
   background-clip: padding-box !important;
@@ -2769,7 +2778,7 @@ html[data-dream-skin="active"][data-dream-shell="dark"]
    them as opaque editor chrome, so make this narrower, later rule win. */
 html[data-dream-skin="active"]
   [data-thread-find-target="conversation"]
-  [class~="bg-surface-elevated-secondary/50"]:has([class~="group/turn-diff-header"]),
+  [class~="bg-surface-elevated-secondary/50"][data-dream-turn-diff-header="true"],
 html[data-dream-skin="active"]
   [data-thread-find-target="conversation"]
   [class~="group/turn-diff-header"],
@@ -2786,7 +2795,7 @@ html[data-dream-skin="active"]
    icon wells, rows, and action buttons must not reintroduce opaque islands. */
 html[data-dream-skin="active"]
   [data-thread-find-target="conversation"]
-  [class~="bg-surface-elevated-secondary/50"]:has([class~="group/turn-diff-header"])
+  [class~="bg-surface-elevated-secondary/50"][data-dream-turn-diff-header="true"]
   :is(button, [role="button"], [class*="bg-"], [class*="surface"], [class*="background"]) {
   background: transparent !important;
   background-image: none !important;
@@ -2798,12 +2807,12 @@ html[data-dream-skin="active"]
    [data-thread-find-target].  Target the card's own stable classes as the
    final authority so the compact edited-files surfaces remain transparent. */
 html[data-dream-skin="active"]
-  [class~="bg-surface-elevated-secondary/50"]:has([class~="group/turn-diff-header"]),
+  [class~="bg-surface-elevated-secondary/50"][data-dream-turn-diff-header="true"],
 html[data-dream-skin="active"]
-  [class~="bg-surface-elevated-secondary/50"]:has([class~="group/turn-diff-header"])
+  [class~="bg-surface-elevated-secondary/50"][data-dream-turn-diff-header="true"]
   [class~="group/turn-diff-header"],
 html[data-dream-skin="active"]
-  [class~="bg-surface-elevated-secondary/50"]:has([class~="group/turn-diff-header"])
+  [class~="bg-surface-elevated-secondary/50"][data-dream-turn-diff-header="true"]
   :is(button, [role="button"], [class*="bg-"], [class*="surface"], [class*="background"]) {
   background: transparent !important;
   background-image: none !important;
@@ -2931,8 +2940,8 @@ html[data-dream-skin="active"] body nav
    Keep their surface translucent in both shells and inherit the active
    palette rather than Electron's opaque black tooltip token. */
 html[data-dream-skin="active"]
-  :is([role="tooltip"], [data-radix-popper-content-wrapper]:has([role="tooltip"]),
-    [data-radix-popper-content]:has([role="tooltip"]),
+  :is([role="tooltip"], [data-radix-popper-content-wrapper][data-dream-tooltip-wrapper="true"],
+    [data-radix-popper-content][data-dream-tooltip-wrapper="true"],
     [data-floating-ui-portal] > [role="tooltip"]) {
   color: var(--ds-text) !important;
   -webkit-text-fill-color: var(--ds-text) !important;
@@ -2944,8 +2953,8 @@ html[data-dream-skin="active"]
 }
 
 html[data-dream-skin="active"]
-  :is([role="tooltip"], [data-radix-popper-content-wrapper]:has([role="tooltip"]),
-    [data-radix-popper-content]:has([role="tooltip"]),
+  :is([role="tooltip"], [data-radix-popper-content-wrapper][data-dream-tooltip-wrapper="true"],
+    [data-radix-popper-content][data-dream-tooltip-wrapper="true"],
     [data-floating-ui-portal] > [role="tooltip"])
   :is(p, span, div, button) {
   color: var(--ds-text) !important;
@@ -2957,7 +2966,7 @@ html[data-dream-skin="active"]
    of exposing tooltip semantics.  This narrow fallback covers only that
    navigator's own floating surface, without changing regular menus. */
 html[data-dream-skin="active"] body
-  nav:has([data-thread-user-message-navigation-rail-list="true"])
+  nav[data-dream-navigation-rail="true"]
   :is([role="tooltip"], [class*="tooltip" i], [class*="bg-background"], [class*="bg-surface"]) {
   color: var(--ds-text) !important;
   -webkit-text-fill-color: var(--ds-text) !important;
@@ -2971,7 +2980,7 @@ html[data-dream-skin="active"] body
 /* The user-message navigation rail is a separate jump navigator.  Keep it
    visible and give its injected drag mapping a clear interaction state. */
 html[data-dream-skin="active"] body
-  nav:has([data-thread-user-message-navigation-rail-list="true"]) {
+  nav[data-dream-navigation-rail="true"] {
   display: block !important;
 }
 
@@ -3052,16 +3061,46 @@ html[data-dream-skin="active"][data-dream-art-wide="true"]
   background-image: none !important;
 }
 
+/* 顶部会话标签的选中背景是独立装饰节点，保持标题与交互按钮不变。 */
+html[data-dream-skin="active"] [data-app-shell-tab-row="true"]
+  [data-tab-id] [class*="_SelectedSurface_"] {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
 /* 设置页在主路由内渲染。将页面、偏好卡片和子页面统一为半透明，
    让背景可见，同时用主题分析出的文字色保证深浅图片上的可读性。 */
-html[data-dream-skin="active"] main:has([data-settings-panel-slug]) {
+html[data-dream-skin="active"][data-dream-base-state="settings"][data-dream-media="image"] body {
+  background-image: linear-gradient(
+    rgb(var(--ds-bg-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))),
+    rgb(var(--ds-bg-rgb) / calc(1 - var(--ds-theme-image-opacity, .80)))
+  ), var(--dream-skin-art) !important;
+  background-position: var(--ds-art-position) !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+}
+
+/* 设置导航在内容区外侧，不能仅靠 main:has(设置按钮) 来识别内容背景。 */
+html[data-dream-skin="active"][data-dream-base-state="settings"]
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-base-state="settings"] aside.app-shell-left-panel {
+  background: rgb(var(--ds-panel-rgb) / .32) !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"] main[data-dream-settings-content="true"] {
   color: var(--ds-text) !important;
   -webkit-text-fill-color: var(--ds-text) !important;
   background: rgb(var(--ds-panel-rgb) / .54) !important;
   background-image: none !important;
 }
 
-html[data-dream-skin="active"] main:has([data-settings-panel-slug])
+html[data-dream-skin="active"] main[data-dream-settings-content="true"]
   :is([data-settings-panel-slug], [class~="bg-token-main-surface-primary"],
     [class~="bg-token-surface-primary"], [class~="bg-token-dropdown-background"],
     [class~="bg-token-menu-background"], [class~="bg-background-primary"],
@@ -3075,7 +3114,7 @@ html[data-dream-skin="active"] main:has([data-settings-panel-slug])
   backdrop-filter: none !important;
 }
 
-html[data-dream-skin="active"] main:has([data-settings-panel-slug])
+html[data-dream-skin="active"] main[data-dream-settings-content="true"]
   :is([class~="text-token-text-secondary"], [class~="text-token-text-tertiary"],
     [class~="text-token-muted-foreground"], [class~="text-token-description-foreground"]) {
   color: var(--ds-muted) !important;
@@ -3083,7 +3122,7 @@ html[data-dream-skin="active"] main:has([data-settings-panel-slug])
 }
 
 /* 设置导航与内容区是同级节点，因此从 body 开始限定范围。 */
-html[data-dream-skin="active"] body:has([data-settings-panel-slug])
+html[data-dream-skin="active"][data-dream-base-state="settings"] body
   main [class~="electron:bg-surface"] {
   color: var(--ds-text) !important;
   -webkit-text-fill-color: var(--ds-text) !important;
@@ -3093,7 +3132,7 @@ html[data-dream-skin="active"] body:has([data-settings-panel-slug])
   backdrop-filter: none !important;
 }
 
-html[data-dream-skin="active"] body:has([data-settings-panel-slug])
+html[data-dream-skin="active"][data-dream-base-state="settings"] body
   main div.rounded-2xl.overflow-hidden.border.border-default {
   color: var(--ds-text) !important;
   -webkit-text-fill-color: var(--ds-text) !important;
@@ -3103,7 +3142,7 @@ html[data-dream-skin="active"] body:has([data-settings-panel-slug])
   backdrop-filter: none !important;
 }
 
-html[data-dream-skin="active"] body:has([data-settings-panel-slug])
+html[data-dream-skin="active"][data-dream-base-state="settings"] body
   [class~="bg-background-primary-soft/90"] {
   color: var(--ds-text) !important;
   -webkit-text-fill-color: var(--ds-text) !important;
@@ -3113,7 +3152,7 @@ html[data-dream-skin="active"] body:has([data-settings-panel-slug])
   backdrop-filter: none !important;
 }
 
-html[data-dream-skin="active"] body:has([data-settings-panel-slug])
+html[data-dream-skin="active"][data-dream-base-state="settings"] body
   main :is(h1, h2, h3, h4, label, button, input, select, textarea, [role="tab"], [role="switch"]) {
   color: var(--ds-text) !important;
   -webkit-text-fill-color: var(--ds-text) !important;
@@ -3121,7 +3160,7 @@ html[data-dream-skin="active"] body:has([data-settings-panel-slug])
 
 /* 最大化任务窗口使用稳定原生标题层，避免任务标题、状态文案和窗口控件相互干扰。 */
 html[data-dream-skin="active"]
-  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"]))
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="thread"]
   > header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*="_Header_"]) {
   background: rgb(var(--ds-panel-rgb) / .96) !important;
   background-image: none !important;
@@ -3129,7 +3168,7 @@ html[data-dream-skin="active"]
 }
 
 html[data-dream-skin="active"]
-  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]):not(:has([role="main"]))
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])[data-dream-surface-route="thread"]
   > header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*="_Header_"])::after {
   content: none !important;
 }
@@ -3276,4 +3315,138 @@ html[data-dream-skin="active"][data-dream-shell="dark"]
   [data-summary-panel-variant="summary"] :is(button, p, span, label) {
   color: var(--ds-text) !important;
   -webkit-text-fill-color: var(--ds-text) !important;
+}
+
+/* 主选项卡、右侧与底部面板共享透明背景，原生控制器标记不依赖面板位置。 */
+html[data-dream-skin="active"][data-dream-shell] body
+  :is([data-app-shell-tabs], [data-app-shell-tab-panel-controller]) {
+  --app-shell-panel-background: transparent !important;
+  --codex-diffs-surface-override: transparent !important;
+  --color-codex-diff-surface: transparent !important;
+  --vscode-editor-background: transparent !important;
+  --vscode-editorGutter-background: transparent !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell] body
+  [data-app-shell-tabs] [data-app-shell-tab-panel-controller],
+html[data-dream-skin="active"][data-dream-shell] body
+  [data-app-shell-tab-panel-controller]
+  :is(div, section, aside, article, header, footer, nav, main, button,
+    [role="tab"], .monaco-editor-background, diffs-container) {
+  background: transparent !important;
+  backdrop-filter: none !important;
+}
+
+/* 只在面板外框绘制一次边缘与阴影，内部列表继续保留原生分隔线。 */
+html[data-dream-skin="active"][data-dream-shell] body
+  :is([data-app-shell-tabs], [data-app-shell-tab-panel-controller="main"],
+    [data-summary-panel-variant="summary"]) {
+  border: 1px solid rgb(var(--ds-muted-rgb) / .24) !important;
+  box-shadow: 0 8px 24px rgb(var(--ds-bg-rgb) / .20),
+    inset 0 1px rgb(var(--ds-text-rgb) / .08) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell] body
+  [data-app-shell-tab-row="true"] [data-tab-id][class~="group/tab"] {
+  background: transparent !important;
+  border: 1px solid rgb(var(--ds-muted-rgb) / .24) !important;
+  box-shadow: 0 3px 10px rgb(var(--ds-bg-rgb) / .18) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell] body
+  [data-app-shell-tab-row="true"]
+  [data-tab-id][class~="group/tab"][data-dream-selected-tab="true"][data-dream-selected-tab] {
+  border-color: rgb(var(--ds-accent-rgb) / .45) !important;
+}
+
+/* 悬浮聊天放大后会替换装饰节点的尺寸类，按窗口标记统一底色与边缘。 */
+html[data-dream-skin="active"][data-dream-shell] body
+  :is([data-pip-obstacle="quick-chat"],
+    [data-pip-obstacle="quick-chat"] > [class*="_floatingSurface_"]) {
+  background: transparent !important;
+  backdrop-filter: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell] body
+  [data-pip-obstacle="quick-chat"] > [class*="_floatingSurface_"] {
+  border: 1px solid rgb(var(--ds-muted-rgb) / .24) !important;
+  box-shadow: 0 8px 24px rgb(var(--ds-bg-rgb) / .20),
+    inset 0 1px rgb(var(--ds-text-rgb) / .08) !important;
+}
+
+/* 文件树在 Shadow DOM 中绘制，使用其公开变量覆盖白底并保留选中反馈。 */
+html[data-dream-skin="active"][data-dream-shell] body file-tree-container {
+  --trees-bg-override: transparent !important;
+  --trees-input-bg-override: transparent !important;
+  --trees-bg-muted-override: rgb(var(--ds-accent-rgb) / .10) !important;
+  --trees-selected-bg-override: rgb(var(--ds-accent-rgb) / .14) !important;
+  --trees-fg-override: var(--ds-text) !important;
+  --trees-fg-muted-override: var(--ds-muted) !important;
+  --trees-selected-fg-override: var(--ds-text) !important;
+  --trees-search-fg-override: var(--ds-text) !important;
+  background: transparent !important;
+  color: var(--ds-text) !important;
+  color-scheme: inherit !important;
+  border: 1px solid rgb(var(--ds-muted-rgb) / .24) !important;
+  box-shadow: 0 8px 24px rgb(var(--ds-bg-rgb) / .20) !important;
+}
+
+/* 终端仅清除绘制底色，ANSI 文字、反显色与选区由 xterm 继续处理。 */
+html[data-dream-skin="active"][data-dream-shell] body
+  :is(.xterm, .xterm-viewport, .xterm-screen, .xterm-rows),
+html[data-dream-skin="active"][data-dream-shell] body
+  [data-app-shell-tab-panel-controller] [data-composer-surface-variant] {
+  background: transparent !important;
+  backdrop-filter: none !important;
+}
+
+/* 创建项目等表单弹窗的输入组合框和文件夹列表使用 bg-primary-soft，
+   与外层玻璃面板一起覆盖，避免主题文字落在原生不透明浅色底上。 */
+html[data-dream-skin="active"][data-dream-shell] body .codex-dialog {
+  background: rgb(var(--ds-panel-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))) !important;
+  border: 1px solid rgb(var(--ds-muted-rgb) / .24) !important;
+  box-shadow: 0 8px 24px rgb(var(--ds-bg-rgb) / .20) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell] body .codex-dialog form [class~="bg-primary-soft"] {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+  background: rgb(var(--ds-panel-2-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))) !important;
+  border-color: rgb(var(--ds-muted-rgb) / .24) !important;
+  box-shadow: 0 4px 12px rgb(var(--ds-bg-rgb) / .12) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell] body .codex-dialog input::placeholder {
+  color: var(--ds-muted) !important;
+  -webkit-text-fill-color: var(--ds-muted) !important;
+  opacity: 1 !important;
+}
+
+/* 项目选择菜单只让外壳绘制一次玻璃背景，内部搜索列表保持透明。 */
+html[data-dream-skin="active"][data-dream-shell] body [data-dream-command-popover="true"] {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+  background: rgb(var(--ds-panel-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))) !important;
+  border: 1px solid rgb(var(--ds-muted-rgb) / .24) !important;
+  box-shadow: 0 8px 24px rgb(var(--ds-bg-rgb) / .20) !important;
+  backdrop-filter: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell] body [cmdk-root],
+html[data-dream-skin="active"][data-dream-shell] body [cmdk-root]
+  :is([cmdk-list], [cmdk-list-sizer], .vertical-scroll-fade-mask) {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell] body [cmdk-root] [cmdk-item]:is(:hover, [aria-selected="true"]) {
+  background: rgb(var(--ds-accent-rgb) / .14) !important;
+}
+
+html[data-dream-skin="active"][data-dream-shell] body [cmdk-input]::placeholder {
+  color: var(--ds-muted) !important;
+  -webkit-text-fill-color: var(--ds-muted) !important;
+  opacity: 1 !important;
 }

@@ -9,10 +9,11 @@
   const SHELL_ATTR = "data-dream-shell";
   const PART_ATTR = "data-ds-part";
   const ROOT_ATTRS = [
+    "data-dream-main-present", "data-dream-main-home", "data-dream-main-or-home",
     "data-dream-skin", SHELL_ATTR,
     "data-dream-art-wide", "data-dream-art-safe", "data-dream-task-mode",
     "data-dream-art-safe-area", "data-dream-art-task-mode", "data-dream-art-aspect",
-    "data-dream-art-ready", "data-dream-media",
+    "data-dream-art-ready", "data-dream-media", "data-dream-base-state",
   ];
   const VERSION = __DREAM_SKIN_VERSION_JSON__;
   const STYLE_REVISION = __DREAM_SKIN_STYLE_REVISION_JSON__;
@@ -676,19 +677,50 @@
     return shell;
   };
 
+  // 新版缓存未激活的 Workspace；只把实际展示的节点作为当前路由信号。
+  const isRenderedNode = (node) => {
+    if (!node?.isConnected || !node.getClientRects().length) return false;
+    const style = getComputedStyle(node);
+    return style.display !== "none" && style.visibility !== "hidden" &&
+      style.visibility !== "collapse" && style.contentVisibility !== "hidden";
+  };
   const selectorHit = (key) => {
     const selector = selectorByKey.get(key)?.selector;
     if (!selector) return false;
-    try { return Boolean(document.querySelector(selector)); } catch { return false; }
+    try { return [...document.querySelectorAll(selector)].some(isRenderedNode); } catch { return false; }
   };
 
   const stableTestidHit = (testid) => {
     const selector = stableTestidSelector(testid);
     if (!selector) return false;
-    try { return Boolean(document.querySelector(selector)); } catch { return false; }
+    try { return [...document.querySelectorAll(selector)].some(isRenderedNode); } catch { return false; }
   };
 
   const partNodes = new Set();
+  // 用稳定标记替代全页 :has()，终端频繁增删节点时无需重算整棵界面。
+  const surfaceRouteNodes = new Set();
+  const SURFACE_ROUTE_ATTRS = [
+    "data-dream-surface-route", "data-dream-home-standalone", "data-dream-home-hero",
+    "data-dream-home-banners", "data-dream-code-wrapper", "data-dream-settings-content",
+    "data-dream-browser-toolbar", "data-dream-turn-diff", "data-dream-turn-diff-header",
+    "data-dream-home-utility", "data-dream-thread-search", "data-dream-title-input",
+    "data-dream-project-strip", "data-dream-editor-dialog", "data-dream-tooltip-wrapper",
+    "data-dream-navigation-rail", "data-dream-selected-tab", "data-dream-command-popover",
+  ];
+  // 这些关系只在界面结构变化时计算，避免原生终端插入样式表时反复执行 :has()。
+  const SURFACE_RELATIONS = [
+    ["data-dream-browser-toolbar", '[class~="bg-surface"]', '[class~="@container/browser-toolbar"]'],
+    ["data-dream-turn-diff", '[class*="bg-surface-elevated-secondary/50"]', '[class*="turn-diff"]'],
+    ["data-dream-turn-diff-header", '[class~="bg-surface-elevated-secondary/50"]', '[class~="group/turn-diff-header"]'],
+    ["data-dream-home-utility", '[role="main"]', '[class*="_homeUtilityBar_"]'],
+    ["data-dream-thread-search", "div.sticky", 'input[type="text"]'],
+    ["data-dream-title-input", "div.no-drag", ':scope > input[type="text"]'],
+    ["data-dream-project-strip", "div", ':scope > .horizontal-scroll-fade-mask [class~="group/project-selector"]'],
+    ["data-dream-editor-dialog", '[role="dialog"], [aria-modal="true"]', '.monaco-editor, .monaco-diff-editor, .editor-widget, diffs-container'],
+    ["data-dream-tooltip-wrapper", "[data-radix-popper-content-wrapper], [data-radix-popper-content]", '[role="tooltip"]'],
+    ["data-dream-navigation-rail", "nav", '[data-thread-user-message-navigation-rail-list="true"]'],
+    ["data-dream-selected-tab", '[data-tab-id][class~="group/tab"]', '[role="tab"][aria-selected="true"]'],
+  ];
   const userMessageRailBindings = new Map();
   const queryAll = (selector) => {
     if (!selector) return [];
@@ -699,9 +731,9 @@
     .filter((node) => node && typeof node.setAttribute === "function");
   const genericInputNodes = () => genericNodes(
     'textarea, [contenteditable="true"], [role="textbox"]',
-  ).filter((node) => !node.closest?.('[role="dialog"], [aria-modal="true"]'));
+  ).filter((node) => isRenderedNode(node) && !node.closest?.('[role="dialog"], [aria-modal="true"]'));
   const resolvedMainNode = () => {
-    const exact = selectorNodes("shell-main")[0];
+    const exact = selectorNodes("shell-main").find(isRenderedNode);
     if (exact) return exact;
     for (const input of genericInputNodes()) {
       const main = input.closest?.('main, [role="main"]');
@@ -806,6 +838,56 @@
       userMessageRailBindings.set(rail, binding);
     }
   };
+  const refreshSurfaceRoutes = () => {
+    const mains = selectorNodes("shell-main");
+    const homes = [...partNodes].filter((node) => node.getAttribute(PART_ATTR) === "home");
+    const homeHeroes = queryAll('[role="main"]').filter((node) => node.querySelector('[data-testid="home-icon"]'));
+    const bannerParents = queryAll(".home-banners").map((node) => node.parentElement).filter(Boolean);
+    const settingsMains = queryAll("main").filter((node) => node.querySelector("[data-settings-panel-slug]"));
+    // 代码块父层的 div:has(> pre) 会让终端中的每个 span 都检查祖先链。
+    const codeWrappers = new Set(queryAll('pre, [data-markdown-copy="code-block"]')
+      .map((node) => node.parentElement).filter((node) => node?.tagName === "DIV"));
+    const markers = new Map();
+    const mark = (node, name, value = "true") => {
+      if (!markers.has(node)) markers.set(node, new Map());
+      markers.get(node).set(name, value);
+    };
+    for (const node of mains) mark(node, "data-dream-surface-route", node.querySelector('[role="main"]') ? "home" : "thread");
+    for (const node of homes) mark(node, "data-dream-home-standalone", String(
+      !node.parentElement?.querySelector(`[${PART_ATTR}="main"]`),
+    ));
+    for (const [nodes, name] of [
+      [homeHeroes, "data-dream-home-hero"], [bannerParents, "data-dream-home-banners"],
+      [settingsMains, "data-dream-settings-content"], [codeWrappers, "data-dream-code-wrapper"],
+    ]) for (const node of nodes) mark(node, name);
+    for (const [name, candidateSelector, descendantSelector] of SURFACE_RELATIONS) {
+      for (const node of queryAll(candidateSelector)) {
+        if (node.querySelector(descendantSelector)) mark(node, name);
+      }
+    }
+    // 搜索项目等命令菜单只在外壳铺底，避免 listbox 与外层叠成深色块。
+    for (const node of queryAll("[cmdk-root]")) {
+      const shell = node.closest('[role="dialog"], [data-radix-popper-content], [data-slot="popover-content"]') ?? node.parentElement;
+      if (shell) mark(shell, "data-dream-command-popover");
+    }
+    for (const node of surfaceRouteNodes) {
+      // 缓存页面复用同一个节点时也移除失效标记，防止设置样式残留到会话。
+      for (const name of SURFACE_ROUTE_ATTRS) if (!markers.get(node)?.has(name)) node.removeAttribute(name);
+    }
+    surfaceRouteNodes.clear();
+    setAttribute(document.documentElement, "data-dream-main-present", String(mains.length > 0));
+    setAttribute(document.documentElement, "data-dream-main-or-home", String(
+      homes.length > 0 || [...partNodes].some((node) => node.getAttribute(PART_ATTR) === "main"),
+    ));
+    setAttribute(document.documentElement, "data-dream-main-home", String(mains.some(
+      (node) => Boolean(node.querySelector('[role="main"]')) && isRenderedNode(node),
+    )));
+    for (const [node, attributes] of markers) {
+      for (const [name, value] of attributes) setAttribute(node, name, value);
+      surfaceRouteNodes.add(node);
+    }
+  };
+
   const refreshParts = () => {
     metrics.partPasses += 1;
     const desired = new Map();
@@ -840,6 +922,7 @@
       }
       partNodes.add(node);
     }
+    refreshSurfaceRoutes();
     refreshUserMessageNavigation();
   };
 
@@ -872,20 +955,20 @@
     const lightShell = document.documentElement?.getAttribute("data-dream-shell") === "light";
     const palette = lightShell
       ? {
-        surface: "rgb(252 252 252 / .96)",
-        separator: "rgb(245 246 247 / .98)",
-        header: "rgb(245 246 247 / .98)",
-        active: "rgb(255 255 255)",
+        surface: "transparent",
+        separator: "transparent",
+        header: "transparent",
+        active: "transparent",
         text: "rgb(30 32 36)",
         muted: "rgb(99 105 116)",
         selection: "rgb(37 99 235 / .38)",
         selectionText: "rgb(15 23 42)",
       }
       : {
-        surface: "rgb(24 26 31 / .96)",
-        separator: "rgb(32 35 41 / .98)",
-        header: "rgb(32 35 41 / .98)",
-        active: "rgb(44 48 57)",
+        surface: "transparent",
+        separator: "transparent",
+        header: "transparent",
+        active: "transparent",
         text: "rgb(235 238 244)",
         muted: "rgb(163 171 184)",
         selection: "rgb(96 165 250 / .48)",
@@ -899,6 +982,21 @@
     }
     const scrollbarCss = `
       :host { color-scheme: ${lightShell ? "light" : "dark"}; }
+      /* 普通代码行还用伪元素铺底，清除它才能透出面板背后的皮肤。 */
+      [data-line-type='context']::after {
+        background: transparent !important;
+      }
+      /* 行号节点随滚动重新创建，规则也必须覆盖尚未挂载的行号与装饰层。 */
+      [data-gutter],
+      [data-gutter] [data-line-type='context'],
+      [data-gutter]::before,
+      [data-gutter]::after {
+        background: transparent !important;
+      }
+      [data-gutter] [data-line-number-content] {
+        color: ${palette.muted} !important;
+        -webkit-text-fill-color: ${palette.muted} !important;
+      }
       :host :is(.monaco-scrollable-element, .overflow-guard, [data-scrollable]) {
         scrollbar-color: rgb(112 120 135 / .72) transparent;
       }
@@ -935,7 +1033,8 @@
         setDiffStyle(node, "color", color);
       }
     };
-    set("pre[data-diff], code[data-code], [data-gutter], [data-content], [data-separator-wrapper], [data-line-type='context']", palette.surface);
+    // 文件预览使用 data-file，差异视图使用 data-diff，二者共享透明正文底色。
+    set("pre[data-diff], pre[data-file], code[data-code], [data-gutter], [data-content], [data-separator-wrapper], [data-line-type='context']", palette.surface);
     set("[data-separator], [data-separator-content]", palette.separator, palette.muted);
     set(":is(header, [role='toolbar'], [role='tablist'], [data-diff-header], [data-file-header], [data-toolbar], [data-tabs])", palette.header);
     set(":is([role='tab'][aria-selected='true'], [data-active='true'], [aria-current='true'])", palette.active);
@@ -951,7 +1050,7 @@
       const shadowRoot = host.shadowRoot;
       if (!shadowRoot) continue;
       const lightShell = document.documentElement?.getAttribute("data-dream-shell") === "light";
-      setDiffStyle(host, "background", lightShell ? "rgb(252 252 252 / .96)" : "rgb(24 26 31 / .96)");
+      setDiffStyle(host, "background", "transparent");
       setDiffStyle(host, "color", lightShell ? "rgb(30 32 36)" : "rgb(235 238 244)");
       styleDiffRoot(shadowRoot);
     }
@@ -1109,7 +1208,7 @@
   const bindThreadClip = () => {
     const active = document.documentElement?.getAttribute("data-dream-skin") === "active" &&
       document.documentElement?.getAttribute("data-dream-art-wide") === "true";
-    const scroll = active ? document.querySelector(".thread-scroll-container") : null;
+    const scroll = active ? [...document.querySelectorAll(".thread-scroll-container")].find(isRenderedNode) : null;
     const footer = scroll?.querySelector('[data-thread-scroll-footer="true"]');
     const content = scroll?.querySelector("[data-thread-user-message-navigation-content]") ??
       scroll?.querySelector('[data-thread-find-target="conversation"]');
@@ -1138,9 +1237,11 @@
     scheduleThreadClip();
   };
 
-  const refreshScope = () => {
+  const refreshScope = ({ refreshMarkers = true } = {}) => {
     metrics.routePasses += 1;
+    if (refreshMarkers) refreshSurfaceRoutes();
     const scope = detectScope();
+    setAttribute(document.documentElement, "data-dream-base-state", scope.baseState);
     refreshProfileMenuCover();
     bindThreadClip();
     const state = window[STATE_KEY];
@@ -1160,7 +1261,7 @@
       refreshDiffSurfaces();
     }
     if (rootPass || partPass) bindThreadClip();
-    if (scopePass) refreshScope();
+    if (scopePass) refreshScope({ refreshMarkers: !partPass });
   };
 
   const cleanup = () => {
@@ -1179,6 +1280,10 @@
       }
     }
     removeParts();
+    for (const node of surfaceRouteNodes) {
+      for (const name of SURFACE_ROUTE_ATTRS) node.removeAttribute(name);
+    }
+    surfaceRouteNodes.clear();
     restoreDiffSurfaces();
     clearProfileMenuCover();
     clearThreadClip();
@@ -1244,7 +1349,10 @@
     "main", "aside", "header", "nav", "dialog", "[role='dialog']", "[role='menu']",
     "[role='listbox']", "[data-radix-popper-content-wrapper]", "[data-floating-ui-portal]",
     "[data-thread-find-target]", "[data-settings-panel-slug]", "[data-testid='home-icon']",
-    "[data-ds-part]", "diffs-container", "form", "textarea"
+    "[data-ds-part]", "diffs-container", "form", "textarea", "pre", "input[type='text']",
+    "[data-markdown-copy='code-block']", "[role='tooltip']", "[class*='turn-diff']",
+    "[class~='@container/browser-toolbar']", ".monaco-editor", ".editor-widget",
+    "[class*='_homeUtilityBar_']", ".home-banners", "[class~='group/project-selector']", "[cmdk-root]"
   ].join(",");
   const isStructuralNode = (node) => node instanceof Element &&
     (node.matches(STRUCTURAL_NODE_SELECTOR) || Boolean(node.querySelector(STRUCTURAL_NODE_SELECTOR)));
@@ -1267,6 +1375,16 @@
     rootObserver = new MutationObserver(() => scheduleEnsure({ root: true }));
     // SPA 路由变化会反映为 DOM 变动；只对会影响界面结构的节点重新标记。
     partObserver = new MutationObserver((records) => {
+      // 切换缓存页面只修改 Workspace 的 style，未必增删 DOM 节点。
+      if (records.some((record) => record.type === "attributes" &&
+        record.target instanceof Element && record.target.matches('[class*="_Workspace_"]'))) {
+        scheduleEnsure({ scope: true, parts: true }, 0);
+      }
+      if (records.some((record) => record.type === "attributes" &&
+        record.attributeName === "aria-selected" && record.target instanceof Element &&
+        record.target.matches('[role="tab"]'))) {
+        scheduleEnsure({ scope: true }, 0);
+      }
       if (hasStructuralMutation(records)) {
         scheduleEnsure({ scope: true, parts: hasContentStructureMutation(records) }, 80);
       }
@@ -1335,7 +1453,8 @@
   };
   const observePartTree = (node) => {
     if (!partObserver || !node) return;
-    partObserver.observe(node, { childList: true, subtree: true });
+    partObserver.observe(node, { childList: true, subtree: true,
+      attributes: true, attributeFilter: ["style", "hidden", "inert", "aria-selected"] });
   };
   observeAttributes(document.documentElement);
   const observeBody = () => {
