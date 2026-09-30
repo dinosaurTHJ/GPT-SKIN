@@ -687,7 +687,16 @@
   const selectorHit = (key) => {
     const selector = selectorByKey.get(key)?.selector;
     if (!selector) return false;
-    try { return [...document.querySelectorAll(selector)].some(isRenderedNode); } catch { return false; }
+    try {
+      return [...document.querySelectorAll(selector)].some((node) => {
+        if (isRenderedNode(node)) return true;
+        if (key !== "home-icon") return false;
+        // 皮肤会隐藏首页图标；用可见且已标记的首页容器确认锚点，排除缓存页面。
+        const homeSelector = selectorByKey.get("home-route")?.selector;
+        const home = homeSelector ? node.closest(homeSelector) : null;
+        return home?.getAttribute("data-dream-home-hero") === "true" && isRenderedNode(home);
+      });
+    } catch { return false; }
   };
 
   const stableTestidHit = (testid) => {

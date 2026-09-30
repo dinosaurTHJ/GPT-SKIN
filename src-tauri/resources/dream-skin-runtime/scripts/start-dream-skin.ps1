@@ -447,10 +447,14 @@ try {
         $Injector, '--once', '--port', "$Port", '--browser-id', $cdpIdentity.BrowserId,
         '--theme-dir', $themePaths.Active, '--timeout-ms', '30000'
       )
+      # 单次注入也保存完整校验结果，并在抛错前记录已显示的皮肤。
+      Write-DreamSkinUtf8FileAtomically -Path $VerifyPath -Content (($once.Output -join "`r`n") + "`r`n")
+      if (Test-DreamSkinRenderedVerificationOutput -Output $once.Output) {
+        $skinLooksRendered = $true
+      }
       if ($once.ExitCode -ne 0) {
-        $details = (($once.Output | Select-Object -Last 8) -join "`n").Trim()
-        if (-not $details) { $details = 'The one-shot injector failed during startup.' }
-        throw $details
+        if ($once.ExitCode -eq 2) { $startFailureCategory = 'renderer-verification-failed' }
+        throw "单次换肤注入或显示校验失败（退出码 $($once.ExitCode)）。完整结果见 $VerifyPath"
       }
       # 单次注入已留在渲染器中，不再为维持已生效皮肤保留 watcher 进程。
       $state = [pscustomobject]@{
@@ -589,7 +593,21 @@ try {
       }
     }
     if ($injectorStopped) { Remove-Item -LiteralPath $StatePath -Force -ErrorAction SilentlyContinue }
-    if ($launchedWithCdp -and -not $skinLooksRendered) {
+    if ($OneShot -and -not $ResultToken -and $launchedWithCdp) {
+      # 普通单次启动没有父级主题事务；换肤失败不应关闭刚打开的 Codex。
+      # 保留未验证的窗口，清除会话声明，并完成外观事务以免下次启动误回滚。
+      if ($null -ne $appearanceTransaction) {
+        try {
+          Complete-DreamSkinAppearanceTransaction `
+            -BackupPath $BackupPath -Transaction $appearanceTransaction
+          $appearanceRecovery = if ($skinLooksRendered) { 'preserved-rendered' } else { 'retained' }
+        } catch {
+          $appearanceRecovery = 'blocked'
+          Write-Warning '外观事务未能完成，已保留恢复记录和 Codex 窗口。'
+        }
+      }
+      Write-Warning "单次换肤失败，已保留 Codex 窗口。完整校验结果见 $VerifyPath"
+    } elseif ($launchedWithCdp -and -not $skinLooksRendered) {
       $rendererRollbackClosed = $false
       try {
         Stop-DreamSkinCodex -Codex $codex -AllowForce
