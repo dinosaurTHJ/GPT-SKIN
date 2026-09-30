@@ -1,10 +1,20 @@
-# ChatGPT Skin Studio
+# ChatGPT Skin Studio：Codex 桌面端主题与换肤
+
+**Codex Skin / Codex Theme for Windows** — custom wallpapers, video backgrounds, transparent panels and usage status for the OpenAI Codex desktop app.
 
 ## 项目简介
 
-ChatGPT Skin Studio 为 Windows 桌面客户端提供本地壁纸、动态背景、透明面板和文字对比度适配。聊天、模型切换、个人资料及用量信息仍由官方客户端提供。Skin Studio 负责外观，并在标题栏只读汇总当前账户的额度与重置券。
+ChatGPT Skin Studio（GPT-SKIN）是面向 **OpenAI Codex Windows 桌面客户端**的本地主题与换肤工具，提供 Codex 自定义壁纸、动态视频背景、透明面板和文字对比度适配。聊天、模型切换、个人资料及用量信息仍由官方客户端提供。Skin Studio 负责外观，并在标题栏只读汇总当前账户的额度与重置券。
 
 [下载 Windows x64 安装包](https://github.com/dinosaurTHJ/GPT-SKIN/releases/tag/v0.1.10) · [源代码](https://github.com/dinosaurTHJ/GPT-SKIN)
+
+## Codex 是什么
+
+Codex 是 OpenAI 面向软件开发的编程 Agent，可协助编写代码、审查代码和调试问题。详见 [OpenAI Codex 官方介绍](https://developers.openai.com/api/docs/guides/code-generation)。
+
+本项目为使用 Codex 桌面客户端的开发者提供可自定义的主题外观，并集中展示官方账户的额度信息。项目名仍为 ChatGPT Skin Studio；当前 Windows 适配和实际效果验证面向 Codex 桌面客户端。
+
+搜索关键词：`Codex 主题`、`Codex 换肤`、`Codex 壁纸`、`Codex 透明背景`、`Codex skin`、`Codex theme`、`Codex desktop customization`。
 
 ## 安装与使用
 
@@ -125,7 +135,7 @@ Tauri + Rust 提供原生桌面外壳，安装包内附换肤所需脚本及 Nod
 
 ## 兼容范围
 
-本次效果验证环境为 Windows x64，官方桌面客户端版本 `26.928.1915.0`。官方页面结构或调试能力更新后，可能需要继续适配。此 Release 提供 Windows 安装包；未发布或验证 macOS 安装包。在线主题商店、授权购买和自动更新服务不属于本次本地功能版本的交付范围。
+本次效果验证环境为 Windows x64，OpenAI Codex 官方桌面客户端版本 `26.928.1915.0`。官方页面结构或调试能力更新后，可能需要继续适配。此 Release 提供 Windows 安装包；未发布或验证 macOS 安装包。在线主题商店、授权购买和自动更新服务不属于本次本地功能版本的交付范围。
 
 ## 开发与许可
 
