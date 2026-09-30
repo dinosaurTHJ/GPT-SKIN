@@ -1388,3 +1388,167 @@ html[data-dream-skin="active"][data-dream-shell="dark"]
   color: var(--ds-text) !important;
   -webkit-text-fill-color: var(--ds-text) !important;
 }
+
+/* 设置页在主路由内渲染。将页面、偏好卡片和子页面统一为半透明，
+   让背景可见，同时用主题分析出的文字色保证深浅图片上的可读性。 */
+html[data-dream-skin="active"][data-dream-base-state="settings"][data-dream-media="image"] body {
+  background-image: linear-gradient(
+    rgb(var(--ds-bg-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))),
+    rgb(var(--ds-bg-rgb) / calc(1 - var(--ds-theme-image-opacity, .80)))
+  ), var(--dream-skin-art) !important;
+  background-position: var(--ds-art-position) !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+}
+
+/* 设置导航在内容区外侧，不能仅靠 main:has(设置按钮) 来识别内容背景。 */
+html[data-dream-skin="active"][data-dream-base-state="settings"]
+  main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-base-state="settings"] aside.app-shell-left-panel {
+  background: rgb(var(--ds-panel-rgb) / .32) !important;
+  box-shadow: none !important;
+}
+
+html[data-dream-skin="active"] main[data-dream-settings-content="true"] {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+  background: rgb(var(--ds-panel-rgb) / .54) !important;
+  background-image: none !important;
+}
+
+html[data-dream-skin="active"] main[data-dream-settings-content="true"]
+  :is([data-settings-panel-slug], [class~="bg-token-main-surface-primary"],
+    [class~="bg-token-surface-primary"], [class~="bg-token-dropdown-background"],
+    [class~="bg-token-menu-background"], [class~="bg-background-primary"],
+    [class~="bg-background-primary-soft"], [class~="bg-surface-elevated-secondary"]) {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+  background: rgb(var(--ds-panel-rgb) / .60) !important;
+  background-image: none !important;
+  border-color: rgb(var(--ds-muted-rgb) / .24) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+html[data-dream-skin="active"] main[data-dream-settings-content="true"]
+  :is([class~="text-token-text-secondary"], [class~="text-token-text-tertiary"],
+    [class~="text-token-muted-foreground"], [class~="text-token-description-foreground"]) {
+  color: var(--ds-muted) !important;
+  -webkit-text-fill-color: var(--ds-muted) !important;
+}
+
+/* 设置导航与内容区是同级节点，因此从 body 开始限定范围。 */
+html[data-dream-skin="active"][data-dream-base-state="settings"] body
+  main [class~="electron:bg-surface"] {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+  background: rgb(var(--ds-panel-rgb) / .54) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-base-state="settings"] body
+  main div.rounded-2xl.overflow-hidden.border.border-default {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+  background: rgb(var(--ds-panel-2-rgb) / .52) !important;
+  border-color: rgb(var(--ds-muted-rgb) / .24) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-base-state="settings"] body
+  [class~="bg-background-primary-soft/90"] {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+  background: rgb(var(--ds-panel-rgb) / .48) !important;
+  border-color: rgb(var(--ds-muted-rgb) / .24) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+html[data-dream-skin="active"][data-dream-base-state="settings"] body
+  main :is(h1, h2, h3, h4, label, button, input, select, textarea, [role="tab"], [role="switch"]) {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+}
+
+/* 个人资料、使用情况与计费复用原生 surface/primary-soft 色板，
+   在设置内容内映射为现有玻璃色板，避免文字已换肤而卡片仍保留浅色底。 */
+html[data-dream-skin="active"][data-dream-base-state="settings"] body main {
+  --color-surface: transparent;
+  --color-background-primary: transparent;
+  --color-surface-secondary: rgb(var(--ds-panel-rgb) / .48);
+  --color-surface-tertiary: rgb(var(--ds-panel-2-rgb) / .52);
+  --color-surface-elevated: rgb(var(--ds-panel-rgb) / .48);
+  --color-surface-elevated-secondary: rgb(var(--ds-panel-rgb) / .48);
+  --color-background-primary-soft: rgb(var(--ds-panel-2-rgb) / .52);
+  --color-background-primary-soft-alpha: rgb(var(--ds-panel-2-rgb) / .32);
+  --color-text: var(--ds-text);
+  --color-text-secondary: var(--ds-muted);
+  --color-text-tertiary: var(--ds-muted);
+  --color-codex-description: var(--ds-muted);
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+}
+
+/* 原生卡片、额度区域和固定页签使用同一透明度，不叠加浅色渐变。 */
+html[data-dream-skin="active"][data-dream-base-state="settings"] body main
+  :is([class~="bg-surface"], [class~="bg-surface-elevated"],
+    [class~="bg-surface-elevated-secondary"], [class~="bg-primary-soft"],
+    [class~="bg-background-primary-soft"]) {
+  background: rgb(var(--ds-panel-rgb) / .48) !important;
+  background-image: none !important;
+  border-color: rgb(var(--ds-muted-rgb) / .24) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+/* 资料说明、额度重置时间与计费辅助文案保持次级文字对比度。 */
+html[data-dream-skin="active"][data-dream-base-state="settings"] body main
+  :is([class~="text-secondary"], [class~="text-tertiary"],
+    [class~="text-codex-description"], [class~="text-token-text-secondary"],
+    [class~="text-token-text-tertiary"]) {
+  color: var(--ds-muted) !important;
+  -webkit-text-fill-color: var(--ds-muted) !important;
+}
+
+
+/* 选词浮层兼容新版不透明背景类及旧版 /90 类；跨缩放容器保留透明阴影框。 */
+html[data-dream-skin="active"]
+  div.pointer-events-none.w-max:is(.fixed.z-50, [class~="absolute"][class~="z-[1]"])
+  :is([role="presentation"][class~="bg-surface-elevated-secondary"],
+    [role="presentation"][class~="bg-surface-elevated-secondary/90"],
+    form.pointer-events-auto[class~="bg-surface"]) {
+  color: var(--ds-text) !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 1px solid rgb(var(--ds-muted-rgb) / .24) !important;
+  box-shadow: 0 8px 24px rgb(var(--ds-bg-rgb) / .20) !important;
+  backdrop-filter: none !important;
+}
+
+html[data-dream-skin="active"]
+  div.pointer-events-none.w-max:is(.fixed.z-50, [class~="absolute"][class~="z-[1]"])
+  :is([role="presentation"][class~="bg-surface-elevated-secondary"],
+    [role="presentation"][class~="bg-surface-elevated-secondary/90"],
+    form.pointer-events-auto[class~="bg-surface"])
+  :is(button, input, textarea) {
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+  background: transparent !important;
+  text-shadow: 0 1px 2px rgb(var(--ds-bg-rgb) / .86),
+    0 0 4px rgb(var(--ds-bg-rgb) / .66);
+}
+
+html[data-dream-skin="active"]
+  div.pointer-events-none.w-max:is(.fixed.z-50, [class~="absolute"][class~="z-[1]"])
+  [role="presentation"] > [aria-hidden="true"][class~="bg-border"] {
+  background: rgb(var(--ds-muted-rgb) / .24) !important;
+}

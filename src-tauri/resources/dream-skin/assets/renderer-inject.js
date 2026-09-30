@@ -739,7 +739,23 @@
     const overlay = selectorHit("overlay-menu") || selectorHit("overlay-dialog") ||
       selectorHit("overlay-popper");
     let baseState = "thread";
-    if (selectorHit("settings-panel") || selectorHit("appearance-radio") ||
+    // 新版设置导航使用 general/profile/usage/billing 等 slug，不能仅识别旧版 general-settings。
+    const hasSettingsNavigation = queryAll("[data-settings-panel-slug]").some((node) => {
+      if (!node.isConnected || !node.getClientRects().length) return false;
+      const style = getComputedStyle(node);
+      return style.display !== "none" && style.visibility !== "hidden" &&
+        style.visibility !== "collapse" && style.contentVisibility !== "hidden";
+    });
+    // 独立个人资料页没有设置导航，使用原生资料热图和加载骨架识别页面。
+    const hasProfileContent = queryAll(
+      '[class~="grid-flow-col"][class~="grid-rows-[repeat(7,minmax(1px,1fr))]"], [class*="_profileLoadingBlock_"]',
+    ).some((node) => {
+      if (!node.isConnected || !node.getClientRects().length) return false;
+      const style = getComputedStyle(node);
+      return style.display !== "none" && style.visibility !== "hidden" &&
+        style.visibility !== "collapse" && style.contentVisibility !== "hidden";
+    });
+    if (hasSettingsNavigation || hasProfileContent || selectorHit("settings-panel") || selectorHit("appearance-radio") ||
       stableTestidHit("theme-preview")) baseState = "settings";
     else if (selectorHit("home-icon") || selectorHit("home-route")) baseState = "home";
     else if (!selectorHit("shell-main") && !document.querySelector('main, [role="main"]')) baseState = "settings";

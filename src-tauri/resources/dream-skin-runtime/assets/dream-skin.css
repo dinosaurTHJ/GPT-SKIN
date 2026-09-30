@@ -2129,19 +2129,26 @@ html[data-dream-skin="active"]
   -webkit-text-fill-color: var(--ds-text) !important;
 }
 
-/* 选中文字的工具条完全透出背景；仅文字随主题变色并加轻微描边阴影。 */
-html[data-dream-skin="active"] body > div.pointer-events-none.w-max.fixed.z-50
-  > [role="presentation"][class~="bg-surface-elevated-secondary/90"] {
+/* 选词浮层兼容新版不透明背景类及旧版 /90 类；跨缩放容器保留透明阴影框。 */
+html[data-dream-skin="active"]
+  div.pointer-events-none.w-max:is(.fixed.z-50, [class~="absolute"][class~="z-[1]"])
+  :is([role="presentation"][class~="bg-surface-elevated-secondary"],
+    [role="presentation"][class~="bg-surface-elevated-secondary/90"],
+    form.pointer-events-auto[class~="bg-surface"]) {
   color: var(--ds-text) !important;
   background: transparent !important;
   background-image: none !important;
-  border-color: transparent !important;
-  box-shadow: none !important;
+  border: 1px solid rgb(var(--ds-muted-rgb) / .24) !important;
+  box-shadow: 0 8px 24px rgb(var(--ds-bg-rgb) / .20) !important;
   backdrop-filter: none !important;
 }
 
-html[data-dream-skin="active"] body > div.pointer-events-none.w-max.fixed.z-50
-  > [role="presentation"][class~="bg-surface-elevated-secondary/90"] button {
+html[data-dream-skin="active"]
+  div.pointer-events-none.w-max:is(.fixed.z-50, [class~="absolute"][class~="z-[1]"])
+  :is([role="presentation"][class~="bg-surface-elevated-secondary"],
+    [role="presentation"][class~="bg-surface-elevated-secondary/90"],
+    form.pointer-events-auto[class~="bg-surface"])
+  :is(button, input, textarea) {
   color: var(--ds-text) !important;
   -webkit-text-fill-color: var(--ds-text) !important;
   background: transparent !important;
@@ -2149,10 +2156,10 @@ html[data-dream-skin="active"] body > div.pointer-events-none.w-max.fixed.z-50
     0 0 4px rgb(var(--ds-bg-rgb) / .66);
 }
 
-html[data-dream-skin="active"] body > div.pointer-events-none.w-max.fixed.z-50
-  > [role="presentation"][class~="bg-surface-elevated-secondary/90"]
-  > [aria-hidden="true"] {
-  background: transparent !important;
+html[data-dream-skin="active"]
+  div.pointer-events-none.w-max:is(.fixed.z-50, [class~="absolute"][class~="z-[1]"])
+  [role="presentation"] > [aria-hidden="true"][class~="bg-border"] {
+  background: rgb(var(--ds-muted-rgb) / .24) !important;
 }
 
 /* The active-work toast and the scroll-to-bottom affordance are separate
@@ -3156,6 +3163,46 @@ html[data-dream-skin="active"][data-dream-base-state="settings"] body
   main :is(h1, h2, h3, h4, label, button, input, select, textarea, [role="tab"], [role="switch"]) {
   color: var(--ds-text) !important;
   -webkit-text-fill-color: var(--ds-text) !important;
+}
+
+/* 个人资料、使用情况与计费复用原生 surface/primary-soft 色板，
+   在设置内容内映射为现有玻璃色板，避免文字已换肤而卡片仍保留浅色底。 */
+html[data-dream-skin="active"][data-dream-base-state="settings"] body main {
+  --color-surface: transparent;
+  --color-background-primary: transparent;
+  --color-surface-secondary: rgb(var(--ds-panel-rgb) / .48);
+  --color-surface-tertiary: rgb(var(--ds-panel-2-rgb) / .52);
+  --color-surface-elevated: rgb(var(--ds-panel-rgb) / .48);
+  --color-surface-elevated-secondary: rgb(var(--ds-panel-rgb) / .48);
+  --color-background-primary-soft: rgb(var(--ds-panel-2-rgb) / .52);
+  --color-background-primary-soft-alpha: rgb(var(--ds-panel-2-rgb) / .32);
+  --color-text: var(--ds-text);
+  --color-text-secondary: var(--ds-muted);
+  --color-text-tertiary: var(--ds-muted);
+  --color-codex-description: var(--ds-muted);
+  color: var(--ds-text) !important;
+  -webkit-text-fill-color: var(--ds-text) !important;
+}
+
+/* 原生卡片、额度区域和固定页签使用同一透明度，不叠加浅色渐变。 */
+html[data-dream-skin="active"][data-dream-base-state="settings"] body main
+  :is([class~="bg-surface"], [class~="bg-surface-elevated"],
+    [class~="bg-surface-elevated-secondary"], [class~="bg-primary-soft"],
+    [class~="bg-background-primary-soft"]) {
+  background: rgb(var(--ds-panel-rgb) / .48) !important;
+  background-image: none !important;
+  border-color: rgb(var(--ds-muted-rgb) / .24) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+/* 资料说明、额度重置时间与计费辅助文案保持次级文字对比度。 */
+html[data-dream-skin="active"][data-dream-base-state="settings"] body main
+  :is([class~="text-secondary"], [class~="text-tertiary"],
+    [class~="text-codex-description"], [class~="text-token-text-secondary"],
+    [class~="text-token-text-tertiary"]) {
+  color: var(--ds-muted) !important;
+  -webkit-text-fill-color: var(--ds-muted) !important;
 }
 
 /* 最大化任务窗口使用稳定原生标题层，避免任务标题、状态文案和窗口控件相互干扰。 */
