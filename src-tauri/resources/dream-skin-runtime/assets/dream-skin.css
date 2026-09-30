@@ -3170,6 +3170,8 @@ html[data-dream-skin="active"][data-dream-base-state="settings"] body
 html[data-dream-skin="active"][data-dream-base-state="settings"] body main {
   --color-surface: transparent;
   --color-background-primary: transparent;
+  /* 额度卡片以内联样式优先读取 panel，必须同时映射这个变量。 */
+  --color-background-panel: rgb(var(--ds-panel-rgb) / .48);
   --color-surface-secondary: rgb(var(--ds-panel-rgb) / .48);
   --color-surface-tertiary: rgb(var(--ds-panel-2-rgb) / .52);
   --color-surface-elevated: rgb(var(--ds-panel-rgb) / .48);
