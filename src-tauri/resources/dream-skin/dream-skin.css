@@ -1607,3 +1607,17 @@ html[data-dream-skin="active"] #codex-dream-skin-usage-status [data-usage-field=
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+
+/* 新版用 CSS Module 定义渐变与高度，按非交互的 sticky 装饰层结构识别，
+   不依赖生成类名，避免底色在输入框上方突然截断。 */
+html[data-dream-skin="active"][data-dream-art-wide="true"]
+  .thread-scroll-container
+  [aria-hidden="true"][class~="pointer-events-none"][class~="sticky"][class~="bottom-0"]
+  > [aria-hidden="true"][class~="pointer-events-none"][class~="absolute"][class~="inset-x-0"][class~="z-0"][class~="from-surface"] {
+  display: none !important;
+  opacity: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+}

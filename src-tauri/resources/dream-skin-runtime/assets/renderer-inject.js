@@ -1299,27 +1299,35 @@
   const getUsageApi = async () => {
     if (!usageBar.apiPromise) {
       usageBar.apiPromise = (async () => {
-        let sharedUrl = [...document.querySelectorAll('link[rel="modulepreload"][href]')]
-          .map((link) => link.href).find((url) => /\/app-shared-[\w-]+\.js$/.test(url));
-        if (!sharedUrl) {
+        // 新版客户端将请求实例迁入 app-initial，兼容旧版 app-shared 布局。
+        const modulePattern = /\/(?:app-shared|app-initial)-[\w-]+\.js$/;
+        let moduleUrls = [...document.querySelectorAll('link[rel="modulepreload"][href]')]
+          .map((link) => link.href).filter((url) => modulePattern.test(url));
+        if (!moduleUrls.length) {
           const entry = document.querySelector('script[type="module"][src]');
           if (!entry || new URL(entry.src).origin !== location.origin) throw new Error("模块不可用");
           const response = await fetch(entry.src, { signal: usageBar.controller?.signal });
           if (!response.ok) throw new Error("模块不可用");
-          const path = (await response.text()).match(/\.\/app-shared-[\w-]+\.js/);
-          if (path) sharedUrl = new URL(path[0], entry.src).href;
+          const paths = (await response.text()).match(/\.\/(?:app-shared|app-initial)-[\w-]+\.js/g) ?? [];
+          moduleUrls = paths.map((path) => new URL(path, entry.src).href);
         }
-        if (!sharedUrl || new URL(sharedUrl).origin !== location.origin) throw new Error("模块不可用");
-        const exports = await import(sharedUrl);
-        const api = Object.values(exports).find((value) => {
-          if (!value || typeof value.safeGet !== "function" ||
-              typeof value.getRequestTarget !== "function") return false;
-          try {
-            return value.getRequestTarget("/wham/usage").headers?.originator === "Codex Desktop";
-          } catch { return false; }
-        });
-        if (!api) throw new Error("桌面请求实例不可用");
-        return api;
+        for (const moduleUrl of new Set(moduleUrls)) {
+          if (new URL(moduleUrl).origin !== location.origin) continue;
+          if (usageBar.controller?.signal.aborted) throw new Error("额度请求已取消");
+          const exports = await import(moduleUrl);
+          const api = Object.values(exports).find((value) => {
+            if (!value || typeof value !== "object") return false;
+            // RPC Proxy 会把任意属性伪装成方法，先检查真实原型，避免误调用远程方法。
+            const prototype = Object.getPrototypeOf(value);
+            if (typeof prototype?.safeGet !== "function" ||
+                typeof prototype?.getRequestTarget !== "function") return false;
+            try {
+              return value.getRequestTarget("/wham/usage").headers?.originator === "Codex Desktop";
+            } catch { return false; }
+          });
+          if (api) return api;
+        }
+        throw new Error("桌面请求实例不可用");
       })().catch((error) => { usageBar.apiPromise = null; throw error; });
     }
     return usageBar.apiPromise;
