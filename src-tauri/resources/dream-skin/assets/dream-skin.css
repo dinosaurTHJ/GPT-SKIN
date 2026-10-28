@@ -1621,3 +1621,16 @@ html[data-dream-skin="active"][data-dream-art-wide="true"]
   background-image: none !important;
   backdrop-filter: none !important;
 }
+
+
+/* 输入区实色铺底层的横向定位已迁入 CSS Module，不再依赖 inset-x-0 类；
+   仍只清理 footer 直接包含的非交互装饰层。 */
+html[data-dream-skin="active"][data-dream-art-wide="true"]
+  [data-thread-scroll-footer="true"]
+  > [aria-hidden="true"][class~="pointer-events-none"][class~="absolute"][class~="bottom-0"][class~="z-0"][class~="bg-surface"] {
+  display: none !important;
+  opacity: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+}

@@ -1940,10 +1940,11 @@ html[data-dream-skin="active"][data-dream-art-wide="true"][data-dream-shell="dar
 html[data-dream-skin="active"][data-dream-art-wide="true"]
   [data-thread-scroll-footer="true"]
   > div[class~="pointer-events-none"][class~="absolute"][class~="inset-x-0"][class~="bottom-0"][class~="z-0"][class~="h-full"][class~="bg-gradient-to-t"][class~="from-surface"][class~="via-surface"],
-/* 新版把输入区装饰渐变改成了实色 surface，仍只清理直接的非交互铺底层。 */
+/* 输入区实色铺底层的横向定位已迁入 CSS Module，不再依赖 inset-x-0 类；
+   仍只清理 footer 直接包含的非交互装饰层。 */
 html[data-dream-skin="active"][data-dream-art-wide="true"]
   [data-thread-scroll-footer="true"]
-  > div[class~="pointer-events-none"][class~="absolute"][class~="inset-x-0"][class~="bottom-0"][class~="z-0"][class~="bg-surface"],
+  > [aria-hidden="true"][class~="pointer-events-none"][class~="absolute"][class~="bottom-0"][class~="z-0"][class~="bg-surface"],
 /* 实色铺底上方另有 32px 渐变，单独清除以免留下横向亮带。 */
 html[data-dream-skin="active"][data-dream-art-wide="true"]
   .thread-scroll-container

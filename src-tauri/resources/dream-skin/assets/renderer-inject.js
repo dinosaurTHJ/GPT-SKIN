@@ -785,9 +785,12 @@
 
   // 顶部额度栏只调用客户端已有的只读接口，登录凭据仍由原生请求层管理。
   const USAGE_BAR_ID = "codex-dream-skin-usage-status";
+  // 额度与重置券分别限频，减少持续打开窗口时的网络请求。
+  const USAGE_REFRESH_MS = 60 * 1000;
+  const RESET_CREDITS_REFRESH_MS = 5 * 60 * 1000;
   const usageBar = {
     element: null, fields: null, timer: null, controller: null, apiPromise: null,
-    running: false, stopped: false, lastAttempt: 0,
+    running: false, stopped: false, lastAttempt: 0, lastCreditsAttempt: 0, accountKey: null,
   };
 
   // 将有效服务端时间转换为本地时间；缺失或无效时间不显示为已过期。
@@ -859,18 +862,22 @@
     if (field.textContent !== text) field.textContent = text;
     if (field.title !== title) field.title = title;
   };
-  const showUsageUnavailable = () => {
+  // 未到重置券刷新时间时保留已获取的次数和过期时间。
+  const showUsageUnavailable = (includeCredits = true) => {
     setUsageField("five", "5 小时剩余：未获取");
     setUsageField("week", "周额度剩余：未获取");
-    setUsageField("resets", "重置次数：未获取");
-    setUsageField("expires", "过期时间：未获取");
+    if (includeCredits) {
+      setUsageField("resets", "重置次数：未获取");
+      setUsageField("expires", "过期时间：未获取");
+    }
   };
 
   // 复用原生使用情况和重置券接口；失败后清除旧值，防止账户切换时误显示。
   const refreshUsageBar = async () => {
     // 首次加载即读取一次，后台窗口之后暂停轮询，恢复可见时再刷新。
     if (usageBar.stopped || usageBar.running ||
-        (document.visibilityState === "hidden" && usageBar.lastAttempt > 0)) return;
+        (document.visibilityState === "hidden" && usageBar.lastAttempt > 0) ||
+        (usageBar.lastAttempt > 0 && Date.now() - usageBar.lastAttempt < USAGE_REFRESH_MS)) return;
     usageBar.running = true;
     usageBar.lastAttempt = Date.now();
     const controller = new AbortController();
@@ -879,15 +886,40 @@
     try {
       const api = await getUsageApi();
       if (usageBar.stopped || controller.signal.aborted) return;
-      const [usageResult, creditsResult] = await Promise.allSettled([
+      let refreshCredits = usageBar.lastCreditsAttempt === 0 ||
+        Date.now() - usageBar.lastCreditsAttempt >= RESET_CREDITS_REFRESH_MS;
+      if (refreshCredits) usageBar.lastCreditsAttempt = Date.now();
+      let [usageResult, creditsResult] = await Promise.allSettled([
         api.safeGet("/wham/usage", {
           signal: controller.signal,
           additionalHeaders: { "OAI-App-Brand": "codex", "x-openai-codex-pricing-chooser": "1" },
         }),
-        api.safeGet("/wham/rate-limit-reset-credits", { signal: controller.signal }),
+        refreshCredits
+          ? api.safeGet("/wham/rate-limit-reset-credits", { signal: controller.signal })
+          : Promise.resolve(null),
       ]);
       if (usageBar.stopped) return;
-      showUsageUnavailable();
+      // 账户切换时立即重读重置券，避免沿用上一账户的缓存。
+      if (usageResult.status === "fulfilled") {
+        const accountKey = JSON.stringify([
+          usageResult.value?.account_id ?? null, usageResult.value?.user_id ?? null,
+        ]);
+        if (accountKey !== usageBar.accountKey) {
+          usageBar.accountKey = accountKey;
+          if (!refreshCredits) {
+            refreshCredits = true;
+            usageBar.lastCreditsAttempt = Date.now();
+            [creditsResult] = await Promise.allSettled([
+              api.safeGet("/wham/rate-limit-reset-credits", { signal: controller.signal }),
+            ]);
+            if (usageBar.stopped) return;
+          }
+        }
+      } else {
+        usageBar.accountKey = null;
+        usageBar.lastCreditsAttempt = 0;
+      }
+      showUsageUnavailable(refreshCredits || usageResult.status !== "fulfilled");
       if (usageResult.status === "fulfilled") {
         const limits = usageResult.value?.rate_limit;
         const five = usageWindowText(limits, 18000);
@@ -918,7 +950,11 @@
         }
       }
     } catch {
-      if (!usageBar.stopped) showUsageUnavailable();
+      if (!usageBar.stopped) {
+        usageBar.accountKey = null;
+        usageBar.lastCreditsAttempt = 0;
+        showUsageUnavailable();
+      }
     } finally {
       clearTimeout(timeout);
       usageBar.running = false;
@@ -955,10 +991,10 @@
     }
   };
 
-  // 回到窗口或页面可见时补充刷新；同一分钟内不重复请求。
+  // 回到窗口或页面可见时补充刷新；一分钟内不重复请求。
   const resumeUsageBar = () => {
     positionUsageBar();
-    if (Date.now() - usageBar.lastAttempt >= 60000) void refreshUsageBar();
+    if (Date.now() - usageBar.lastAttempt >= USAGE_REFRESH_MS) void refreshUsageBar();
   };
   const ensureUsageBar = () => {
     if (!document.body || usageBar.stopped) return;
@@ -983,7 +1019,7 @@
       window.addEventListener("focus", resumeUsageBar);
       document.addEventListener("visibilitychange", resumeUsageBar);
       navigator.windowControlsOverlay?.addEventListener("geometrychange", positionUsageBar);
-      usageBar.timer = setInterval(() => { void refreshUsageBar(); }, 60000);
+      usageBar.timer = setInterval(() => { void refreshUsageBar(); }, USAGE_REFRESH_MS);
       void refreshUsageBar();
     }
     if (!usageBar.element.isConnected) document.body.append(usageBar.element);
