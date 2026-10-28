@@ -1,0 +1,106 @@
+name: Release Windows local edition
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: local-windows-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish-windows:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.31.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+      - name: Verify tagged version
+        id: version
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
+          if ($version -notmatch '^\d+\.\d+\.\d+$' -or $env:GITHUB_REF -cne "refs/tags/v$version") {
+            throw 'This workflow requires a matching version tag.'
+          }
+          node scripts/sync-version.mjs --check
+          if ($LASTEXITCODE -ne 0) { throw 'Version check failed.' }
+          "version=$version" >> $env:GITHUB_OUTPUT
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Configure local edition
+        shell: pwsh
+        run: |
+          # 本地版无需在线服务凭据，这些仅为编译占位配置。
+          $env:RETHEME_API_SECRET_ID = 'local-development'
+          $env:RETHEME_API_SECRET_KEY = 'local-development'
+          $env:RETHEME_PACKAGE_KEY = 'local-development-build-only-00000000'
+          $env:RETHEME_LICENSE_PUBLIC_KEY = '0' * 64
+          $env:RETHEME_COMPATIBILITY_PUBLIC_KEY = '0' * 64
+          $env:RETHEME_THEME_PUBLIC_KEY = '0' * 64
+          node scripts/write-build-config.mjs
+          if ($LASTEXITCODE -ne 0) { throw 'Local build configuration failed.' }
+      - name: Build Windows installer
+        run: pnpm exec tauri build --bundles nsis
+      - name: Prepare release assets
+        shell: pwsh
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $version = $env:RELEASE_VERSION
+          New-Item -ItemType Directory -Path release-upload | Out-Null
+          $installer = "src-tauri/target/release/bundle/nsis/ChatGPT Skin Studio_${version}_x64-setup.exe"
+          Copy-Item -LiteralPath $installer -Destination "release-upload/ChatGPT-Skin-Studio_${version}_windows-x64-setup.exe"
+          Copy-Item -LiteralPath LICENSE -Destination release-upload/LICENSE.txt
+          foreach ($image in @("v$version-usage-status-titlebar.png", "v$version-installed-studio.png")) {
+            Copy-Item -LiteralPath "docs/images/$image" -Destination "release-upload/$image"
+          }
+          $hashes = Get-ChildItem release-upload -File | Sort-Object Name | ForEach-Object {
+            "{0}  {1}" -f (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLower(), $_.Name
+          }
+          [IO.File]::WriteAllLines("$PWD/release-upload/SHA256SUMS.txt", $hashes, [Text.UTF8Encoding]::new($false))
+          $readme = [IO.File]::ReadAllText("$PWD/README.md")
+          $start = $readme.IndexOf("## v$version ", [StringComparison]::Ordinal)
+          if ($start -lt 0) { throw 'Version release notes are missing.' }
+          $end = $readme.IndexOf("`n## ", $start + 3, [StringComparison]::Ordinal)
+          if ($end -lt 0) { $end = $readme.Length }
+          $notes = $readme.Substring($start, $end - $start).Trim()
+          $notes += "`n`nWindows x64 本地版，由 GitHub Actions 从标签源码构建，无需配置在线 API 密钥。附件包含安装包、LICENSE、SHA256SUMS 和本机实际效果截图。`n`n源码 commit：$env:GITHUB_SHA`n"
+          [IO.File]::WriteAllText("$env:RUNNER_TEMP/release-notes.txt", $notes, [Text.UTF8Encoding]::new($false))
+      - name: Publish tagged local edition
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $tag = "v$env:RELEASE_VERSION"
+          $existing = gh release view $tag --repo $env:GITHUB_REPOSITORY --json isDraft --jq .isDraft 2>$null
+          if ($LASTEXITCODE -eq 0) {
+            if ($existing.Trim() -ne 'true') { throw 'Release already published; refusing replacement.' }
+          } else {
+            gh release create $tag --repo $env:GITHUB_REPOSITORY --verify-tag --draft --title "ChatGPT Skin Studio $env:RELEASE_VERSION" --notes-file "$env:RUNNER_TEMP/release-notes.txt"
+            if ($LASTEXITCODE -ne 0) { throw 'Draft release creation failed.' }
+          }
+          $assets = @(Get-ChildItem release-upload -File | ForEach-Object FullName)
+          gh release upload $tag @assets --repo $env:GITHUB_REPOSITORY --clobber
+          if ($LASTEXITCODE -ne 0) { throw 'Release upload failed.' }
+          gh release edit $tag --repo $env:GITHUB_REPOSITORY --draft=false --latest --title "ChatGPT Skin Studio $env:RELEASE_VERSION" --notes-file "$env:RUNNER_TEMP/release-notes.txt"
+          if ($LASTEXITCODE -ne 0) { throw 'Release publication failed.' }
