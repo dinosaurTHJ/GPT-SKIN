@@ -825,13 +825,24 @@
         const modulePattern = /\/(?:app-shared|app-initial)-[\w-]+\.js$/;
         let moduleUrls = [...document.querySelectorAll('link[rel="modulepreload"][href]')]
           .map((link) => link.href).filter((url) => modulePattern.test(url));
-        if (!moduleUrls.length) {
+        if (!moduleUrls.some((url) => /\/app-initial-[\w-]+\.js$/.test(url))) {
           const entry = document.querySelector('script[type="module"][src]');
           if (!entry || new URL(entry.src).origin !== location.origin) throw new Error("模块不可用");
           const response = await fetch(entry.src, { signal: usageBar.controller?.signal });
           if (!response.ok) throw new Error("模块不可用");
-          const paths = (await response.text()).match(/\.\/(?:app-shared|app-initial)-[\w-]+\.js/g) ?? [];
-          moduleUrls = paths.map((path) => new URL(path, entry.src).href);
+          const entryText = await response.text();
+          const paths = entryText.match(/\.\/(?:app-shared|app-initial)-[\w-]+\.js/g) ?? [];
+          moduleUrls.push(...paths.map((path) => new URL(path, entry.src).href));
+          // 新版只预加载 app-shared，app-initial 由同源 app-main 间接引入。
+          const mainPath = entryText.match(/\.\/app-main-[\w-]+\.js/)?.[0];
+          if (mainPath && !moduleUrls.some((url) => /\/app-initial-[\w-]+\.js$/.test(url))) {
+            const mainUrl = new URL(mainPath, entry.src);
+            if (mainUrl.origin !== location.origin) throw new Error("模块不可用");
+            const mainResponse = await fetch(mainUrl.href, { signal: usageBar.controller?.signal });
+            if (!mainResponse.ok) throw new Error("模块不可用");
+            const initialPaths = (await mainResponse.text()).match(/\.\/app-initial-[\w-]+\.js/g) ?? [];
+            moduleUrls.push(...initialPaths.map((path) => new URL(path, mainUrl.href).href));
+          }
         }
         for (const moduleUrl of new Set(moduleUrls)) {
           if (new URL(moduleUrl).origin !== location.origin) continue;

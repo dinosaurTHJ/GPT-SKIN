@@ -6,7 +6,7 @@
 
 ChatGPT Skin Studio（GPT-SKIN）是面向 **OpenAI Codex Windows 桌面客户端**的本地主题与换肤工具，提供 Codex 自定义壁纸、动态视频背景、透明面板和文字对比度适配。聊天、模型切换、个人资料及用量信息仍由官方客户端提供。Skin Studio 负责外观，并在标题栏只读汇总当前账户的额度与重置券。
 
-[下载 Windows x64 安装包](https://github.com/dinosaurTHJ/GPT-SKIN/releases/tag/v0.1.13) · [源代码](https://github.com/dinosaurTHJ/GPT-SKIN)
+[下载 Windows x64 安装包](https://github.com/dinosaurTHJ/GPT-SKIN/releases/tag/v0.1.14) · [源代码](https://github.com/dinosaurTHJ/GPT-SKIN)
 
 ## Codex 是什么
 
@@ -18,12 +18,18 @@ Codex 是 OpenAI 面向软件开发的编程 Agent，可协助编写代码、审
 
 ## 安装与使用
 
-1. 从 Release 下载 `ChatGPT-Skin-Studio_0.1.13_windows-x64-setup.exe` 并安装。安装包包含前端、Rust 程序、换肤脚本和 Node.js 运行时，使用者无需安装 Node.js、pnpm 或 Rust。
+1. 从 Release 下载 `ChatGPT-Skin-Studio_0.1.14_windows-x64-setup.exe` 并安装。安装包包含前端、Rust 程序、换肤脚本和 Node.js 运行时，使用者无需安装 Node.js、pnpm 或 Rust。
 2. 打开 ChatGPT Skin Studio，点击“更换目录”，选择本地背景目录。默认目录为 `C:\image`，也可以选择其他目录；程序会扫描子目录并按目录分类。
 3. 第一次连接前，先保存工作并正常退出 ChatGPT / Codex，再从 Skin Studio 点击“打开 ChatGPT”。已经建立换肤连接后，切换背景无需重启客户端。
 4. 选择图片或视频并点击“应用”。通过“背景透明度”调整效果；“恢复官方”用于移除当前皮肤并恢复原有外观。
 
 本次发布面向 Windows 10/11 x64，依赖桌面客户端和 Microsoft Edge WebView2。它是可直接安装的本地换肤版本，无需配置在线主题商店账号或 API 密钥。
+
+## v0.1.14 顶部额度获取修复
+
+兼容新版 Codex 间接加载请求模块的方式，修复顶部额度与重置券显示“未获取”。本机在 Codex 26.1027.3384.0 中验证，额度和重置券已恢复显示。
+
+![0.1.14 本机顶部额度栏](docs/images/v0.1.14-usage-status-titlebar.png)
 
 ## v0.1.13 输入区与额度刷新修复
 

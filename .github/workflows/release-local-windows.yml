@@ -69,7 +69,7 @@ jobs:
           $installer = "src-tauri/target/release/bundle/nsis/ChatGPT Skin Studio_${version}_x64-setup.exe"
           Copy-Item -LiteralPath $installer -Destination "release-upload/ChatGPT-Skin-Studio_${version}_windows-x64-setup.exe"
           Copy-Item -LiteralPath LICENSE -Destination release-upload/LICENSE.txt
-          foreach ($image in @("v$version-usage-status-titlebar.png", "v$version-installed-studio.png")) {
+          foreach ($image in @("v$version-usage-status-titlebar.png", "v0.1.13-installed-studio.png")) {
             Copy-Item -LiteralPath "docs/images/$image" -Destination "release-upload/$image"
           }
           $hashes = Get-ChildItem release-upload -File | Sort-Object Name | ForEach-Object {
