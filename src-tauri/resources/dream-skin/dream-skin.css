@@ -1270,7 +1270,7 @@ html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface
 }
 
 html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])
-  :is(.app-shell-main-content-top-fade, [class*="_MainContentTopFade_"]) {
+  :is(.app-shell-main-content-top-fade, :is([class*="_MainContentTopFade_"], [class*="MainContentTopFade-"])) {
   display: none !important;
   background: transparent !important;
 }

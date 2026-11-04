@@ -1,6 +1,6 @@
 // Canonical cross-platform renderer. Run tools/sync-runtime-assets.mjs after editing.
 ((cssText, artDataUrl, themeConfig) => {
-  const SELECTOR_CONTRACT = {"schema":"codex-dream-skin-selectors/1","selectors":[{"key":"shell-main","selector":"main:is(.main-surface, [data-app-shell-main-surface], [class*=\"_MainContentSurface_\"])","tier":"L1","scope":"all","required":true},{"key":"left-panel","selector":"aside.app-shell-left-panel","tier":"L1","scope":"all","required":true},{"key":"header-tint","selector":"header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*=\"_Header_\"])","tier":"L1","scope":"all","required":true},{"key":"main-content-top-fade","selector":":is(.app-shell-main-content-top-fade, [class*=\"_MainContentTopFade_\"])","tier":"L2","scope":"all","required":false},{"key":"home-icon","selector":"[data-testid=\"home-icon\"]","tier":"L1","scope":"home","required":true},{"key":"home-route","selector":"[role=\"main\"]:has([data-testid=\"home-icon\"])","tier":"L1","scope":"home","required":true},{"key":"home-route-css","selector":"[role=\"main\"]","tier":"L1","scope":"home","required":true},{"key":"home-banners","selector":".home-banners","tier":"L2","scope":"home","required":false},{"key":"composer-chrome","selector":".composer-surface-chrome","tier":"L2","scope":"home+thread","required":false},{"key":"composer-toolbar","selector":".composer-surface-chrome [class*=\"_footer_\"]","tier":"L2","scope":"home+thread","required":false},{"key":"home-utility","selector":"[class*=\"_homeUtilityBar_\"]","tier":"L2","scope":"home","required":false},{"key":"game-source","selector":"[data-feature=\"game-source\"]","tier":"L2","scope":"home","required":false},{"key":"home-suggestions","selector":".group\\/home-suggestions","tier":"L2","scope":"home","required":false},{"key":"project-selector","selector":".group\\/project-selector","tier":"L2","scope":"home config","required":false},{"key":"markdown","selector":"[class*=\"_markdown\"]","tier":"L2","scope":"thread","required":false},{"key":"thread-surface","selector":".thread-scroll-container","tier":"L2","scope":"thread","required":false},{"key":"message","selector":":is([data-message-author-role], [data-local-conversation-user-anchor], [data-local-conversation-final-assistant])","tier":"L2","scope":"thread","required":false},{"key":"settings-panel","selector":"[data-settings-panel-slug=\"general-settings\"]","tier":"L2","scope":"settings","required":false},{"key":"appearance-radio","selector":"input[name=\"appearance-theme\"]","tier":"L2","scope":"settings","required":false},{"key":"overlay-menu","selector":"[role=\"menu\"]","tier":"L2","scope":"overlay","required":false},{"key":"overlay-dialog","selector":"[role=\"dialog\"]","tier":"L2","scope":"overlay","required":false},{"key":"overlay-popper","selector":"[data-radix-popper-content-wrapper]","tier":"L2","scope":"overlay","required":false}],"stableTestids":["app-shell-header-context-menu-surface","home-icon","theme-preview"]};
+  const SELECTOR_CONTRACT = {"schema":"codex-dream-skin-selectors/1","selectors":[{"key":"shell-main","selector":"main:is(.main-surface, [data-app-shell-main-surface], [class*=\"_MainContentSurface_\"])","tier":"L1","scope":"all","required":true},{"key":"left-panel","selector":"aside.app-shell-left-panel","tier":"L1","scope":"all","required":true},{"key":"header-tint","selector":"header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*=\"_Header_\"])","tier":"L1","scope":"all","required":true},{"key":"main-content-top-fade","selector":":is(.app-shell-main-content-top-fade, [class*=\"_MainContentTopFade_\"], [class*=\"MainContentTopFade-\"])","tier":"L2","scope":"all","required":false},{"key":"home-icon","selector":"[data-testid=\"home-icon\"]","tier":"L1","scope":"home","required":true},{"key":"home-route","selector":"[role=\"main\"]:has([data-testid=\"home-icon\"])","tier":"L1","scope":"home","required":true},{"key":"home-route-css","selector":"[role=\"main\"]","tier":"L1","scope":"home","required":true},{"key":"home-banners","selector":".home-banners","tier":"L2","scope":"home","required":false},{"key":"composer-chrome","selector":":is(.composer-surface-chrome, [data-composer-surface-variant], [class*=\"ComposerLayoutRoot-\"])","tier":"L2","scope":"home+thread","required":false},{"key":"composer-toolbar","selector":":is(.composer-surface-chrome [class*=\"_footer_\"], [data-composer-footer-responsive], [class*=\"ComposerLayoutRoot-\"] [class*=\"ComposerLayoutFooter-\"])","tier":"L2","scope":"home+thread","required":false},{"key":"home-utility","selector":"[class*=\"_homeUtilityBar_\"]","tier":"L2","scope":"home","required":false},{"key":"game-source","selector":"[data-feature=\"game-source\"]","tier":"L2","scope":"home","required":false},{"key":"home-suggestions","selector":".group\\/home-suggestions","tier":"L2","scope":"home","required":false},{"key":"project-selector","selector":".group\\/project-selector","tier":"L2","scope":"home config","required":false},{"key":"markdown","selector":"[class*=\"_markdown\"]","tier":"L2","scope":"thread","required":false},{"key":"thread-surface","selector":".thread-scroll-container","tier":"L2","scope":"thread","required":false},{"key":"message","selector":":is([data-message-author-role], [data-local-conversation-user-anchor], [data-local-conversation-final-assistant])","tier":"L2","scope":"thread","required":false},{"key":"settings-panel","selector":"[data-settings-panel-slug=\"general-settings\"]","tier":"L2","scope":"settings","required":false},{"key":"appearance-radio","selector":"input[name=\"appearance-theme\"]","tier":"L2","scope":"settings","required":false},{"key":"overlay-menu","selector":"[role=\"menu\"]","tier":"L2","scope":"overlay","required":false},{"key":"overlay-dialog","selector":"[role=\"dialog\"]","tier":"L2","scope":"overlay","required":false},{"key":"overlay-popper","selector":"[data-radix-popper-content-wrapper]","tier":"L2","scope":"overlay","required":false}],"stableTestids":["app-shell-header-context-menu-surface","home-icon","theme-preview"]};
   const STATE_KEY = "__CODEX_DREAM_SKIN_STATE__";
   const DISABLED_KEY = "__CODEX_DREAM_SKIN_DISABLED__";
   const STYLE_REGISTRY_KEY = "__CODEX_DREAM_SKIN_STYLE_SHEETS__";
@@ -772,6 +772,8 @@
       for (const input of genericInputNodes()) {
         if (main && !main.contains?.(input)) continue;
         const owner = input.closest?.(
+          '[data-composer-surface-variant], [class*="ComposerLayoutRoot-"]',
+        ) ?? input.closest?.(
           '[data-testid*="composer" i], [data-testid*="prompt" i], ' +
           '[class*="composer" i], [class*="prompt" i]',
         );
@@ -1325,6 +1327,21 @@
             moduleUrls.push(...initialPaths.map((path) => new URL(path, mainUrl.href).href));
           }
         }
+        const isCodexUsageApi = (value) => {
+          if (!value || typeof value !== "object") return false;
+          let prototype;
+          try { prototype = Object.getPrototypeOf(value); } catch { return false; }
+          if (typeof prototype?.safeGet !== "function" ||
+              typeof prototype?.getRequestTarget !== "function") return false;
+          try {
+            return value.getRequestTarget("/wham/usage").headers?.originator === "Codex Desktop";
+          } catch { return false; }
+        };
+        const findCodexUsageApi = (exports) => {
+          let candidates;
+          try { candidates = [exports, ...Object.values(exports ?? {})]; } catch { return null; }
+          return candidates.find(isCodexUsageApi) ?? null;
+        };
         for (const moduleUrl of new Set(moduleUrls)) {
           if (new URL(moduleUrl).origin !== location.origin) continue;
           if (usageBar.controller?.signal.aborted) throw new Error("额度请求已取消");
@@ -1340,6 +1357,26 @@
             } catch { return false; }
           });
           if (api) return api;
+        }
+        // Codex 26.1029 exposes its request client through the loaded Rspack module cache.
+        const entryUrls = [...document.querySelectorAll('script[type="module"][src]')]
+          .map((script) => script.src)
+          .filter((url) => {
+            try { return new URL(url).origin === location.origin; } catch { return false; }
+          });
+        for (const entryUrl of new Set(entryUrls)) {
+          if (usageBar.controller?.signal.aborted) throw new Error("额度请求已取消");
+          let entryExports;
+          try { entryExports = await import(entryUrl); } catch { continue; }
+          const runtimeRequire = entryExports?.__webpack_require__;
+          const moduleCache = runtimeRequire?.c ?? runtimeRequire?.cache;
+          if (!moduleCache || typeof moduleCache !== "object") continue;
+          let cachedModules;
+          try { cachedModules = Object.values(moduleCache); } catch { continue; }
+          for (const cachedModule of cachedModules) {
+            const api = findCodexUsageApi(cachedModule?.exports);
+            if (api) return api;
+          }
         }
         throw new Error("桌面请求实例不可用");
       })().catch((error) => { usageBar.apiPromise = null; throw error; });

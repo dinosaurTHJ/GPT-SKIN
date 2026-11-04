@@ -1261,7 +1261,7 @@ html[data-dream-skin="active"] .composer-surface-chrome::before { content: none 
    keeps the permission notice as a status card above the composer. Cover
    those native surfaces explicitly when the artwork selects a light shell. */
 html[data-dream-skin="active"][data-dream-shell="light"]
-  :is([data-ds-part="composer"], [class*="_ComposerLayoutRoot_"]) {
+  :is([data-ds-part="composer"], :is([class*="_ComposerLayoutRoot_"], [class*="ComposerLayoutRoot-"])) {
   overflow: visible !important;
   border: 1px solid rgb(var(--ds-muted-rgb) / .24) !important;
   border-radius: 22px !important;
@@ -1275,7 +1275,7 @@ html[data-dream-skin="active"][data-dream-shell="light"]
    composer-surface-chrome hook. Keep this input surface transparent in wide
    artwork mode and let imageOpacity control its remaining tint. */
 html[data-dream-skin="active"][data-dream-art-wide="true"]
-  [class*="_ComposerLayoutRoot_"] {
+  :is([class*="_ComposerLayoutRoot_"], [class*="ComposerLayoutRoot-"]) {
   overflow: visible !important;
   border: 1px solid rgb(var(--ds-muted-rgb) / .24) !important;
   border-radius: 22px !important;
@@ -1286,7 +1286,7 @@ html[data-dream-skin="active"][data-dream-art-wide="true"]
 }
 
 html[data-dream-skin="active"][data-dream-shell="light"]
-  :is([data-ds-part="composer"], [class*="_ComposerLayoutRoot_"])
+  :is([data-ds-part="composer"], :is([class*="_ComposerLayoutRoot_"], [class*="ComposerLayoutRoot-"]))
   :is([class~="text-token-text-primary"], [class~="text-token-foreground"],
     [class~="text-token-text-secondary"], [class~="text-token-text-tertiary"],
     [class~="text-token-muted-foreground"], [class~="text-token-description-foreground"],
@@ -1296,20 +1296,20 @@ html[data-dream-skin="active"][data-dream-shell="light"]
 }
 
 html[data-dream-skin="active"][data-dream-shell="light"]
-  :is([data-ds-part="composer"], [class*="_ComposerLayoutRoot_"])
+  :is([data-ds-part="composer"], :is([class*="_ComposerLayoutRoot_"], [class*="ComposerLayoutRoot-"]))
   :is(textarea, input)::placeholder {
   color: var(--ds-muted) !important;
   opacity: 1 !important;
 }
 
 html[data-dream-skin="active"][data-dream-shell="light"]
-  :is([data-ds-part="composer"], [class*="_ComposerLayoutRoot_"])
+  :is([data-ds-part="composer"], :is([class*="_ComposerLayoutRoot_"], [class*="ComposerLayoutRoot-"]))
   button:not([class~="bg-token-foreground"]) {
   color: var(--ds-muted) !important;
 }
 
 html[data-dream-skin="active"][data-dream-shell="light"]
-  :is([data-ds-part="composer"], [class*="_ComposerLayoutRoot_"])
+  :is([data-ds-part="composer"], :is([class*="_ComposerLayoutRoot_"], [class*="ComposerLayoutRoot-"]))
   button:not([class~="bg-token-foreground"]) svg {
   color: currentColor !important;
 }
@@ -1653,7 +1653,7 @@ html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface
 /* 新版把 data-app-shell-main-content-top-fade 放在会话父容器上；
    只隐藏实际渐变节点，避免连同输入框和会话正文一起隐藏。 */
 html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"])
-  :is(.app-shell-main-content-top-fade, [class*="_MainContentTopFade_"]) {
+  :is(.app-shell-main-content-top-fade, :is([class*="_MainContentTopFade_"], [class*="MainContentTopFade-"])) {
   display: none !important;
   background: transparent !important;
 }
@@ -1803,7 +1803,7 @@ html[data-dream-skin="active"]
    placeholder pseudo-element, so the older textarea/input rule does not
    reach it on a light image. */
 html[data-dream-skin="active"]
-  :is([data-ds-part="composer"], [class*="_ComposerLayoutRoot_"])
+  :is([data-ds-part="composer"], :is([class*="_ComposerLayoutRoot_"], [class*="ComposerLayoutRoot-"]))
   p.placeholder::after {
   color: var(--ds-muted) !important;
   -webkit-text-fill-color: var(--ds-muted) !important;
@@ -1850,7 +1850,7 @@ html[data-dream-skin="active"][data-dream-shell="light"]
    fixed at 88% opacity. Tie both composer layers to imageOpacity so 80%
    leaves only a 20% panel tint and 100% becomes genuinely transparent. */
 html[data-dream-skin="active"]
-  :is([class*="_ComposerLayoutRoot_"], [class*="_ComposerLayoutFooter_"]) {
+  :is(:is([class*="_ComposerLayoutRoot_"], [class*="ComposerLayoutRoot-"]), :is([class*="_ComposerLayoutFooter_"], [class*="ComposerLayoutFooter-"])) {
   background: rgb(var(--ds-panel-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))) !important;
   backdrop-filter: none !important;
 }
@@ -1897,9 +1897,9 @@ html[data-dream-skin="active"]
    keeping the shell and wide-art attributes here gives this override a
    higher specificity while preserving the imageOpacity contract. */
 html[data-dream-skin="active"][data-dream-art-wide="true"][data-dream-shell="light"]
-  :is([data-ds-part="composer"], [class*="_ComposerLayoutRoot_"], [class*="_ComposerLayoutFooter_"]),
+  :is([data-ds-part="composer"], :is([class*="_ComposerLayoutRoot_"], [class*="ComposerLayoutRoot-"]), :is([class*="_ComposerLayoutFooter_"], [class*="ComposerLayoutFooter-"])),
 html[data-dream-skin="active"][data-dream-art-wide="true"][data-dream-shell="dark"]
-  :is([data-ds-part="composer"], [class*="_ComposerLayoutRoot_"], [class*="_ComposerLayoutFooter_"]) {
+  :is([data-ds-part="composer"], :is([class*="_ComposerLayoutRoot_"], [class*="ComposerLayoutRoot-"]), :is([class*="_ComposerLayoutFooter_"], [class*="ComposerLayoutFooter-"])) {
   background: rgb(var(--ds-panel-rgb) / calc(1 - var(--ds-theme-image-opacity, .80))) !important;
   backdrop-filter: none !important;
   box-shadow: none !important;
@@ -3047,7 +3047,7 @@ html[data-dream-skin="active"][data-dream-shell] body main
    full bottom lane. It is layout chrome rather than the actual input card;
    keep it clear so it does not leave a dark strip below the conversation. */
 html[data-dream-skin="active"][data-dream-art-wide="true"][data-dream-shell]
-  :is([data-ds-part="composer"], [class*="_ComposerLayoutRoot_"], [class*="_ComposerLayoutFooter_"]) {
+  :is([data-ds-part="composer"], :is([class*="_ComposerLayoutRoot_"], [class*="ComposerLayoutRoot-"]), :is([class*="_ComposerLayoutFooter_"], [class*="ComposerLayoutFooter-"])) {
   background: transparent !important;
   background-image: none !important;
   border: 0 !important;
@@ -3059,7 +3059,7 @@ html[data-dream-skin="active"][data-dream-art-wide="true"][data-dream-shell]
 
 /* Outline only the input card, leaving the transparent footer lane clear. */
 html[data-dream-skin="active"][data-dream-art-wide="true"][data-dream-shell]
-  [class*="_ComposerLayoutRoot_"] {
+  :is([class*="_ComposerLayoutRoot_"], [class*="ComposerLayoutRoot-"]) {
   box-shadow:
     inset 0 0 0 1px rgb(var(--ds-muted-rgb) / .22),
     0 5px 18px rgb(var(--ds-bg-rgb) / .22) !important;
