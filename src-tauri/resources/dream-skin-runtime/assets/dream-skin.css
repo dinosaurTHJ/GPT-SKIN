@@ -1962,6 +1962,14 @@ html[data-dream-skin="active"][data-dream-art-wide="true"]
   backdrop-filter: none !important;
 }
 
+/* 新版会话 footer 将底部渐变迁入 ::before，按输入区的父子结构定位该装饰层。 */
+html[data-dream-skin="active"][data-dream-art-wide="true"]
+  .thread-scroll-container
+  > [class~="pointer-events-none"][class~="absolute"][class~="inset-x-0"][class~="bottom-0"]:has([data-ds-part="composer"], [data-composer-surface-variant], [class*="ComposerLayoutRoot-"])::before {
+  content: none !important;
+  background: none !important;
+}
+
 html[data-dream-skin="active"] [data-thread-find-target="conversation"] {
   padding-bottom: 9rem !important;
 }
