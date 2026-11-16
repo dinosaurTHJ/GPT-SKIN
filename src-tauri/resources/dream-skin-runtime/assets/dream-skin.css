@@ -1962,10 +1962,13 @@ html[data-dream-skin="active"][data-dream-art-wide="true"]
   backdrop-filter: none !important;
 }
 
-/* 新版会话 footer 将底部渐变迁入 ::before，按输入区的父子结构定位该装饰层。 */
+/* 新版会话 footer 用 ::before 绘制渐变、::after 绘制底部实色铺底。 */
 html[data-dream-skin="active"][data-dream-art-wide="true"]
   .thread-scroll-container
-  > [class~="pointer-events-none"][class~="absolute"][class~="inset-x-0"][class~="bottom-0"]:has([data-ds-part="composer"], [data-composer-surface-variant], [class*="ComposerLayoutRoot-"])::before {
+  > [class~="pointer-events-none"][class~="absolute"][class~="inset-x-0"][class~="bottom-0"]:has([data-ds-part="composer"], [data-composer-surface-variant], [class*="ComposerLayoutRoot-"])::before,
+html[data-dream-skin="active"][data-dream-art-wide="true"]
+  .thread-scroll-container
+  > [class~="pointer-events-none"][class~="absolute"][class~="inset-x-0"][class~="bottom-0"]:has([data-ds-part="composer"], [data-composer-surface-variant], [class*="ComposerLayoutRoot-"])::after {
   content: none !important;
   background: none !important;
 }
