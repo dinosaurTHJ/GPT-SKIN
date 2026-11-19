@@ -3559,3 +3559,29 @@ html[data-dream-skin="active"] #codex-dream-skin-usage-status [data-usage-field=
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* Reveal the current theme behind the embedded Dot conversation. */
+html[data-dream-skin="active"] .messaging-root.messaging-embedded,
+html[data-dream-skin="active"] .messaging-root.messaging-embedded .thread-pane {
+  background-color: transparent !important;
+}
+
+/* Keep Dot message outlines on the bubbles and lightly tint them by sender. */
+html[data-dream-skin="active"] .messaging-root.messaging-embedded article.message-row {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+html[data-dream-skin="active"] .messaging-root.messaging-embedded article.message-row .message-bubble-surface > .message-bubble {
+  box-shadow: inset 0 0 0 1px rgb(var(--ds-muted-rgb) / .12) !important;
+}
+
+html[data-dream-skin="active"] .messaging-root.messaging-embedded article.message-row.self .message-bubble-surface > .message-bubble {
+  background-color: rgb(126 172 231 / .13) !important;
+}
+
+html[data-dream-skin="active"] .messaging-root.messaging-embedded article.message-row:not(.self) .message-bubble-surface > .message-bubble {
+  background-color: rgb(255 139 152 / .05) !important;
+}
