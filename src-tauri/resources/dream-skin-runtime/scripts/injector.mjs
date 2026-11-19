@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import { constants as fsConstants } from "node:fs";
-import { createHash } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { readImageMetadata, validateVideoContainer } from "./image-metadata.mjs";
@@ -56,6 +56,8 @@ const ART_MIME_TYPES = new Map([
   [".webm", "video/webm"],
 ]);
 const MAX_SAFE_CSS_BYTES = 256 * 1024;
+const MEDIA_CHUNK_BYTES = 512 * 1024;
+const MEDIA_TRANSFER_IDLE_MS = 30000;
 const STRONG_THEME_AUDIT_MS = 30000;
 const MIN_RENDERER_VIEWPORT_WIDTH = 320;
 const MIN_RENDERER_VIEWPORT_HEIGHT = 240;
@@ -662,7 +664,12 @@ export async function loadPayload(themeDir = path.join(root, "assets"), candidat
   const extension = path.extname(loadedTheme.imagePath).toLowerCase();
   const mime = ART_MIME_TYPES.get(extension);
   if (!mime) throw new Error(`Unsupported theme media format: ${extension || "missing"}`);
-  const artDataUrl = `data:${mime};base64,${loadedTheme.imageBytes.toString("base64")}`;
+  const media = loadedTheme.imageBytes.length > MEDIA_CHUNK_BYTES
+    ? { bytes: loadedTheme.imageBytes, mime }
+    : null;
+  const artArgument = media
+    ? "artBlob"
+    : JSON.stringify(`data:${mime};base64,${loadedTheme.imageBytes.toString("base64")}`);
   const styleRevision = createHash("sha256").update(combinedCss).digest("hex").slice(0, 20);
   loadedTheme.theme.artKey = createHash("sha256")
     .update(loadedTheme.imageBytes).digest("hex").slice(0, 20);
@@ -681,7 +688,7 @@ export async function loadPayload(themeDir = path.join(root, "assets"), candidat
   // theme name.
   const payload = template
     .replace("__DREAM_SKIN_CSS_JSON__", () => JSON.stringify(combinedCss))
-    .replace("__DREAM_SKIN_ART_JSON__", () => JSON.stringify(artDataUrl))
+    .replace("__DREAM_SKIN_ART_JSON__", () => artArgument)
     .replace("__DREAM_SKIN_THEME_JSON__", () => JSON.stringify(loadedTheme.theme))
     .replace("__DREAM_SKIN_VERSION_JSON__", () => JSON.stringify(SKIN_VERSION))
     .replace("__DREAM_SKIN_STYLE_REVISION_JSON__", () => JSON.stringify(styleRevision))
@@ -700,7 +707,7 @@ export async function loadPayload(themeDir = path.join(root, "assets"), candidat
     throw new Error(`Payload failed to parse as JavaScript: ${error.message}`);
   }
   const { imageBytes: _imageBytes, ...themeState } = loadedTheme;
-  return { ...themeState, payload, revision };
+  return { ...themeState, payload, revision, media };
 }
 
 async function fileExists(filePath) {
@@ -873,8 +880,54 @@ async function connectCodexTargets(port, timeoutMs, expectedBrowserId) {
   throw new Error(`No verified Codex renderer on 127.0.0.1:${port}: ${lastError?.message ?? "timed out"}`);
 }
 
-async function applyToSession(session, payload) {
-  return session.evaluate(payload);
+async function applyToSession(session, { payload, media }) {
+  if (!media) return session.evaluate(payload);
+
+  // 逐条等待响应，给 Chromium 主线程留出处理窗口消息的机会。
+  const staged = `window[${JSON.stringify(`__CODEX_DREAM_SKIN_MEDIA_${randomUUID()}`)}]`;
+  // CDP 断开时无法从外部清理，空闲超时由页面释放未完成的媒体分块。
+  const resetExpiry = `
+    clearTimeout(transfer.expiry);
+    transfer.expiry = setTimeout(() => { delete ${staged}; }, ${MEDIA_TRANSFER_IDLE_MS});
+  `;
+  const discard = `clearTimeout(${staged}?.expiry); delete ${staged};`;
+  try {
+    await session.evaluate(`(() => {
+      const transfer = ${staged} = { chunks: [], expiry: null };
+      ${resetExpiry}
+    })()`);
+    for (let offset = 0; offset < media.bytes.length; offset += MEDIA_CHUNK_BYTES) {
+      const chunk = media.bytes.subarray(offset, offset + MEDIA_CHUNK_BYTES).toString("base64");
+      await session.evaluate(`(() => {
+        const transfer = ${staged};
+        ${resetExpiry}
+        const chunk = ${JSON.stringify(chunk)};
+        const bytes = typeof Uint8Array.fromBase64 === "function"
+          ? Uint8Array.fromBase64(chunk)
+          : Uint8Array.from(atob(chunk), (char) => char.charCodeAt(0));
+        transfer.chunks.push(bytes);
+      })()`);
+    }
+    return await session.evaluate(`(() => {
+      const artBlob = new Blob(${staged}.chunks, { type: ${JSON.stringify(media.mime)} });
+      ${discard}
+      ${payload};
+    })()`);
+  } finally {
+    await session.evaluate(discard).catch(() => {});
+  }
+}
+
+function isThemeInstalled(session, revision) {
+  return session.evaluate(`(() => {
+    const state = window.__CODEX_DREAM_SKIN_STATE__;
+    if (!state || state.revision !== ${JSON.stringify(revision)} ||
+        window.__CODEX_DREAM_SKIN_DISABLED__ ||
+        document.documentElement.getAttribute('data-dream-skin') !== 'active') return false;
+    return state.styleMode === 'adopted'
+      ? document.adoptedStyleSheets.includes(state.styleSheet)
+      : state.styleNode?.isConnected === true;
+  })()`);
 }
 
 export function earlyPayloadFor(payload, revision) {
@@ -1429,7 +1482,6 @@ async function runOneShot(options) {
     for (const { session } of connected) session.close();
     throw error;
   }
-  const payload = loadedPayload?.payload ?? null;
   const results = [];
   let screenshotCaptured = false;
   try {
@@ -1443,7 +1495,7 @@ async function runOneShot(options) {
               `正在应用「${loadedPayload.theme.name}」…`,
             );
           }
-          await applyToSession(session, payload);
+          await applyToSession(session, loadedPayload);
           // 立即校验；未完成首帧时 waitForVerifiedSession 自己会重试。
         }
         if (options.reload) {
@@ -1456,7 +1508,7 @@ async function runOneShot(options) {
                 `正在应用「${loadedPayload.theme.name}」…`,
               );
             }
-            await applyToSession(session, payload);
+            await applyToSession(session, loadedPayload);
           }
         }
         if (operationToken) {
@@ -1524,14 +1576,14 @@ async function runWatch(options) {
   const identityAnchor = await connectBrowserIdentityAnchor(options.port, options.browserId);
   const sessions = new Map();
   const earlyScripts = new Map();
-  const fallbackTargets = new Map();
-  const fallbackListeners = new Set();
+  const rendererChecks = new Set();
   const targetFailures = new Map();
   let stopping = false;
   let listFailures = 0;
   let lastListErrorLogAt = 0;
   let lastThemeErrorLogAt = 0;
   let lastStrongThemeAuditAt = 0;
+  let lastRendererAuditAt = 0;
   let loadedPayload = null;
   let paused = false;
   const stop = () => { stopping = true; };
@@ -1546,22 +1598,15 @@ async function runWatch(options) {
     }
     targetFailures.set(target.id, { failures, lastLogAt: previous.lastLogAt, until: now + delayMs });
   };
-  const attachLoadFallback = (id, target, session) => {
-    if (fallbackListeners.has(id)) return;
-    fallbackListeners.add(id);
-    let lastReinjectErrorLogAt = 0;
-    session.on("Page.loadEventFired", () => {
-      if (!fallbackTargets.get(id)) return;
-      setTimeout(() => {
-        const operation = paused ? removeFromSession(session) : applyToSession(session, loadedPayload.payload);
-        operation.catch((error) => {
-          if (Date.now() - lastReinjectErrorLogAt >= 30000) {
-            console.error(`[dream-skin] reinject failed for ${target.id}: ${error.message}`);
-            lastReinjectErrorLogAt = Date.now();
-          }
-        });
-      }, 250);
-    });
+  const registerWatchPayload = async (id, session) => {
+    // 大媒体在页面确认后分块加载，不能放进随导航执行的整段脚本。
+    if (loadedPayload.media) return null;
+    try {
+      return await registerEarlyPayload(session, loadedPayload.payload, loadedPayload.fingerprint);
+    } catch (error) {
+      console.error(`[dream-skin] early injection unavailable for ${id}: ${error.message}`);
+      return null;
+    }
   };
   process.on("SIGINT", stop);
   process.on("SIGTERM", stop);
@@ -1629,38 +1674,22 @@ async function runWatch(options) {
         for (const [id, session] of sessions) {
           try {
             const previousEarlyScript = earlyScripts.get(id);
+            await removeEarlyPayload(session, previousEarlyScript);
+            earlyScripts.delete(id);
             if (paused) {
               await removeFromSession(session);
-              await removeEarlyPayload(session, previousEarlyScript);
-              earlyScripts.delete(id);
-              fallbackTargets.delete(id);
-              fallbackListeners.delete(id);
-            } else {
-              let nextEarlyScript = null;
-              try {
-                nextEarlyScript = await registerEarlyPayload(
-                  session,
-                  loadedPayload.payload,
-                  loadedPayload.fingerprint,
-                );
-                if (!nextEarlyScript) throw new Error("CDP did not return an early-script identifier");
-                fallbackTargets.set(id, false);
-              } catch (error) {
-                fallbackTargets.set(id, true);
-                console.error(`[dream-skin] early theme refresh unavailable for ${id}: ${error.message}`);
-                attachLoadFallback(id, { id }, session);
-              }
+            } else if ((await probeSession(session))?.codex) {
+              const nextEarlyScript = await registerWatchPayload(id, session);
               if (nextEarlyScript) earlyScripts.set(id, nextEarlyScript);
-              else earlyScripts.delete(id);
-              await removeEarlyPayload(session, previousEarlyScript);
-              await applyToSession(session, loadedPayload.payload);
+              if (!await isThemeInstalled(session, loadedPayload.revision)) {
+                await applyToSession(session, loadedPayload);
+              }
             }
           } catch (error) {
             console.error(`[dream-skin] live theme update failed for ${id}: ${error.message}`);
             await removeEarlyPayload(session, earlyScripts.get(id));
             earlyScripts.delete(id);
-            fallbackTargets.delete(id);
-            fallbackListeners.delete(id);
+            rendererChecks.delete(id);
             session.close();
             sessions.delete(id);
           }
@@ -1676,8 +1705,7 @@ async function runWatch(options) {
         if (!activeIds.has(id) || session.closed) {
           await removeEarlyPayload(session, earlyScripts.get(id));
           earlyScripts.delete(id);
-          fallbackTargets.delete(id);
-          fallbackListeners.delete(id);
+          rendererChecks.delete(id);
           session.close();
           sessions.delete(id);
           targetFailures.delete(id);
@@ -1692,53 +1720,51 @@ async function runWatch(options) {
         let earlyScriptId = null;
         try {
           session = await connectTarget(target, options.port);
-          if (identityAnchor.closed) throw new CdpIdentityMismatchError("Original CDP browser identity closed");
-          let earlyInjectionFallback = false;
-          if (!paused) {
-            try {
-              earlyScriptId = await registerEarlyPayload(
-                session,
-                loadedPayload.payload,
-                loadedPayload.fingerprint,
-              );
-              if (!earlyScriptId) throw new Error("CDP did not return an early-script identifier");
-              await session.evaluate(earlyPayloadFor(loadedPayload.payload, loadedPayload.fingerprint));
-            } catch (error) {
-              await removeEarlyPayload(session, earlyScriptId);
-              earlyScriptId = null;
-              earlyInjectionFallback = true;
-              console.error(`[dream-skin] early injection unavailable for ${target.id}: ${error.message}`);
-            }
-          }
           const probe = await waitForCodexProbe(session);
           if (!probe?.codex) {
-            await removeEarlyPayload(session, earlyScriptId);
             rejectTarget(target, 5000);
             session.close();
             continue;
           }
-          fallbackTargets.set(target.id, earlyInjectionFallback);
-          if (earlyInjectionFallback) attachLoadFallback(target.id, target, session);
           if (identityAnchor.closed) throw new CdpIdentityMismatchError("Original CDP browser identity closed");
-          let earlyApplied = false;
-          if (!paused && !earlyInjectionFallback) {
-            earlyApplied = await session.evaluate(
-              `window.__CODEX_DREAM_SKIN_EARLY_APPLIED__ === ${JSON.stringify(loadedPayload.fingerprint)}`,
-            ).catch(() => false);
+          session.on("Page.loadEventFired", () => rendererChecks.add(target.id));
+          if (paused) {
+            await removeFromSession(session);
+          } else {
+            earlyScriptId = await registerWatchPayload(target.id, session);
+            if (!await isThemeInstalled(session, loadedPayload.revision)) {
+              await applyToSession(session, loadedPayload);
+            }
           }
-          if (paused) await removeFromSession(session);
-          else if (!earlyApplied) await applyToSession(session, loadedPayload.payload);
           sessions.set(target.id, session);
           if (earlyScriptId) earlyScripts.set(target.id, earlyScriptId);
           targetFailures.delete(target.id);
           console.log(`[dream-skin] injected target ${target.id}`);
         } catch (error) {
           await removeEarlyPayload(session, earlyScriptId);
-          fallbackTargets.delete(target.id);
-          fallbackListeners.delete(target.id);
+          rendererChecks.delete(target.id);
           session?.close();
           if (identityAnchor.closed || error instanceof CdpIdentityMismatchError) break;
           rejectTarget(target, 2500, error);
+        }
+      }
+      // 页面载入及样式恢复走同一循环，避免重复传输同一媒体。
+      if (!paused) {
+        const auditDue = Date.now() - lastRendererAuditAt >= 10000;
+        if (auditDue) lastRendererAuditAt = Date.now();
+        for (const [id, session] of sessions) {
+          if (!rendererChecks.delete(id) && !auditDue) continue;
+          try {
+            if (!await isThemeInstalled(session, loadedPayload.revision) &&
+                (await probeSession(session))?.codex &&
+                !await fileExists(options.pauseFile)) {
+              await applyToSession(session, loadedPayload);
+              console.log(`[dream-skin] repaired target ${id}`);
+            }
+          } catch (error) {
+            // 页面导航或会话短暂失联不能触发移除；连接关闭后由既有重连逻辑接管。
+            rejectTarget({ id }, 2500, error);
+          }
         }
       }
       await new Promise((resolve) => setTimeout(resolve, 1200));
@@ -1750,8 +1776,6 @@ async function runWatch(options) {
       session.close();
     }
     earlyScripts.clear();
-    fallbackTargets.clear();
-    fallbackListeners.clear();
   }
 }
 
