@@ -333,6 +333,12 @@ html[data-dream-skin="active"][data-dream-media="video"] body {
   background-color: transparent !important;
 }
 
+/* 窗口外壳的原生渐变会覆盖视频，清除这一层以保留视频自身的透明度。 */
+html[data-dream-skin="active"][data-dream-media="video"][data-codex-window-type="electron"]
+  [data-app-shell-frame][data-app-shell-page-surface="true"] {
+  background-image: none !important;
+}
+
 html[data-dream-skin="active"][data-dream-media="video"]
   main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) {
   background: linear-gradient(
