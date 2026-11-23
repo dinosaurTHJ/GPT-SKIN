@@ -64,6 +64,8 @@
   let styleMode = null;
   let styleNode = null;
   let styleSheet = null;
+  let paletteStyles = null;
+  let appliedPalette = null;
   let backgroundVideo = null;
   let profileMenuViewport = null;
   let profileMenuElement = null;
@@ -629,6 +631,52 @@
     }
   });
 
+  const SHELL_SELECTOR_PREFIX = /^html\[data-dream-skin="active"\]\[data-dream-shell="(light|dark)"\]/;
+  const exclusiveSelectorPalette = (selector) => {
+    const palette = SHELL_SELECTOR_PREFIX.exec(selector)?.[1];
+    if (!palette) return null;
+
+    // 只判断顶层逗号，保留 :is()、属性值和转义中的逗号。
+    let depth = 0;
+    let quote = "";
+    for (let index = 0; index < selector.length; index += 1) {
+      const char = selector[index];
+      if (char === "\\") {
+        index += 1;
+      } else if (quote) {
+        if (char === quote) quote = "";
+      } else if (char === '"' || char === "'") {
+        quote = char;
+      } else if (char === "(" || char === "[") {
+        depth += 1;
+      } else if (char === ")" || char === "]") {
+        depth -= 1;
+      } else if (char === "," && depth === 0) {
+        const next = selector.slice(index + 1).trimStart();
+        if (SHELL_SELECTOR_PREFIX.exec(next)?.[1] !== palette) return null;
+      }
+    }
+    return palette;
+  };
+
+  const collectPaletteStyles = (sheet) => {
+    const light = [];
+    const dark = [];
+    for (const rule of sheet.cssRules) {
+      const palette = rule.selectorText ? exclusiveSelectorPalette(rule.selectorText) : null;
+      const text = rule.cssText;
+      if (palette !== "dark") light.push(text);
+      if (palette !== "light") dark.push(text);
+    }
+    return { light: light.join("\n"), dark: dark.join("\n") };
+  };
+
+  const selectStylePalette = (palette) => {
+    if (!paletteStyles || !styleSheet || appliedPalette === palette) return;
+    styleSheet.replaceSync(paletteStyles[palette] ?? cssText);
+    appliedPalette = palette;
+  };
+
   const installStyle = () => {
     try {
       if (!("adoptedStyleSheets" in document) || typeof CSSStyleSheet !== "function") {
@@ -637,17 +685,22 @@
       const sheet = new CSSStyleSheet();
       if (typeof sheet.replaceSync !== "function") throw new Error("replaceSync is unavailable");
       sheet.replaceSync(cssText);
+      // 保留原始层叠顺序，避免不活动的另一套配色参与会话滚动时的选择器匹配。
+      paletteStyles = collectPaletteStyles(sheet);
+      styleSheet = sheet;
+      selectStylePalette(resolvedShell());
       const retained = [...document.adoptedStyleSheets]
         .filter((candidate) => !styleRegistry.has(candidate));
       document.adoptedStyleSheets = [...retained, sheet];
       styleRegistry.clear();
       styleRegistry.add(sheet);
       document.getElementById(STYLE_ID)?.remove();
-      styleSheet = sheet;
       styleMode = "adopted";
       return;
     } catch {
       styleSheet = null;
+      paletteStyles = null;
+      appliedPalette = null;
     }
 
     styleNode = document.getElementById(STYLE_ID) || document.createElement("style");
@@ -679,6 +732,7 @@
     metrics.rootPasses += 1;
     ensureStyle();
     const shell = resolvedShell();
+    selectStylePalette(shell);
     setAttribute(root, "data-dream-skin", "active");
     setAttribute(root, SHELL_ATTR, shell);
     setAttribute(root, "data-dream-media", MEDIA_TYPE);
