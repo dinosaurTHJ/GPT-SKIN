@@ -74,6 +74,11 @@
   let threadClipResizeObserver = null;
   let threadClipFrame = 0;
   let threadClipOriginal = null;
+  let modalWorkspace = null;
+  let modalDialogs = [];
+  let modalClippedSurfaces = new Set();
+  let modalResizeObserver = null;
+  let modalStateObserver = null;
   const diffStyleSnapshots = new Map();
   const now = () => typeof performance === "object" && typeof performance.now === "function"
     ? performance.now() : Date.now();
@@ -1261,12 +1266,116 @@
     scheduleThreadClip();
   };
 
+  const OPEN_MODAL_SELECTOR = '.codex-dialog[aria-modal="true"][data-state="open"]';
+  const modalClipFor = (surface, covers) => {
+    const bounds = surface.getBoundingClientRect();
+    if (bounds.width <= 0 || bounds.height <= 0) return "";
+    const rectangles = covers.map((cover) => ({
+      left: Math.max(bounds.left, cover.left),
+      top: Math.max(bounds.top, cover.top),
+      right: Math.min(bounds.right, cover.right),
+      bottom: Math.min(bounds.bottom, cover.bottom),
+    })).filter((rect) => rect.right > rect.left && rect.bottom > rect.top);
+    if (rectangles.length === 0) return "";
+
+    // 合并重叠覆盖，避免偶奇裁切规则把交叠部分重新显示。
+    const edges = [...new Set(rectangles.flatMap((rect) => [rect.top, rect.bottom]))].sort((a, b) => a - b);
+    const cutouts = [];
+    for (let index = 0; index < edges.length - 1; index += 1) {
+      const top = edges[index];
+      const bottom = edges[index + 1];
+      const row = rectangles.filter((rect) => rect.top <= top && rect.bottom >= bottom)
+        .sort((a, b) => a.left - b.left);
+      let span = null;
+      for (const rect of row) {
+        if (span && rect.left <= span.right) {
+          span.right = Math.max(span.right, rect.right);
+        } else {
+          span = { left: rect.left, right: rect.right, top, bottom };
+          cutouts.push(span);
+        }
+      }
+    }
+
+    const points = ["0 0", "100% 0", "100% 100%", "0 100%", "0 0"];
+    const percent = (offset, size) => (100 * offset / size).toFixed(4) + "%";
+    for (const rect of cutouts) {
+      const left = percent(rect.left - bounds.left, bounds.width);
+      const right = percent(rect.right - bounds.left, bounds.width);
+      const top = percent(rect.top - bounds.top, bounds.height);
+      const bottom = percent(rect.bottom - bounds.top, bounds.height);
+      points.push(left + " " + top, left + " " + bottom, right + " " + bottom,
+        right + " " + top, left + " " + top, "0 0");
+    }
+    return "polygon(evenodd, " + points.join(", ") + ")";
+  };
+
+  const updateModalClips = () => {
+    const clipped = new Set();
+    const covers = modalDialogs.map((dialog) => dialog.getBoundingClientRect());
+    const apply = (surface, rectangles) => {
+      if (!surface || rectangles.length === 0) return;
+      const clip = modalClipFor(surface, rectangles);
+      if (!clip) return;
+      setStyleProperty(surface, "--ds-modal-clip", clip);
+      setAttribute(surface, "data-dream-modal-clip", "true");
+      clipped.add(surface);
+    };
+    apply(modalWorkspace, covers);
+    modalDialogs.forEach((dialog, index) => apply(dialog, covers.slice(index + 1)));
+    for (const surface of modalClippedSurfaces) {
+      if (!clipped.has(surface)) {
+        surface.removeAttribute("data-dream-modal-clip");
+        surface.style.removeProperty("--ds-modal-clip");
+      }
+    }
+    modalClippedSurfaces = clipped;
+  };
+
+  const updateModalClipsAfterMotion = (event) => {
+    if (event.target === event.currentTarget) updateModalClips();
+  };
+
+  const disconnectModalClipObservers = () => {
+    modalResizeObserver?.disconnect();
+    modalStateObserver?.disconnect();
+    for (const dialog of modalDialogs) {
+      dialog.removeEventListener("transitionend", updateModalClipsAfterMotion);
+      dialog.removeEventListener("animationend", updateModalClipsAfterMotion);
+    }
+  };
+
+  const bindModalClips = () => {
+    const workspace = document.querySelector("[data-app-shell-workspace-row]");
+    const dialogs = [...document.querySelectorAll(OPEN_MODAL_SELECTOR)]
+      .filter((dialog) => !workspace?.contains(dialog));
+    if (workspace === modalWorkspace && dialogs.length === modalDialogs.length &&
+      dialogs.every((dialog, index) => dialog === modalDialogs[index])) return;
+
+    disconnectModalClipObservers();
+    modalWorkspace = workspace;
+    modalDialogs = dialogs;
+    if (dialogs.length) {
+      if (typeof ResizeObserver === "function") modalResizeObserver ??= new ResizeObserver(updateModalClips);
+      if (typeof MutationObserver === "function") modalStateObserver ??= new MutationObserver(bindModalClips);
+      if (workspace) modalResizeObserver?.observe(workspace, { box: "border-box" });
+      for (const dialog of dialogs) {
+        modalResizeObserver?.observe(dialog, { box: "border-box" });
+        modalStateObserver?.observe(dialog, { attributes: true, attributeFilter: ["data-state"] });
+        dialog.addEventListener("transitionend", updateModalClipsAfterMotion);
+        dialog.addEventListener("animationend", updateModalClipsAfterMotion);
+      }
+    }
+    updateModalClips();
+  };
+
   const refreshScope = ({ refreshMarkers = true } = {}) => {
     metrics.routePasses += 1;
     if (refreshMarkers) refreshSurfaceRoutes();
     const scope = detectScope();
     setAttribute(document.documentElement, "data-dream-base-state", scope.baseState);
     refreshProfileMenuCover();
+    bindModalClips();
     bindThreadClip();
     const state = window[STATE_KEY];
     if (state?.installToken === installToken) state.scope = scope;
@@ -1620,6 +1729,10 @@
     restoreDiffSurfaces();
     clearProfileMenuCover();
     clearThreadClip();
+    disconnectModalClipObservers();
+    modalDialogs = [];
+    modalWorkspace = null;
+    updateModalClips();
     state?.rootObserver?.disconnect();
     state?.partObserver?.disconnect();
     if (bodyReadyHandler && typeof document.removeEventListener === "function") {
@@ -1708,6 +1821,9 @@
     rootObserver = new MutationObserver(() => scheduleEnsure({ root: true }));
     // SPA 路由变化会反映为 DOM 变动；只对会影响界面结构的节点重新标记。
     partObserver = new MutationObserver((records) => {
+      if (records.some((record) => record.type === "childList" && record.target === document.body)) {
+        bindModalClips();
+      }
       // 切换缓存页面只修改 Workspace 的 style，未必增删 DOM 节点。
       if (records.some((record) => record.type === "attributes" &&
         record.target instanceof Element && record.target.matches('[class*="_Workspace_"]'))) {

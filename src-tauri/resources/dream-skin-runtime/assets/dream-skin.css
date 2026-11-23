@@ -3120,6 +3120,24 @@ html[data-dream-skin="active"][data-dream-base-state="settings"][data-dream-medi
   background-attachment: fixed !important;
 }
 
+/* 原生模态弹窗在独立的 Portal 中渲染，底层界面只裁去被覆盖的区域。 */
+html[data-dream-skin="active"] [data-dream-modal-clip="true"] {
+  clip-path: var(--ds-modal-clip) !important;
+}
+
+/* 新版设置弹窗挂载在主工作区之外，内容区沿用弹窗外壳的主题底色。 */
+html[data-dream-skin="active"] .settings-dialog .settings-dialog-content {
+  background: transparent !important;
+}
+
+/* 保留设置中宠物卡片、浏览器表头和云端筛选栏的结构，用半透明主题底色。 */
+html[data-dream-skin="active"] .settings-dialog-content
+  :is(.bg-surface.rounded-2xl[class~="min-h-56"],
+    table[data-page-size] > thead.bg-surface,
+    .sticky.bg-surface[class~="after:from-surface"]) {
+  --color-surface: rgb(var(--ds-panel-rgb) / .34) !important;
+}
+
 /* 设置导航在内容区外侧，不能仅靠 main:has(设置按钮) 来识别内容背景。 */
 html[data-dream-skin="active"][data-dream-base-state="settings"]
   main:is(.main-surface, [data-app-shell-main-surface], [class*="_MainContentSurface_"]) {
@@ -3263,10 +3281,11 @@ html[data-dream-skin="active"] header[data-app-shell-header-edge-scroll="true"]
   background-color: transparent !important;
 }
 
-/* 菜单、浮层和任务输出栏会在切换模型或历史时高频重绘，禁用 GPU 模糊。 */
+/* 菜单、浮层和任务输出栏会高频重绘，设置遮罩也覆盖整窗。用现有底色替代模糊。 */
 html[data-dream-skin="active"]
   :is([role="dialog"], [role="menu"], [role="listbox"], [data-radix-popper-content-wrapper],
-    [data-floating-ui-portal], [data-in-progress-fixed-content="true"],
+    .settings-dialog-backdrop, .codex-dialog [cmdk-root], [data-floating-ui-portal],
+    [data-in-progress-fixed-content="true"],
     div[class~="pointer-events-none"][class~="absolute"][class~="right-0"]) {
   backdrop-filter: none !important;
 }
