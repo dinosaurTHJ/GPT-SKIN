@@ -1,6 +1,6 @@
 // Canonical cross-platform renderer. Run tools/sync-runtime-assets.mjs after editing.
 ((cssText, artDataUrl, themeConfig) => {
-  const SELECTOR_CONTRACT = {"schema":"codex-dream-skin-selectors/1","selectors":[{"key":"shell-main","selector":"main:is(.main-surface, [data-app-shell-main-surface], [class*=\"_MainContentSurface_\"])","tier":"L1","scope":"all","required":true},{"key":"left-panel","selector":"aside.app-shell-left-panel","tier":"L1","scope":"all","required":true},{"key":"header-tint","selector":"header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*=\"_Header_\"])","tier":"L1","scope":"all","required":true},{"key":"main-content-top-fade","selector":":is(.app-shell-main-content-top-fade, [class*=\"_MainContentTopFade_\"], [class*=\"MainContentTopFade-\"])","tier":"L2","scope":"all","required":false},{"key":"home-icon","selector":"[data-testid=\"home-icon\"]","tier":"L1","scope":"home","required":true},{"key":"home-route","selector":"[role=\"main\"]:has([data-testid=\"home-icon\"])","tier":"L1","scope":"home","required":true},{"key":"home-route-css","selector":"[role=\"main\"]","tier":"L1","scope":"home","required":true},{"key":"home-banners","selector":".home-banners","tier":"L2","scope":"home","required":false},{"key":"composer-chrome","selector":":is(.composer-surface-chrome, [data-composer-surface-variant], [class*=\"ComposerLayoutRoot-\"])","tier":"L2","scope":"home+thread","required":false},{"key":"composer-toolbar","selector":":is(.composer-surface-chrome [class*=\"_footer_\"], [data-composer-footer-responsive], [class*=\"ComposerLayoutRoot-\"] [class*=\"ComposerLayoutFooter-\"])","tier":"L2","scope":"home+thread","required":false},{"key":"home-utility","selector":"[class*=\"_homeUtilityBar_\"]","tier":"L2","scope":"home","required":false},{"key":"game-source","selector":"[data-feature=\"game-source\"]","tier":"L2","scope":"home","required":false},{"key":"home-suggestions","selector":".group\\/home-suggestions","tier":"L2","scope":"home","required":false},{"key":"project-selector","selector":".group\\/project-selector","tier":"L2","scope":"home config","required":false},{"key":"markdown","selector":"[class*=\"_markdown\"]","tier":"L2","scope":"thread","required":false},{"key":"thread-surface","selector":".thread-scroll-container","tier":"L2","scope":"thread","required":false},{"key":"message","selector":":is([data-message-author-role], [data-local-conversation-user-anchor], [data-local-conversation-final-assistant])","tier":"L2","scope":"thread","required":false},{"key":"settings-panel","selector":"[data-settings-panel-slug=\"general-settings\"]","tier":"L2","scope":"settings","required":false},{"key":"appearance-radio","selector":"input[name=\"appearance-theme\"]","tier":"L2","scope":"settings","required":false},{"key":"overlay-menu","selector":"[role=\"menu\"]","tier":"L2","scope":"overlay","required":false},{"key":"overlay-dialog","selector":"[role=\"dialog\"]","tier":"L2","scope":"overlay","required":false},{"key":"overlay-popper","selector":"[data-radix-popper-content-wrapper]","tier":"L2","scope":"overlay","required":false}],"stableTestids":["app-shell-header-context-menu-surface","home-icon","theme-preview"]};
+  const SELECTOR_CONTRACT = {"schema":"codex-dream-skin-selectors/1","selectors":[{"key":"shell-main","selector":"main:is(.main-surface, [data-app-shell-main-surface], [class*=\"_MainContentSurface_\"])","tier":"L1","scope":"all","required":true},{"key":"left-panel","selector":"aside.app-shell-left-panel","tier":"L1","scope":"all","required":true},{"key":"header-tint","selector":"header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [data-app-shell-titlebar], [class*=\"_Header_\"])","tier":"L1","scope":"all","required":true},{"key":"main-content-top-fade","selector":":is(.app-shell-main-content-top-fade, [class*=\"_MainContentTopFade_\"], [class*=\"MainContentTopFade-\"])","tier":"L2","scope":"all","required":false},{"key":"home-icon","selector":"[data-testid=\"home-icon\"]","tier":"L1","scope":"home","required":true},{"key":"home-route","selector":"[role=\"main\"]:has([data-testid=\"home-icon\"])","tier":"L1","scope":"home","required":true},{"key":"home-route-css","selector":"[role=\"main\"]","tier":"L1","scope":"home","required":true},{"key":"home-banners","selector":".home-banners","tier":"L2","scope":"home","required":false},{"key":"composer-chrome","selector":":is(.composer-surface-chrome, [data-composer-surface-variant], [class*=\"ComposerLayoutRoot-\"])","tier":"L2","scope":"home+thread","required":false},{"key":"composer-toolbar","selector":":is(.composer-surface-chrome [class*=\"_footer_\"], [data-composer-footer-responsive], [class*=\"ComposerLayoutRoot-\"] [class*=\"ComposerLayoutFooter-\"])","tier":"L2","scope":"home+thread","required":false},{"key":"home-utility","selector":"[class*=\"_homeUtilityBar_\"]","tier":"L2","scope":"home","required":false},{"key":"game-source","selector":"[data-feature=\"game-source\"]","tier":"L2","scope":"home","required":false},{"key":"home-suggestions","selector":".group\\/home-suggestions","tier":"L2","scope":"home","required":false},{"key":"project-selector","selector":".group\\/project-selector","tier":"L2","scope":"home config","required":false},{"key":"markdown","selector":"[class*=\"_markdown\"]","tier":"L2","scope":"thread","required":false},{"key":"thread-surface","selector":".thread-scroll-container","tier":"L2","scope":"thread","required":false},{"key":"message","selector":":is([data-message-author-role], [data-local-conversation-user-anchor], [data-local-conversation-final-assistant])","tier":"L2","scope":"thread","required":false},{"key":"settings-panel","selector":"[data-settings-panel-slug=\"general-settings\"]","tier":"L2","scope":"settings","required":false},{"key":"appearance-radio","selector":"input[name=\"appearance-theme\"]","tier":"L2","scope":"settings","required":false},{"key":"overlay-menu","selector":"[role=\"menu\"]","tier":"L2","scope":"overlay","required":false},{"key":"overlay-dialog","selector":"[role=\"dialog\"]","tier":"L2","scope":"overlay","required":false},{"key":"overlay-popper","selector":"[data-radix-popper-content-wrapper]","tier":"L2","scope":"overlay","required":false}],"stableTestids":["app-shell-header-context-menu-surface","home-icon","theme-preview"]};
   const STATE_KEY = "__CODEX_DREAM_SKIN_STATE__";
   const DISABLED_KEY = "__CODEX_DREAM_SKIN_DISABLED__";
   const STYLE_REGISTRY_KEY = "__CODEX_DREAM_SKIN_STYLE_SHEETS__";
@@ -112,6 +112,12 @@
     return URL.createObjectURL(new Blob([bytes], { type: mime }));
   })();
 
+  const syncBackgroundVideoPlayback = () => {
+    if (!backgroundVideo) return;
+    if (document.hidden) backgroundVideo.pause();
+    else if (backgroundVideo.paused) void backgroundVideo.play().catch(() => {});
+  };
+
   const ensureBackgroundVideo = () => {
     if (MEDIA_TYPE !== "video" || !document?.createElement) return null;
     if (backgroundVideo?.isConnected) return backgroundVideo;
@@ -120,14 +126,14 @@
     video.id = VIDEO_ID;
     video.muted = true;
     video.loop = true;
-    video.autoplay = true;
+    video.autoplay = false;
     video.playsInline = true;
     video.preload = "auto";
     video.setAttribute("aria-hidden", "true");
     if (video.src !== artUrl) video.src = artUrl;
     if (!video.isConnected) document.documentElement?.insertBefore(video, document.body || null);
     backgroundVideo = video;
-    video.play().catch(() => {});
+    syncBackgroundVideoPlayback();
     return video;
   };
 
@@ -1273,7 +1279,7 @@
   const USAGE_REFRESH_MS = 60 * 1000;
   const RESET_CREDITS_REFRESH_MS = 5 * 60 * 1000;
   const usageBar = {
-    element: null, fields: null, timer: null, controller: null, apiPromise: null,
+    element: null, header: null, fields: null, timer: null, controller: null, apiPromise: null,
     running: false, stopped: false, lastAttempt: 0, lastCreditsAttempt: 0, accountKey: null,
   };
 
@@ -1500,6 +1506,7 @@
       const rect = element.getBoundingClientRect();
       return rect.top < 2 && rect.height > 20 && rect.height < 64 && rect.width > innerWidth * .8;
     });
+    usageBar.header = header ?? null;
     if (!header) { host.hidden = true; return; }
     let area;
     try { area = navigator.windowControlsOverlay?.getTitlebarAreaRect(); } catch {}
@@ -1507,7 +1514,8 @@
     const height = area?.height > 0 ? Math.min(area.height, headerRect.height) : headerRect.height;
     const right = area?.width > 0 ? area.x + area.width : headerRect.right - 140;
     let left = Math.max(headerRect.left + 12, 160);
-    for (const element of document.querySelectorAll('[role="menubar"], header button')) {
+    const controls = [...document.querySelectorAll('[role="menubar"]'), ...header.querySelectorAll("button")];
+    for (const element of controls) {
       const rect = element.getBoundingClientRect();
       if (rect.width > 0 && rect.top < height && rect.bottom > 0 && rect.right < right * .5) {
         left = Math.max(left, rect.right + 12);
@@ -1552,8 +1560,9 @@
       usageBar.timer = setInterval(() => { void refreshUsageBar(); }, USAGE_REFRESH_MS);
       void refreshUsageBar();
     }
-    if (!usageBar.element.isConnected) document.body.append(usageBar.element);
-    positionUsageBar();
+    const needsMount = !usageBar.element.isConnected;
+    if (needsMount) document.body.append(usageBar.element);
+    if (needsMount || !usageBar.header?.isConnected) positionUsageBar();
   };
 
   // 恢复默认或重新换肤时撤销请求、计时器和节点，不留下重复状态栏。
@@ -1583,8 +1592,8 @@
       // Diff 根节点是昂贵的 shadow DOM，仅在路由或内容结构变化后刷新。
       refreshDiffSurfaces();
     }
-    if (rootPass || partPass) bindThreadClip();
     if (scopePass) refreshScope({ refreshMarkers: !partPass });
+    else if (rootPass || partPass) bindThreadClip();
   };
 
   const cleanup = () => {
@@ -1729,6 +1738,7 @@
     scheduleEnsure({ scope: true, parts: true }, 180);
   } : null;
   const visibilityHandler = () => {
+    syncBackgroundVideoPlayback();
     if (document.visibilityState !== "visible") return;
     metrics.safetyPasses += 1;
     scheduleEnsure({ root: true, scope: true, parts: true }, 0);
@@ -1778,7 +1788,7 @@
   const observePartTree = (node) => {
     if (!partObserver || !node) return;
     partObserver.observe(node, { childList: true, subtree: true,
-      attributes: true, attributeFilter: ["style", "hidden", "inert", "aria-selected"] });
+      attributes: true, attributeFilter: ["style", "aria-selected"] });
   };
   observeAttributes(document.documentElement);
   const observeBody = () => {

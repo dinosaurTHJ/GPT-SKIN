@@ -1658,6 +1658,12 @@ html[data-dream-skin="active"][data-dream-art-wide="true"] main:is(.main-surface
   background: transparent !important;
 }
 
+/* 新版标题栏下方的黑边是独立的顶部渐变，保留标题和滚动内容。 */
+html[data-dream-skin="active"] [data-app-shell-main-surface]
+  [aria-hidden="true"][class~="pointer-events-none"][class*="bg-[image:var(--app-shell-content-fade,"] {
+  background-image: none !important;
+}
+
 /* Codex paints a second opaque fade behind the sticky composer. The composer
    already owns its readable surface, so retaining this layer creates a false
    bottom panel and makes the control look duplicated. */
@@ -1751,6 +1757,14 @@ html[data-dream-skin="active"] [data-ds-part="message"] { border-radius: 16px; }
       animation-iteration-count: 1 !important;
     }
   }
+}
+
+/* Codex draws a separate backing layer behind workspace pages. Let the artwork
+   show through while preserving the native outline and page layout. */
+html[data-dream-skin="active"] [data-app-shell-surface-backing],
+html[data-dream-skin="active"] [data-app-shell-main-surface]
+  > [class~="electron:before:bg-surface"]::before {
+  background-color: transparent !important;
 }
 
 /* The native Windows shell keeps an outer main.bg-surface behind the actual
