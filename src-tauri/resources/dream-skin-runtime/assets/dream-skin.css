@@ -3616,6 +3616,29 @@ html[data-dream-skin="active"] .messaging-root.messaging-embedded .thread-pane {
   background-color: transparent !important;
 }
 
+/* Dot 的输入区有独立的渐变装饰和实色底边。 */
+html[data-dream-skin="active"] .messaging-root.messaging-embedded .conversation-footer
+  [data-codex-composer-root] [aria-hidden="true"][class~="pointer-events-none"][class~="from-surface"][class~="via-surface"] {
+  background-image: none !important;
+}
+
+html[data-dream-skin="active"] .messaging-root.messaging-embedded .conversation-footer
+  .composer-wrap:not([data-has-composer-surface]) {
+  border-bottom-color: transparent !important;
+}
+
+/* Dot 资料面板的外框与内容面板都各自绘制底色。 */
+html[data-dream-skin="active"][data-dream-shell] body .codex-dialog[data-orbit-profile="true"],
+html[data-dream-skin="active"] [data-orbit-profile="true"] > [data-summary-panel-variant] {
+  background-color: transparent !important;
+}
+
+/* Dot 的分组标题和上沿装饰一起透出壁纸。 */
+html[data-dream-skin="active"] [data-orbit-profile="true"] [data-summary-panel-variant] section[role="presentation"] > header,
+html[data-dream-skin="active"] [data-orbit-profile="true"] [data-summary-panel-variant] section[role="presentation"] > header::before {
+  background-color: transparent !important;
+}
+
 /* Keep Dot message outlines on the bubbles and lightly tint them by sender. */
 html[data-dream-skin="active"] .messaging-root.messaging-embedded article.message-row {
   background-color: transparent !important;
